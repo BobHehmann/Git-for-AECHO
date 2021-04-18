@@ -31,6 +31,8 @@ Public Class MAIN
     '                   is created via Publish. To use with non-Published versions, copy this master to the usual adjacent location,
     '                   from Windows.
     '               8)  Made Publication-ready in Visual Studio.
+    '   1.060.1     April 18, 2021 Bob Hehmann
+    '               1)  Upgrade from .NET 4.8 to .NET 5.0
 
     ' XML & Related Teminology in comments, as used in AECHO (not all aspects of XML are defined or used) -
     '   (XML):
