@@ -562,13 +562,13 @@ Partial Class MAIN
         'Menu_Help
         '
         Me.Menu_Help.Name = "Menu_Help"
-        Me.Menu_Help.Size = New System.Drawing.Size(180, 22)
+        Me.Menu_Help.Size = New System.Drawing.Size(150, 22)
         Me.Menu_Help.Text = "View Help"
         '
         'AboutToolStripMenuItem
         '
         Me.AboutToolStripMenuItem.Name = "AboutToolStripMenuItem"
-        Me.AboutToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.AboutToolStripMenuItem.Size = New System.Drawing.Size(150, 22)
         Me.AboutToolStripMenuItem.Text = "About AECHO"
         '
         'RTBox

@@ -10,7 +10,7 @@ Imports System.Runtime.InteropServices
 ' Vérifiez les valeurs des attributs de l'assembly
 
 <Assembly: AssemblyTitle("Analyzer-Editor-for-Compiled-Hauptwerk-Organs")>
-<Assembly: AssemblyDescription("Freeware version of a Hauptwerk organs editor. If you notice anything of interest, please contact me at MUSICALIS@NEUF.FR and share yourinsights.")>
+<Assembly: AssemblyDescription("Freeware version of a Hauptwerk organs editor. If you notice anything of interest, please contact me at MUSICALIS@NEUF.FR and share your insights.")>
 <Assembly: AssemblyCompany("")>
 <Assembly: AssemblyProduct("AECHO")>
 <Assembly: AssemblyCopyright("Copyright © Verpeaux J-Paul 2021")>

@@ -1,7 +1,10 @@
 ﻿Public Class Couplers
 
-    Private Sub TextBox1_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles TBoxCplrCode.KeyDown
-        ' VALIDATION AVEC LA TOUCHE ENTER
+    Private Sub TextBox1_KeyDown(
+            sender As Object,
+            e As KeyEventArgs
+            ) Handles TBoxCplrCode.KeyDown                      ' VALIDATION AVEC LA TOUCHE ENTER; Validate input on the form
+
         Dim cplrCode As Integer = Val(TBoxCplrCode.Text)
         Dim destCode As Integer = Int(cplrCode / 100)
         Dim srcCode As Integer = cplrCode Mod 100
@@ -18,6 +21,7 @@
                 Case 16 : RadioDMan6.Checked = True
                 Case Else : MsgBox("Error ! This is not a valid coupler code")
             End Select
+
             Select Case srcCode
                 Case 0 To 4 : RadioSPed.Checked = True
                 Case 5 To 9 : RadioSMan1.Checked = True
@@ -28,6 +32,7 @@
                 Case 30 To 34 : RadioSMan6.Checked = True
                 Case Else : MsgBox("Error ! This is not a valid coupler code")
             End Select
+
             Select Case typeCode
                 Case 0 : Radio16.Checked = True
                 Case 1 : Radio8.Checked = True
@@ -35,6 +40,7 @@
                 Case 3 : RadioBass.Checked = True
                 Case 4 : RadioMelody.Checked = True
             End Select
+
             ' cas de unisson off
             If RadioSPed.Checked = True And RadioDPed.Checked = True And typeCode = 1 Then RadioUOff.Checked = True
             If RadioSMan1.Checked = True And RadioDMan1.Checked = True And typeCode = 1 Then RadioUOff.Checked = True
@@ -45,12 +51,17 @@
             If RadioSMan6.Checked = True And RadioDMan6.Checked = True And typeCode = 1 Then RadioUOff.Checked = True
 
         End If
+
     End Sub
 
 
-    Private Sub ButtonFindCode_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ButtonFindCode.Click
-        ' TROUVE LE CODE A PARTIR DE L'ETAT DES RADIO BUTTONS
+    Private Sub ButtonFindCode_Click(
+            sender As Object,
+            e As EventArgs
+            ) Handles ButtonFindCode.Click                      ' TROUVE LE CODE A PARTIR DE L'ETAT DES RADIO BUTTONS
+
         Dim cplrCode As Integer = 0
+
         If RadioDPed.Checked = True Then cplrCode = 1000
         If RadioDMan1.Checked = True Then cplrCode = 1100
         If RadioDMan2.Checked = True Then cplrCode = 1200
@@ -77,7 +88,6 @@
         ' afficher
         TBoxCplrCode.Text = cplrCode.ToString
         TBoxCplrCode.Focus()
-
 
     End Sub
 End Class
