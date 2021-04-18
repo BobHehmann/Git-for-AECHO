@@ -1,0 +1,55 @@
+2021-04-18 16:40:34.636 -07:00 [INF] MSBuild registered from C:\Program Files\dotnet\sdk\5.0.202\
+2021-04-18 16:40:34.677 -07:00 [INF] Registered 1 extensions:
+	Default extension
+2021-04-18 16:40:36.387 -07:00 [INF] Initializing upgrade step Select an entrypoint
+2021-04-18 16:40:36.391 -07:00 [INF] Setting entrypoint to only project in solution: C:\Users\Bob Hehmann\source\repos\GIT-for-AECHO\AECHO\AECHO.vbproj
+2021-04-18 16:40:36.400 -07:00 [INF] Initializing upgrade step Select project to upgrade
+2021-04-18 16:40:36.519 -07:00 [INF] Initializing upgrade step Back up project
+2021-04-18 16:42:21.016 -07:00 [INF] Skipping upgrade step Back up project
+2021-04-18 16:42:21.017 -07:00 [INF] Upgrade step Back up project skipped
+2021-04-18 16:42:26.866 -07:00 [INF] Initializing upgrade step Convert project file to SDK style
+2021-04-18 16:42:38.416 -07:00 [INF] Applying upgrade step Convert project file to SDK style
+2021-04-18 16:42:38.419 -07:00 [INF] Converting project file format with try-convert, version 0.7.217901
+2021-04-18 16:42:42.556 -07:00 [INF] [try-convert] Conversion complete!
+2021-04-18 16:42:42.896 -07:00 [INF] Project file converted successfully! The project may require additional changes to build successfully against the new .NET target.
+2021-04-18 16:42:44.440 -07:00 [INF] Upgrade step Convert project file to SDK style applied successfully
+2021-04-18 16:42:52.273 -07:00 [INF] Initializing upgrade step Clean up NuGet package references
+2021-04-18 16:42:54.220 -07:00 [INF] Reference to .NET Upgrade Assistant analyzer package (Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers, version 0.2.220602) needs added
+2021-04-18 16:42:54.226 -07:00 [INF] Packages to be addded:
+Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers, Version=0.2.220602
+2021-04-18 16:43:07.806 -07:00 [INF] Applying upgrade step Clean up NuGet package references
+2021-04-18 16:43:07.814 -07:00 [INF] Adding package reference: Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers, Version=0.2.220602
+2021-04-18 16:43:09.426 -07:00 [INF] Upgrade step Clean up NuGet package references applied successfully
+2021-04-18 16:43:10.993 -07:00 [INF] Initializing upgrade step Update TFM
+2021-04-18 16:43:10.998 -07:00 [INF] TFM needs updated to net5.0-windows
+2021-04-18 16:43:16.998 -07:00 [INF] Applying upgrade step Update TFM
+2021-04-18 16:43:18.940 -07:00 [INF] Updated TFM to net5.0-windows
+2021-04-18 16:43:18.941 -07:00 [INF] Upgrade step Update TFM applied successfully
+2021-04-18 16:43:23.832 -07:00 [INF] Initializing upgrade step Update NuGet Packages
+2021-04-18 16:43:25.838 -07:00 [INF] Adding Microsoft.Windows.Compatibility 5.0.2
+2021-04-18 16:43:25.839 -07:00 [INF] Packages to be addded:
+Microsoft.Windows.Compatibility, Version=5.0.2
+2021-04-18 16:43:36.662 -07:00 [INF] Applying upgrade step Update NuGet Packages
+2021-04-18 16:43:36.664 -07:00 [INF] Adding package reference: Microsoft.Windows.Compatibility, Version=5.0.2
+2021-04-18 16:43:39.000 -07:00 [INF] Upgrade step Update NuGet Packages applied successfully
+2021-04-18 16:43:40.025 -07:00 [INF] Initializing upgrade step Add template files
+2021-04-18 16:43:40.058 -07:00 [INF] 0 expected template items needed
+2021-04-18 16:43:40.060 -07:00 [INF] Initializing upgrade step Upgrade app config files
+2021-04-18 16:43:40.079 -07:00 [INF] Found 0 app settings for upgrade: 
+2021-04-18 16:43:40.082 -07:00 [INF] system.diagnostics is not supported in .NET 5. See https://github.com/dotnet/runtime/issues/23937 for details. For now, it will be disabled.
+2021-04-18 16:43:40.086 -07:00 [INF] 0 web page namespace imports need upgraded: 
+2021-04-18 16:43:50.830 -07:00 [INF] Applying upgrade step Disable unsupported configuration sections
+2021-04-18 16:43:50.833 -07:00 [INF] system.diagnostics is not supported in .NET 5. See https://github.com/dotnet/runtime/issues/23937 for details. For now, it will be disabled.
+2021-04-18 16:43:50.836 -07:00 [INF] Configuration file C:\Users\Bob Hehmann\source\repos\GIT-for-AECHO\AECHO\app.config has been updated
+2021-04-18 16:43:50.838 -07:00 [INF] Upgrade step Disable unsupported configuration sections applied successfully
+2021-04-18 16:43:50.839 -07:00 [INF] Applying upgrade step Upgrade app config files
+2021-04-18 16:43:50.840 -07:00 [INF] Upgrade step Upgrade app config files applied successfully
+2021-04-18 16:43:59.763 -07:00 [INF] Initializing upgrade step Update C# source
+2021-04-18 16:44:01.095 -07:00 [INF] Initializing upgrade step Move to next project
+2021-04-18 16:44:06.709 -07:00 [INF] Applying upgrade step Move to next project
+2021-04-18 16:44:06.710 -07:00 [INF] Upgrade step Move to next project applied successfully
+2021-04-18 16:44:13.217 -07:00 [INF] Initializing upgrade step Finalize upgrade
+2021-04-18 16:44:20.485 -07:00 [INF] Applying upgrade step Finalize upgrade
+2021-04-18 16:44:20.486 -07:00 [INF] Upgrade step Finalize upgrade applied successfully
+2021-04-18 16:44:22.798 -07:00 [INF] Upgrade has completed. Please review any changes.
+2021-04-18 16:44:22.800 -07:00 [INF] Saving upgrade progress file at C:\Users\Bob Hehmann\source\repos\GIT-for-AECHO\AECHO\.upgrade-assistant
