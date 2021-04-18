@@ -3,7 +3,7 @@ Imports System.IO
 Public Class MAIN
     '   Version Log
     '   1.058.2 Baseline Vesion
-    '   1.059.0     April-07-2021   Bob Hehmann
+    '   1.059.0     April, 07-2021   Bob Hehmann
     '               1)  Updated Version to 1.059, updated copyright date, corrected version number in Window Title Bar & About Box
     '               2)  Changed ODF I/O to allow UTF-8 compatibilty, useful if including special/extended characters, i.e. adding an
     '                   umlaut to a Stop Name
@@ -15,9 +15,22 @@ Public Class MAIN
     '               6)  Updated .NET Framework from 3.5 to 4.8 (and tested successfully with .NET 5.0)
     '               7) 	Added AECHO 1.059.0 Project to GIT, to manage source versioning. Updates 1-7 define the initial baseline
     '                   Git Branch 'master'
-    '               8)  Git branch 'cleanup-InitialPass-Syntax-Comments'. Cleanup code formatting, comment formatting,
-    '                   resolved all IDE Warnings and Informational messages. Add English comments to all code.
-    '                   Modified "Exit Sub" to "Return" (avoids IDE editing/auto-complete issues.)
+    '   1.060.0     April 18, 2021  Bob Hehmann
+    '               1)  Git branch 'cleanup-InitialPass-Syntax-Comments'. Cleanup code formatting, comment formatting,
+    '                   resolved all IDE Warnings and Informational messages.
+    '               2)  Add English comments to all code.
+    '               3)  Add standardized documentation to all procedures: Purpose; Process; Called-By; Side-Effects; Notes;
+    '               4)  Add XML terminology, will relate to new XML-specific logic to be added soon.
+    '               5)  Modified "Exit Sub" to "Return" (avoids IDE editing/auto-complete issues.)
+    '               6)  Added ability to locate the "\DATA" directory from 2 locations: the ususal location, adjacent to
+    '                   the executable, for use when AECHO is not explicitly installed; from a distinct non-adjacent synthetic
+    '                   directory, when installed as a Click-once application. For Click-once apps, Windows moves data files to
+    '                   a non-adjacent area, need to use a system call to locate.
+    '               7)  Added the \DATA directory to the project, maintained at the same level in the VS Proejct as the Project
+    '                   file and VB sourcecode - this places it under Git version management. Added to installer, so correct version
+    '                   is created via Publish. To use with non-Published versions, copy this master to the usual adjacent location,
+    '                   from Windows.
+    '               8)  Made Publication-ready in Visual Studio.
 
     ' XML & Related Teminology in comments, as used in AECHO (not all aspects of XML are defined or used) -
     '   (XML):
@@ -235,15 +248,19 @@ Public Class MAIN
 
         ' Purpose:      Initialize the application: application registered check, prep default paths to AppData & ODF,
         '               update Window Title Bar, ensure the tags display is cleared and Edit Mode is off.
-        ' Process:      Contruct file path (directory path) variables, call initializatio routines.
+        ' Process:      Contruct file path (directory path) variables, call initialization routines.
         ' Called By:    Window's Event Handler, MAIN form Load Event
         ' Side Effects: Initializes a number of Class variables; updates MAIN form
-        ' Notes:        Reference to G_SectionName is suspect, RTBox is empty at this point - better handled elsewhere        
+        ' Notes:        Reference to G_SectionName is suspect, RTBox is empty at this point - better handled elsewhere
 
         G_AppPath = Path.GetDirectoryName(Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)
         G_AppPath = G_AppPath.Substring(6, Len(G_AppPath) - 6)  ' il faut retirer File:\ au début; initialize path to the application, stripping off initial "file:\"
-        G_DataPath = G_AppPath & "\DATA"                        ' G_DataPath now points to \DATA directory containing Section Descriptive files and Help file (.rtf files) 
-        'MessageBox.Show(G_AppPath & vbCrLf & G_DataPath)
+        If Directory.Exists(G_AppPath & "\DATA") Then           ' Check is \DATA is found in notmal place, next to executable: is here if AECHO is not installed as Click-once Application
+            G_DataPath = G_AppPath & "\DATA"                    ' G_DataPath now points to \DATA directory containing Section Descriptive files and Help file (.rtf files), non-installed version
+        Else                                                    ' Application is installed as Click-once, retrieve apps data directory from the system
+            G_DataPath = System.Deployment.Application.ApplicationDeployment.CurrentDeployment.DataDirectory & "\Data"
+        End If
+        'MsgBox(G_AppPath & vbCrLf & G_DataPath)
 
         Me.Text = "AECHO: HAUPTWERK Organ Analyzer, Version " &
             My.Application.Info.Version.ToString                ' <1.059.0> Add version ID to the initial Window Title Bar at run-time

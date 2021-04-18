@@ -1613,7 +1613,7 @@ Partial Class MAIN
         Me.MainMenuStrip = Me.MenuStrip1
         Me.Name = "MAIN"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "AECHO : HAUPTWERK ORGAN ANALYZER  Version 1-0-59"
+        Me.Text = "AECHO : HAUPTWERK ORGAN ANALYZER  Version 1-0-XX"
         Me.MenuStrip1.ResumeLayout(False)
         Me.MenuStrip1.PerformLayout()
         CType(Me.NumericTextSize, System.ComponentModel.ISupportInitialize).EndInit()
