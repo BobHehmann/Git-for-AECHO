@@ -1,5 +1,7 @@
 ﻿
 Imports System.IO
+Imports System.Windows.Forms
+
 Public Class MAIN
     '   Version Log
     '   1.058.2 Baseline Vesion
@@ -33,6 +35,11 @@ Public Class MAIN
     '               8)  Made Publication-ready in Visual Studio.
     '   1.060.1     April 18, 2021 Bob Hehmann
     '               1)  Upgrade from .NET 4.8 to .NET 5.0
+    '               2)  Added an installer project, so AECHO can run from a self-contained directory (legacy), or be installed as a
+    '                   standard application. When installing, \DATA dir is placed into "\User\Romaing\Aecho\DATA". Installer will
+    '                   install the code, place the \DATA directory under \Roaming\, create desktop icon, and a Program Start-Menu
+    '                   entry. Includes Uninstalling capability (removes code, data, icon, and Start-Menu folder/icon.)
+    '               3)  Added code to locate the \DATA directory either adjacent to the executable (legacy), or in its installed location
 
     ' XML & Related Teminology in comments, as used in AECHO (not all aspects of XML are defined or used) -
     '   (XML):
@@ -255,16 +262,43 @@ Public Class MAIN
         ' Side Effects: Initializes a number of Class variables; updates MAIN form
         ' Notes:        Reference to G_SectionName is suspect, RTBox is empty at this point - better handled elsewhere
 
-        G_AppPath = Path.GetDirectoryName(Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)
-        G_AppPath = G_AppPath.Substring(6, Len(G_AppPath) - 6)  ' il faut retirer File:\ au début; initialize path to the application, stripping off initial "file:\"
-        If Directory.Exists(G_AppPath & "\DATA") Then           ' Check is \DATA is found in notmal place, next to executable: is here if AECHO is not installed as Click-once Application
-            G_DataPath = G_AppPath & "\DATA"                    ' G_DataPath now points to \DATA directory containing Section Descriptive files and Help file (.rtf files), non-installed version
-        Else                                                    ' Application is installed as Click-once, retrieve apps data directory from the system
-            G_DataPath = System.Deployment.Application.ApplicationDeployment.CurrentDeployment.DataDirectory & "\Data"
-        End If
-        'MsgBox(G_AppPath & vbCrLf & G_DataPath)
+        Dim workingDataDir As String                            ' Interim var while finding path to data
+        Dim trimDir As String                                   ' Constructed to be "ProductName\ProductVersion", which we have to strip off of data path for installed app
+        Dim idx As Integer                                      ' String-search index
 
-        Me.Text = "AECHO: HAUPTWERK Organ Analyzer, Version " &
+        'G_AppPath = Path.GetDirectoryName(Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)
+        'G_AppPath = G_AppPath.Substring(6, Len(G_AppPath) - 6) ' il faut retirer File:\ au début; initialize path to the application, stripping off initial "file:\"
+
+        G_AppPath = Application.StartupPath                     ' Better way to locate executable path in .NET 5
+        workingDataDir = Path.Combine(G_AppPath, "DATA")        ' Construct the first attempt, \DATA adjacent to executable
+
+        If Directory.Exists(workingDataDir) Then                ' Is \DATA next to executable? If so, then AECHO is not an installed application, and we are good
+            G_DataPath = workingDataDir                         ' G_DataPath points to non-installed \DATA directory containing Section Descriptive files and Help file (.rtf files)
+        Else                                                    ' POssibly an installed app, DATA will be in AppData\Roaming\AECHO\DATA
+            workingDataDir = Application.UserAppDataPath        ' Retrieve the full, version-specific Path, we'll need to truncate back to \Roaming\AECHO
+            trimDir = Path.Combine(Application.ProductName,
+                                    Application.ProductVersion) ' Construct "AECHO\1.60...", which we need to trim off
+            idx = Strings.InStr(workingDataDir, trimDir,
+                                CompareMethod.Text)             ' Find this excess trailer...
+            If idx > 1 Then                                     ' We found the trailer
+                workingDataDir = Strings.Left(workingDataDir,
+                                              idx - 1)          ' Truncate the trailer, leaving "\Roaming\AECHO\"
+                workingDataDir = Path.Combine(workingDataDir,
+                                              "DATA")           ' Append \DATA suffix
+                If Directory.Exists(workingDataDir) Then        ' Good, we found it in Installed location, go with it
+                    G_DataPath = workingDataDir                 ' G_DataPath now points to the \DATA directory for a standard installed application
+                Else
+                    G_DataPath = ""                             ' Cannot locate our Data, clear the Path
+                End If
+            Else
+                G_DataPath = ""                                 ' Search for trailer-text failed, we give up
+            End If
+        End If
+        If G_DataPath = "" Then                                 ' Did we find it? If not, present a warning message
+            MsgBox("Cannot locate the \DATA directory. AECHO will still run, but will be unable to access Section Descriptions and the Help file.", vbInformation)
+        End If
+
+        Me.Text = "AECHO: Hauptwek Organ Analyzer, Version " &
             My.Application.Info.Version.ToString                ' <1.059.0> Add version ID to the initial Window Title Bar at run-time
         RegisteredUnregistered()                                ' Savoir si version enregistre ou non; detect if this version is registered or not - as of 1.057, always "Registered"
         ReadInitialDir()                                        ' Establishes G_InitialDir as (possible) location of user's ODF files

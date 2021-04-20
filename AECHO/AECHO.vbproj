@@ -39,6 +39,9 @@
     <DefineDebug>false</DefineDebug>
     <DocumentationFile>AECHO.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+    <RemoveIntegerChecks>true</RemoveIntegerChecks>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>A4D5871A76ACF825E75147A26D3AF065D9B34EFB</ManifestCertificateThumbprint>
@@ -48,7 +51,16 @@
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>true</SignManifests>
+    <PackageReleaseNotes>Conversion to .NET 5.0</PackageReleaseNotes>
+    <AssemblyName>Aecho</AssemblyName>
+    <RootNamespace>Aecho</RootNamespace>
+    <ApplicationIcon>Icon_Color_Pipe_Organ.ico</ApplicationIcon>
+    <PackageIcon>Icon_Color_Pipe_Organ.ico</PackageIcon>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Icon_BW_Pipe_Organ.ico" />
+    <None Remove="Icon_Color_Pipe_Organ.ico" />
+  </ItemGroup>
   <ItemGroup>
     <Reference Update="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -58,6 +70,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Import Include="Microsoft.VisualBasic.ApplicationServices" />
     <Import Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
@@ -126,9 +139,14 @@
     <Content Include="DATA\WindCompartment.rtf" />
     <Content Include="DATA\windcompartmentlinkage.rtf" />
     <Content Include="DATA\_General.rtf" />
+    <Content Include="Icon_BW_Pipe_Organ.ico" />
+    <Content Include="Icon_Color_Pipe_Organ.ico" />
     <None Update="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+    <None Update="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
     </None>
   </ItemGroup>
   <ItemGroup>

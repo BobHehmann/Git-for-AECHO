@@ -1,4 +1,6 @@
-﻿Public Class Couplers
+﻿Imports System.Windows.Forms
+
+Public Class Couplers
 
     Private Sub TextBox1_KeyDown(                           ' Standard Control event parms...
             sender As Object,

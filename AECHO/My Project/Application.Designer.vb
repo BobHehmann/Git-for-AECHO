@@ -32,7 +32,7 @@ Namespace My
         
         <Global.System.Diagnostics.DebuggerStepThroughAttribute()>  _
         Protected Overrides Sub OnCreateMainForm()
-            Me.MainForm = Global.AECHO.MAIN
+            Me.MainForm = Global.Aecho.MAIN
         End Sub
     End Class
 End Namespace

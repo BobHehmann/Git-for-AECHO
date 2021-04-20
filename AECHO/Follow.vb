@@ -1,4 +1,6 @@
-﻿Public Class Follow
+﻿Imports System.Windows.Forms
+
+Public Class Follow
     Public F_StartPos As Integer                                    ' Beginning / current position of a search
     Public F_LimitPos As Integer                                    ' Upper bound on a search: either EOF, or EOL, depending on context
     Public F_ItemID As Integer                                      ' Sample ID from form, as an integer
