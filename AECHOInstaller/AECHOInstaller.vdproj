@@ -1308,15 +1308,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:AECHO"
-        "ProductCode" = "8:{FE9E5FEB-D22F-4177-9C6E-5DCBC31A57DA}"
-        "PackageCode" = "8:{CD39C21D-2EA3-4E6A-BA0A-3A87C7151CA5}"
+        "ProductCode" = "8:{7F76D428-B2AD-4AE1-9756-EAEB7A0EDF67}"
+        "PackageCode" = "8:{1173510D-A80E-49C9-877F-BED0FF4CF362}"
         "UpgradeCode" = "8:{B1A81219-38A9-4A46-A9C2-52148913D611}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.60.1"
+        "ProductVersion" = "8:1.60.2"
         "Manufacturer" = "8:HWTools"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -1858,7 +1858,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_8BEF99629CA04647BECF5BB49B74A95D"
             {
-            "SourcePath" = "8:..\\AECHO\\obj\\Release\\net5.0-windows\\apphost.exe"
+            "SourcePath" = "8:..\\AECHO\\obj\\Debug\\net5.0-windows\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_30E68C04FCF14736A6AEE7EA62551B95"

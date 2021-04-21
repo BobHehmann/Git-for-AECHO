@@ -99,8 +99,8 @@ Partial Class MAIN
         Me.LabelCaretPos = New System.Windows.Forms.Label()
         Me.Label5 = New System.Windows.Forms.Label()
         Me.LabelLineEnd = New System.Windows.Forms.Label()
-        Me.Label6 = New System.Windows.Forms.Label()
-        Me.LabelSection = New System.Windows.Forms.Label()
+        Me.lblSectionTitle = New System.Windows.Forms.Label()
+        Me.lblSectionName = New System.Windows.Forms.Label()
         Me.Label7 = New System.Windows.Forms.Label()
         Me.LabelNumberOfTags = New System.Windows.Forms.Label()
         Me.RTBoxRTF = New System.Windows.Forms.RichTextBox()
@@ -233,8 +233,8 @@ Partial Class MAIN
         Me.SectionsMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Menu_DisplayPage, Me.Menu_TextStyle, Me.Menu_TextInstance, Me.Menu_ImageSet, Me.Menu_ImageSetElement, Me.Menu_ImageSetInstance, Me.Menu_KeyImageSet, Me.Menu_Division, Me.Menu_DivisionInput, Me.Menu_Switch, Me.Menu_SwitchLinkage, Me.Menu_SwitchExclusiveSelectGroup, Me.Menu_SwitchExclusiveSelectGroupElement, Me.Menu_Keyboard, Me.Menu_KeyboardKey, Me.Menu_KeyAction, Me.Menu_Rank, Me.Menu_ExternalRank, Me.Menu_ExternalPipe, Me.Menu_Stop, Me.Menu_StopRank})
         Me.SectionsMenuItem.Enabled = False
         Me.SectionsMenuItem.Name = "SectionsMenuItem"
-        Me.SectionsMenuItem.Size = New System.Drawing.Size(94, 20)
-        Me.SectionsMenuItem.Text = "Sectionss 1-22"
+        Me.SectionsMenuItem.Size = New System.Drawing.Size(89, 20)
+        Me.SectionsMenuItem.Text = "Sections 1-22"
         '
         'Menu_DisplayPage
         '
@@ -591,7 +591,7 @@ Partial Class MAIN
         '
         'NumericTextSize
         '
-        Me.NumericTextSize.Location = New System.Drawing.Point(1127, 52)
+        Me.NumericTextSize.Location = New System.Drawing.Point(1131, 57)
         Me.NumericTextSize.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.NumericTextSize.Maximum = New Decimal(New Integer() {20, 0, 0, 0})
         Me.NumericTextSize.Minimum = New Decimal(New Integer() {7, 0, 0, 0})
@@ -715,28 +715,28 @@ Partial Class MAIN
         Me.LabelLineEnd.Text = "?"
         Me.LabelLineEnd.TextAlign = System.Drawing.ContentAlignment.TopRight
         '
-        'Label6
+        'lblSectionTitle
         '
-        Me.Label6.AutoSize = True
-        Me.Label6.Location = New System.Drawing.Point(194, 35)
-        Me.Label6.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
-        Me.Label6.Name = "Label6"
-        Me.Label6.Size = New System.Drawing.Size(46, 15)
-        Me.Label6.TabIndex = 28
-        Me.Label6.Text = "Section"
+        Me.lblSectionTitle.AutoSize = True
+        Me.lblSectionTitle.Cursor = System.Windows.Forms.Cursors.Default
+        Me.lblSectionTitle.Location = New System.Drawing.Point(14, 33)
+        Me.lblSectionTitle.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.lblSectionTitle.Name = "lblSectionTitle"
+        Me.lblSectionTitle.Size = New System.Drawing.Size(49, 15)
+        Me.lblSectionTitle.TabIndex = 28
+        Me.lblSectionTitle.Text = "Section:"
         '
-        'LabelSection
+        'lblSectionName
         '
-        Me.LabelSection.AutoSize = True
-        Me.LabelSection.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.LabelSection.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
-        Me.LabelSection.ForeColor = System.Drawing.Color.Red
-        Me.LabelSection.Location = New System.Drawing.Point(251, 30)
-        Me.LabelSection.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
-        Me.LabelSection.Name = "LabelSection"
-        Me.LabelSection.Size = New System.Drawing.Size(61, 18)
-        Me.LabelSection.TabIndex = 29
-        Me.LabelSection.Text = "Section"
+        Me.lblSectionName.AutoSize = True
+        Me.lblSectionName.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.lblSectionName.ForeColor = System.Drawing.Color.Red
+        Me.lblSectionName.Location = New System.Drawing.Point(68, 33)
+        Me.lblSectionName.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.lblSectionName.Name = "lblSectionName"
+        Me.lblSectionName.Size = New System.Drawing.Size(157, 16)
+        Me.lblSectionName.TabIndex = 29
+        Me.lblSectionName.Text = "Current Section Name"
         '
         'Label7
         '
@@ -767,7 +767,7 @@ Partial Class MAIN
         Me.RTBoxRTF.Location = New System.Drawing.Point(722, 399)
         Me.RTBoxRTF.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.RTBoxRTF.Name = "RTBoxRTF"
-        Me.RTBoxRTF.Size = New System.Drawing.Size(629, 347)
+        Me.RTBoxRTF.Size = New System.Drawing.Size(679, 380)
         Me.RTBoxRTF.TabIndex = 56
         Me.RTBoxRTF.Text = ""
         '
@@ -785,12 +785,12 @@ Partial Class MAIN
         '
         'ButtonSaveRtbox2
         '
-        Me.ButtonSaveRtbox2.Location = New System.Drawing.Point(1253, 753)
+        Me.ButtonSaveRtbox2.Location = New System.Drawing.Point(1413, 437)
         Me.ButtonSaveRtbox2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.ButtonSaveRtbox2.Name = "ButtonSaveRtbox2"
-        Me.ButtonSaveRtbox2.Size = New System.Drawing.Size(90, 28)
+        Me.ButtonSaveRtbox2.Size = New System.Drawing.Size(62, 24)
         Me.ButtonSaveRtbox2.TabIndex = 62
-        Me.ButtonSaveRtbox2.Text = "Save it"
+        Me.ButtonSaveRtbox2.Text = "Save Text"
         Me.ButtonSaveRtbox2.UseVisualStyleBackColor = True
         '
         'PanelTags
@@ -1526,7 +1526,7 @@ Partial Class MAIN
         Me.FindNextButton.Name = "FindNextButton"
         Me.FindNextButton.Size = New System.Drawing.Size(88, 33)
         Me.FindNextButton.TabIndex = 77
-        Me.FindNextButton.Text = "FIND NEXT"
+        Me.FindNextButton.Text = "Find Next"
         Me.FindNextButton.UseVisualStyleBackColor = True
         '
         'FindButton
@@ -1536,7 +1536,7 @@ Partial Class MAIN
         Me.FindButton.Name = "FindButton"
         Me.FindButton.Size = New System.Drawing.Size(51, 33)
         Me.FindButton.TabIndex = 76
-        Me.FindButton.Text = "FIND"
+        Me.FindButton.Text = "Find"
         Me.FindButton.UseVisualStyleBackColor = True
         '
         'TextToFindBox
@@ -1551,7 +1551,7 @@ Partial Class MAIN
         '
         Me.ButtonLed.BackColor = System.Drawing.Color.DarkOrange
         Me.ButtonLed.Enabled = False
-        Me.ButtonLed.Location = New System.Drawing.Point(176, 1)
+        Me.ButtonLed.Location = New System.Drawing.Point(182, 8)
         Me.ButtonLed.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.ButtonLed.Name = "ButtonLed"
         Me.ButtonLed.Size = New System.Drawing.Size(27, 17)
@@ -1561,12 +1561,12 @@ Partial Class MAIN
         '
         'ButtonFont
         '
-        Me.ButtonFont.Location = New System.Drawing.Point(1107, 756)
+        Me.ButtonFont.Location = New System.Drawing.Point(1413, 398)
         Me.ButtonFont.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.ButtonFont.Name = "ButtonFont"
-        Me.ButtonFont.Size = New System.Drawing.Size(54, 24)
+        Me.ButtonFont.Size = New System.Drawing.Size(59, 24)
         Me.ButtonFont.TabIndex = 77
-        Me.ButtonFont.Text = "Font"
+        Me.ButtonFont.Text = "Set Font"
         Me.ButtonFont.UseVisualStyleBackColor = True
         '
         'ButtonMarker1
@@ -1612,7 +1612,7 @@ Partial Class MAIN
         'LabelPackageID
         '
         Me.LabelPackageID.AutoSize = True
-        Me.LabelPackageID.Location = New System.Drawing.Point(26, 381)
+        Me.LabelPackageID.Location = New System.Drawing.Point(14, 381)
         Me.LabelPackageID.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelPackageID.Name = "LabelPackageID"
         Me.LabelPackageID.Size = New System.Drawing.Size(62, 15)
@@ -1649,32 +1649,32 @@ Partial Class MAIN
         '
         'ButtonNextLine
         '
-        Me.ButtonNextLine.Location = New System.Drawing.Point(1134, 114)
+        Me.ButtonNextLine.Location = New System.Drawing.Point(1131, 114)
         Me.ButtonNextLine.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.ButtonNextLine.Name = "ButtonNextLine"
-        Me.ButtonNextLine.Size = New System.Drawing.Size(102, 27)
+        Me.ButtonNextLine.Size = New System.Drawing.Size(111, 27)
         Me.ButtonNextLine.TabIndex = 86
         Me.ButtonNextLine.Text = "Next Line"
         Me.ButtonNextLine.UseVisualStyleBackColor = True
         '
         'ButtonNext10Lines
         '
-        Me.ButtonNext10Lines.Location = New System.Drawing.Point(1134, 160)
+        Me.ButtonNext10Lines.Location = New System.Drawing.Point(1131, 160)
         Me.ButtonNext10Lines.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.ButtonNext10Lines.Name = "ButtonNext10Lines"
-        Me.ButtonNext10Lines.Size = New System.Drawing.Size(104, 27)
+        Me.ButtonNext10Lines.Size = New System.Drawing.Size(111, 27)
         Me.ButtonNext10Lines.TabIndex = 87
-        Me.ButtonNext10Lines.Text = "Next 10 Lines"
+        Me.ButtonNext10Lines.Text = "Move + 10 Lines"
         Me.ButtonNext10Lines.UseVisualStyleBackColor = True
         '
         'ButtonNext100Lines
         '
-        Me.ButtonNext100Lines.Location = New System.Drawing.Point(1134, 204)
+        Me.ButtonNext100Lines.Location = New System.Drawing.Point(1131, 204)
         Me.ButtonNext100Lines.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.ButtonNext100Lines.Name = "ButtonNext100Lines"
-        Me.ButtonNext100Lines.Size = New System.Drawing.Size(104, 27)
+        Me.ButtonNext100Lines.Size = New System.Drawing.Size(111, 27)
         Me.ButtonNext100Lines.TabIndex = 88
-        Me.ButtonNext100Lines.Text = "Next 100 Lines"
+        Me.ButtonNext100Lines.Text = "Move + 100 Lines"
         Me.ButtonNext100Lines.UseVisualStyleBackColor = True
         '
         'MAIN
@@ -1695,8 +1695,8 @@ Partial Class MAIN
         Me.Controls.Add(Me.ButtonSaveRtbox2)
         Me.Controls.Add(Me.RTBoxLine)
         Me.Controls.Add(Me.RTBoxRTF)
-        Me.Controls.Add(Me.LabelSection)
-        Me.Controls.Add(Me.Label6)
+        Me.Controls.Add(Me.lblSectionName)
+        Me.Controls.Add(Me.lblSectionTitle)
         Me.Controls.Add(Me.NumericTextSize)
         Me.Controls.Add(Me.RTBox)
         Me.Controls.Add(Me.MenuStrip1)
@@ -1705,7 +1705,7 @@ Partial Class MAIN
         Me.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Name = "MAIN"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "AECHO : HAUPTWERK ORGAN ANALYZER  Version 1-0-XX"
+        Me.Text = "AECHO : Hauptwerk Organ Analyzer , Version 1.62.X"
         Me.MenuStrip1.ResumeLayout(False)
         Me.MenuStrip1.PerformLayout()
         CType(Me.NumericTextSize, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1767,8 +1767,8 @@ Partial Class MAIN
     Friend WithEvents LabelCaretPos As System.Windows.Forms.Label
     Friend WithEvents Label5 As System.Windows.Forms.Label
     Friend WithEvents LabelLineEnd As System.Windows.Forms.Label
-    Friend WithEvents Label6 As System.Windows.Forms.Label
-    Friend WithEvents LabelSection As System.Windows.Forms.Label
+    Friend WithEvents lblSectionTitle As System.Windows.Forms.Label
+    Friend WithEvents lblSectionName As System.Windows.Forms.Label
     Friend WithEvents Label7 As System.Windows.Forms.Label
     Friend WithEvents LabelNumberOfTags As System.Windows.Forms.Label
     Friend WithEvents Menu_Enclosure As System.Windows.Forms.ToolStripMenuItem

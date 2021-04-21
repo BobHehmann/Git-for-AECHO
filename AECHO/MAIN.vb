@@ -40,6 +40,10 @@ Public Class MAIN
     '                   install the code, place the \DATA directory under \Roaming\, create desktop icon, and a Program Start-Menu
     '                   entry. Includes Uninstalling capability (removes code, data, icon, and Start-Menu folder/icon.)
     '               3)  Added code to locate the \DATA directory either adjacent to the executable (legacy), or in its installed location
+    '   1.060.2     April 20, 2021 Bob Hehmann
+    '               1)  Detailed code clean-up, minor functionality. Improve use of constants; fewer globals; standardize error handling
+    '                   and messaging; Rename some objects to reflect their function rather than just their VB Type e.g. "RTBoxODF" rather
+    '                   than "RTBox". Harden routines; catch key Exceptions. Overall flow and algorithms stay close to the original.
 
     ' XML & Related Teminology in comments, as used in AECHO (not all aspects of XML are defined or used) -
     '   (XML):
@@ -300,6 +304,7 @@ Public Class MAIN
 
         Me.Text = "AECHO: Hauptwek Organ Analyzer, Version " &
             My.Application.Info.Version.ToString                ' <1.059.0> Add version ID to the initial Window Title Bar at run-time
+        lblSectionName.Text = ""                                ' <1.060.2> Clear Section Name field onscreen, until we are established in a real Section
         RegisteredUnregistered()                                ' Savoir si version enregistre ou non; detect if this version is registered or not - as of 1.057, always "Registered"
         ReadInitialDir()                                        ' Establishes G_InitialDir as (possible) location of user's ODF files
         G_SectionName = "_General"                              ' par defaut; the initial Section Name
@@ -671,7 +676,7 @@ Public Class MAIN
         RTBox.SelectionStart = belongStart + 24                     ' Extract the Section Name (the XML Attribute Value)
         RTBox.SelectionLength = belongend - belongStart - 25
         G_SectionName = RTBox.SelectedText
-        LabelSection.Text = G_SectionName                           ' Update the Section Name onscreen
+        lblSectionName.Text = G_SectionName                         ' Update the Section Name onscreen
 
     End Sub
     Private Sub RTBox_MouseClick(sender As Object,                  ' Standard Control event parms...
@@ -746,7 +751,7 @@ Public Class MAIN
 
                 LabelSectionStart.Text = S_Section(G_Section).startPos      ' afficher infos debut et fin; update Section Start/End on screen
                 LabelSectionEnd.Text = S_Section(G_Section).endPos
-                LabelSection.Text = S_Section(G_Section).name               ' afficher le nom de la section; update the Section Name on screen
+                lblSectionName.Text = S_Section(G_Section).name             ' afficher le nom de la section; update the Section Name on screen
                 G_SectionName = S_Section(G_Section).name                   ' And save name of current Section
                 G_LineIndex = RTBox.GetLineFromCharIndex(G_CaretPos)        ' caalculer et afficher n° dee ligne; update Line Number
                 LabelLineNumber.Text = G_LineIndex.ToString                 ' And place onscreen
@@ -828,7 +833,7 @@ Public Class MAIN
         GetFirstLine(G_StartPos)
         ' Afficher le nom de la section
         G_SectionName = section.Substring(24, Len(section) - 26)
-        LabelSection.Text = G_SectionName
+        lblSectionName.Text = G_SectionName
         ' charger le fichier RTF
         LoadRTFFile()
 
@@ -1973,8 +1978,8 @@ Public Class MAIN
         PBox.BorderStyle = BorderStyle.None         ' Remove the borders
 
         Dim psize = New System.Drawing.Size With {  ' retrecir le panel; resize the panel
-            .Height = 330,
-            .Width = 600
+            .Height = 380,
+            .Width = 699
         }
         PanelTags.Size = psize                      ' Resize the panel to its normal dimensions
 
@@ -2109,8 +2114,8 @@ Public Class MAIN
         LabelPackageID.Text = "PkgID = " & G_PackageID  ' Update PackageID on the Panel-Header of the Main form i.e. internal ID of the organ supplying the image
         url = G_PackagePath & G_PackageID & G_ImageFile ' Build url to be entire path\filename of the image to be displayed
         Dim psize = New System.Drawing.Size With {      ' agrandir le panel; Widen the Tags Panel to make more room for the imgage, covering the RTF explanatory text portion of the form
-            .Height = 330,
-            .Width = 1150
+            .Height = 380,
+            .Width = 1386
         }
         PanelTags.Size = psize
 
@@ -2189,8 +2194,8 @@ Public Class MAIN
         PBox.BorderStyle = BorderStyle.None         ' Remove the borders
 
         Dim psize = New System.Drawing.Size With {  ' retrecir le panel; resize the Tags Panel
-            .Height = 330,
-            .Width = 600
+            .Height = 380,
+            .Width = 699
         }
         PanelTags.Size = psize
 

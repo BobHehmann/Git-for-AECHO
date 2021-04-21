@@ -56,6 +56,7 @@
     <RootNamespace>Aecho</RootNamespace>
     <ApplicationIcon>Icon_Color_Pipe_Organ.ico</ApplicationIcon>
     <PackageIcon>Icon_Color_Pipe_Organ.ico</PackageIcon>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Icon_BW_Pipe_Organ.ico" />
