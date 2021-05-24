@@ -1,0 +1,140 @@
+﻿     XML & Related Teminology in comments, as used in AECHO (Not all aspects of XML are defined Or used) -
+       (XML):
+           Tag ->           A markup string starting with "<", And ending with ">". When nested, individual Tags are the closest
+                            matching bracket-pairs - standard nesting conventions apply. Example: "<ImaTag>"
+
+           Start-Tag ->     The opening tag of an Element e.g. "<Pitch>". Contains the Name immediately following the opening "<".
+                            Always paired With an End-Tag.
+
+           End-Tag ->       The closing tag Of an Element e.g. "</Pitch>". Contains the same name As its paired Start-Tag,
+                            preceded by "/". 
+
+           Name/Type ->     The first string between the markup-brackets of a Tag in the prior two examples, "Pitch".
+                            Names are Case-sensitive. The Name Of an Element identifies its Type, which can be associated With
+                            rules for acceptable syntax And structure of the Content within an Element of a particular Type.
+
+           Element ->       A string consisting of a Start-Tag ("<xyz>"), And ending with a matching End-Tag ("</xyz>"). There
+                            may be text between the Tags (the Content), Or Not.
+
+           Content ->       The text found between an Element's Start and End-Tags; the Content may be null/empty. Content may
+                            include one Or more nested Elements, In addition To unmarked text. Such nested Elements are called
+                            Child Elements, which are wholly contained within their Parent Element.
+
+                            Example: "<o><a>123</a><b>ABC</b></o>" has an Parent (outer) Element "o", whose Content consists of
+                            two Child Elements, "a" And "b". The Content Of Element "a" Is "123"; Of "b" Is "ABC".
+
+                            Nesting depth can be arbitrary, but nested Elements must be wholly contained In their Parent's Content,
+                            And Elements may never overlap.
+
+                            Example: "<o><a>123</a></o>" Is OK (wholly nested), but "<o><a>123</o></a>" Is incorrect, as the
+                            Parent "o" cannot end before its Child "a" ends.
+
+           Attribute ->     Optional Name/Value pairs contained in a Start-Tag, following the Name. Attributes are seperated from
+                            the Name And from Each other by whitespace. Their syntax Is attribute_name="attribute_value". A
+                            Start-Tag may contain 0, 1, Or more Attributes.
+
+                            Example: '<image source="picture.jpg" border="None">Stuff...</image>' is an Element named "image",
+                            With two Attributes ("source" And "border") whose values are respectively "picture.jpg" And "None".
+                            The Content Is "Stuff...".
+
+       XML includes many additional elements, such As escapes, comments, Empty-Element-Tags... These are Not defined here, And
+       are generally Not used In an ODF.
+
+       (ODF):               Organ Definition Format/File
+
+           ODF ->           The content of a Hauptwerk Organ Definition File, which Is organized as an XML document. Loaded into
+                            the Rtb_ODF control, ODF will generally refer To this In-memory copy, Not To the underlying file.
+                            AECHO facilitates the presentation, decoding, And simple editing Of ODF structured files.
+
+           Compressed ODF ->
+                            Most ODF Files are distributed In their "Compressed" form, where the Element Names Of the myriad Of
+                            lowest level Child Elements are replaced With Single letter codes: "<a>", "<b>"..., instead of
+                            their long-form descriptive names. And those that would have null values are eliminated entirely.
+                            This Is to increase efficiency in HW whan these files are processed, And to reduce file size.
+                            However, it leaves the resulting ODF File essentially uninterpretable to a non-expert user. One
+                            purpose of AECHO Is to provide a context-aware presentation of the full-length Names of all
+                            Elements avaiable within a Section record - including both populated And unpopulated fields.
+
+           Section ->       In an ODF, an XML Element of Type "ObjectList", with the Attribute "ObjectType". This Attribute's
+                            Value Is the name of the Section. A Section specifies a group of related Elements defining a particular
+                            type of Organ content. For example, the Content of the Section "TextStyle" defines font types And
+                            styles that might be applied To instances Of Text (itself another Section Type.) Conceptually, a
+                            Section resembles a database table.
+
+                            Example: '<ObjectList ObjectType="DisplayPage"><o><a>1</a><b>Console</b></o></ObjectList>' is the
+                            Section DisplayPage, with a Single Content Row.
+
+                            In Hauptwerk, ODF Sections have been very stable over time, comprising the same 44 Sections for many
+                            years. Each Section has its own defintion of the Elements that encode its Content, analgous to the
+                            definition of a database table's records. The Content of a Section Element may be empty: such Sections
+                            appear as Elements with no Content.
+
+                            Example: '<ObjectList ObjectType="ExternalRank"></ObjectList> defines an empty Section "ExternalRank".
+
+                            Sections 2-44 have a consistant structure, where their Child Elements are all of Type "o". The
+                            Structure of Each "o" Element In a given Section Is the same, but differs from Section To Section,
+                            much as records within a single database table have a similar structure, but are different from
+                            records in another table. AECHO parses the structure of each Section Type when presenting its Content.
+
+                            Section 1, "_General" has a distinctly different structure from the other 43 Sections: it consists
+                            of a single Child Element named "_General", which in turn contains numerous Child Elements with
+                            fully expanded And self-explanatory Names. These Elements define common meta-data such As the Organ's
+                            Name, Location, And Builder. In contrast, the Child Elements within an "o" Element (found in
+                            Sections 2-44), have highly compressed Names, usually consisting of a single alphabetic letter without
+                            obvious meaning: '<a>', '<d>"... Part of AECHO's purpose is to expand these compressed Names into
+                            their full HW internal Names, which are mostly self-explanatory.
+
+                            Sections are a major navigational element Of AECHO, directly accessible from the program's Menu Bar.
+
+           Row ->           For the Child Elements of Sections 2-44, a single XML Element of Type "o": the standard record that
+                            comprises most Of an ODF's content. Note that a Row may span multiple lines in the Rtb_ODF, due to
+                            either arbitrary line-wrapping In a RichTextBox control, Or explicit newlines In the underlying file.
+                            Generally, when presenting parsed "o" Element Content, the outer bounding tags "<o>" And "</o>" are
+                            ignored, being implicit: only the Child Elements inside the "o" Element are expanded upon. "o" Rows
+                            are analagous To individual database records In a Section table; Child Elements Of an "o" represent
+                            the fields within Each record.
+
+                            For all other Elements, such as Section 1 ("_General"), the ObjectList Start And End Tags, XML
+                            control Elements, and the outermost Element "Hauptwerk", AECHO treats Each display line In the RTF
+                            box as a Row, Not to be parsed. These rows may be edited, however.
+
+           Line ->          RichTextBox (RTB) controls express positioning in terms of Lines, zero-based. When loading a file
+                            into an RTB with Wordwrap enabled, lines are broken both at the control's right-side border (soft),
+                            and where the source file itself contains a line-break (hard). Therefore, a line number may not
+                            necessarily be in 1-1 correspondance with the source file. When writing the control's content back out
+                            to a file, soft/wrap line-breaks removed, but hard-breaks, original or manually entered while editing,
+                            remain. If Wordwrap is disabled, an RTB will display a horizontal scroll-bar at runtime, and there will
+                            be no soft breaks. In this format, Lines are 1-to-1 with the source file. AECHO has been modified to
+                            display ODFs with wrapping disabled, so Line Numbers are stable.
+
+
+                       DOC RICH TEXT BOX (useful Methods/Properties)
+
+    AppendText 	                                    Ajoute du texte au texte en cours dans une zone de texte. (Hérité de TextBoxBase.)
+    CanPaste 	                                    Détermine si vous pouvez coller des informations du Presse-papiers dans le format de données spécifié.
+    Clear 	                                        Efface tout le texte du contrôle zone de texte. (Hérité de TextBoxBase.)
+    ClearUndo 	                                    Efface les informations sur la dernière opération effectuée à partir de la mémoire tampon d'annulation de la zone de texte. (Hérité de TextBoxBase.)
+    Copy 	                                        Copie la sélection actuelle dans la zone de texte vers le Presse-papiers. (Hérité de TextBoxBase.)
+    Cut 	                                        Déplace la sélection actuelle entre la zone de texte et le Presse-papiers. (Hérité de TextBoxBase.)
+    DeselectAll 	                                Spécifie que la valeur de la propriété SelectionLength est zéro afin qu'aucun caractère ne soit sélectionné dans le contrôle. (Hérité de TextBoxBase.)
+    Find(Char()) 	                                Recherche dans le texte d'un contrôle RichTextBox la première occurrence d'un caractère issu d'une liste.
+    Find(String) 	                                Recherche une chaîne donnée dans le texte d'un contrôle RichTextBox.
+    Find(Char(), Int32) 	                        Recherche dans le texte d'un contrôle RichTextBox, à partir d'un point spécifique, la première occurrence d'un caractère parmi une liste de caractères.
+    Find(String, RichTextBoxFinds) 	                Recherche une chaîne dans le texte d'un contrôle RichTextBox en appliquant des options de recherche spécifiques.
+    Find(Char(), Int32, Int32) 	                    Recherche dans une plage de texte d'un contrôle RichTextBox la première occurrence d'un caractère issu d'une liste.
+    Find(String, Int32, RichTextBoxFinds) 	        Recherche une chaîne à un emplacement spécifique dans le texte d'un contrôle RichTextBox en appliquant des options de recherche spécifiques.
+    Find(String, Int32, Int32, RichTextBoxFinds)    Recherche une chaîne dans une plage de texte d'un contrôle RichTextBox en appliquant des options de recherche spécifiques. 
+    GetCharFromPosition 	                        Récupère le caractère le plus proche de l'emplacement spécifié dans le contrôle. (Hérité de TextBoxBase.)
+    GetCharIndexFromPosition 	                    Récupère l'index du caractère le plus proche de l'emplacement spécifié par un System.Drawning.Point.
+    GetFirstCharIndexFromLine 	                    Récupère l'index du premier caractère d'une ligne donnée. (Hérité de TextBoxBase.)
+    GetFirstCharIndexOfCurrentLine 	                Récupère l'index du premier caractère de la ligne active. (Hérité de TextBoxBase.)
+    GetLineFromCharIndex 	                        Récupère le numéro de ligne à partir de la position de caractère spécifiée dans le texte du contrôle RichTextBox. (Substitue TextBoxBase.GetLineFromCharIndex(Int32).)
+    GetPositionFromCharIndex 	                    Récupère l'emplacement de l'index de caractère spécifié dans le contrôle. (Substitue TextBoxBase.GetPositionFromCharIndex(Int32).)
+    ResetFont 	                                    Rétablit la valeur par défaut de la propriété Font. (Hérité de Control.)
+    ResetForeColor 	                                Rétablit la valeur par défaut de la propriété ForeColor. (Hérité de Control.)
+    ScrollToCaret 	                                Fait défiler le contenu du contrôle vers la position indiquée par le signe insertion. (Hérité de TextBoxBase.)
+    Select Case (Int32, Int32) 	                    Sélectionne une plage de texte dans la zone de texte.(start position, longueur selection)
+    SelectAll 	                                    Sélectionne tout le texte de la zone de texte. (Hérité de TextBoxBase.)
+    Undo 	                                        Annule la dernière modification apportée dans la zone de texte. (Hérité de TextBoxBase.)
+    Update 	                                        Force le contrôle à redessiner les zones invalidées dans sa zone cliente. (Hérité de Control.)
+    UpdateStyles 	                                Force la réapplication au contrôle des styles assignés. (Hérité de Control.)

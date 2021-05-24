@@ -1,0 +1,316 @@
+﻿Version Log
+
+1.058.2 Baseline Vesion
+    Git:        NA
+    Summary:    Code as initially received from Jean-Paul V.
+    Details:    NA
+
+1.059.0     April, 07-2021   Bob Hehmann
+    Git:        master
+    Summary:    Minor spelling/text changes; added UTF-8 compatability; About Box; Loaded into Git; .NET from 3.5 to 4.8
+    Details:
+
+    1)  Updated Version to 1.059, updated copyright date, corrected version number in Window Title Bar & About Box
+    2)  Changed ODF I/O to allow UTF-8 compatibilty, useful if including special/extended characters, i.e. adding an
+        umlaut to a Stop Name
+    3)  Changed "Compilated" to "Compiled" in Title Bar; Made Vesion info in Title Bar & About Box dynamic
+    4)  Changed Menu Bar text to mixed-case, added ... to "Save As" & "Open Hauptwerk Organ"; Changed text for
+        "Help" to "View Help", "About" to "About AECHO", reflecting standatd practice
+    5)  Replaced MSgBox implementation of "About" with VS AboutBox object, which takes its content from Project
+        Assembly parameters.
+    6)  Updated .NET Framework from 3.5 to 4.8 (and tested successfully with .NET 5.0)
+    7) 	Added AECHO 1.059.0 Project to GIT, to manage source versioning. Updates 1-7 define the initial baseline
+        Git Branch 'master'
+
+1.060.0     April 18, 2021  Bob Hehmann
+    Git:        cleanup-InitialPass-Syntax-Comments
+    Summary:    Improve in-code documentation; added \DATA to Git management; remove IDE Warnings; formatting
+    Details:
+
+    1)  Cleanup code formatting, comment formatting,
+        resolved all IDE Warnings and Informational messages.
+    2)  Add English comments to all code.
+    3)  Add standardized documentation to all procedures: Purpose; Process; Called-By; Side-Effects; Notes
+    4)  Add XML terminology, will relate to new XML-specific logic to be added soon.
+    5)  Modified "Exit Sub" to "Return" (avoids IDE editing/auto-complete issues.)
+    6)  Added ability to locate the "\DATA" directory from 2 locations: the ususal location, adjacent to
+        the executable, for use when AECHO is not explicitly installed; from a distinct non-adjacent synthetic
+        directory, when installed as a Click-once application. For Click-once apps, Windows moves data files to
+        a non-adjacent area, need to use a system call to locate.
+    7)  Added the \DATA directory to the project, maintained at the same level in the VS Proejct as the Project
+        file and VB sourcecode - this places it under Git version management. Added to installer, so correct version
+        is created via Publish. To use with non-Published versions, copy this master to the usual adjacent location,
+        from Windows.
+    8)  Made Publication-ready in Visual Studio.
+
+1.060.1     April 18, 2021 Bob Hehmann
+    Git:        NET5-Upgrade
+    Summary:    Upgrade to .Net 5.0; Added Windows Installer Project; Modified \DATA locator to support  both installed
+                and unintstalled variants.
+    Details:
+
+    1)  Upgrade from .NET 4.8 to .NET 5.0
+    2)  Added an installer project, so AECHO can run from a self-contained directory (legacy), or be installed as a
+        standard application. When installing, \DATA dir is placed into "\User\Romaing\Aecho\DATA". Installer will
+        install the code, place the \DATA directory under \Roaming\, create desktop icon, and a Program Start-Menu
+        entry. Includes Uninstalling capability (removes code, data, icon, and Start-Menu folder/icon.)
+    3)  Added code to locate the \DATA directory either adjacent to the executable (legacy), or in its installed location.
+
+1.060.2     April 20, 2021 Bob Hehmann
+    Git:        Code-Cleanup2
+    Summary:    Deeper clean, remove many side-effect; bug fixes; standardized naming conventions; no-wrap ODF display.
+    Details:
+
+    1)  Detailed code clean-up, minor functionality. Move most contants to Global Constants in Main Form; reduce reliance on
+        global variables and side-effects; standardize error handling and messaging; Rename some objects to reflect their
+        function rather than just their VB Type e.g. "Rtb_ODF" rather than "RTBox". Harden routines; catch key Exceptions.
+        Overall flow and algorithms stay close to the original. Added "Updates" to the standardized Routine Documentation Header.
+
+    2)  Moved some controls, adjusted sizes, normalized display fonts. Added code to remember the standard size of the
+        Tags Panel, and to calculate its expanded size when it is upscaled to display an image. Rather than hardcoding the
+        two sizes, save the initial size and calculate the expanded size to align to the right-side of Descriptive Text Panel.
+        This allows those panels to be re-sized at design time, and the code will still work unchanged. Added Titles to these
+        Panels.
+
+    3)  Set No-Wrapping attribute of Rtb_ODF, so the XML/ODF display never introduces soft line-breaks - it uses a horizontal
+        scroll-bar instead. This helps stabilize Line Numbers i.e. changing the ODF Font Size no longer changes line
+        numbering or total line count. Widened the control, to show more text without scrolling.
+
+    4)  Moved this detailed Change Log out of the Main Source Code into its own file: ChangeLog.txt, under Git control. Moved
+        bulk internal documentation out of code, into its own Git-managed file: GeneralNotes.txt.
+
+    5)  Make initialization explicit, setting initial, no-ODF loaded state, both at startup, and after successfully selecting
+        an ODF file to load. Most logic is implemented in new routine ResetToNoODF(). Introduced G_HasODFChanged global to track
+        if we should prompt to save a modified file before opening a new ODF or Quiting, or should we just discard the changes.
+        Set default font size for Rtb_ODF to match the numeric font-size Control's default, avoiding conversion upon load.
+
+    6)  Created "Deprecated_Unused_Code.txt" file under Git control, relocated old, unused routines from active Modules to
+        there. Kept around, as they may embody useful ideas from prior releases or versions.
+            OldGetSectionFromMenu()                             <Replaced by newer algorithm>
+            GetFirstLine()                                      <Only referenced by OldGetSectionFromMenu()>
+
+    7)  Alter Title-Text over the Descriptive Text Box (Section Descriptions, Help Text, Section Locations) based on the context.
+
+    8)  Initialize Coupler-Code form to have 1 pre-checked Radio Button in each of the three categories. Move values of the
+        choices into the .Tag properties of the Radio Buttons, eliminating long If-then chains. For "Find-Code", ensure that with
+        Unison-Off, Source & Destination are the same, and for 8 ft./Unison, that they are different - warn user if this is violated.
+        Added code to validate a manually entered Coupler Code before altering the buttons: 4 digit numberic, each component in-bounds.
+        Provide explicit error message if this is invalid. Shorten logic to detect Uni-Off vs 8 ft.
+
+    9)  Add Menu option to Close the current ODF (prompts to save if content was modified, otherwise just cleans-up.) Added error
+        trapping to SaveAs, to catch failure to write out the data. If Closing, Quiting, or Opening a new ODF,
+        and there is a current loaded ODF that has been modified since opening or saving last, prompt user to SaveAs.
+
+    10) Added roll-over tool-tip text to all menu choices. Added Shortcuts to common items. Added "Alt" accessible single-key
+        codes to every item except SEction choice sub-items. Moved SectionNames from Constants to .Tag content for each Section
+        Menu Item, and reduced all Section Sub-Menu processing to a single subroutine (instead of 44), that takes the Section
+        Name from the Tag. Eliminated the 44 Constants (Strings), one for each Section, holding its expanded Element Name.
+
+            Menu Item                       Shortcut
+            File						    <None>
+	            Open Hauptwerk Organ...		Ctrl-O
+	            Close ODF				    Ctrl-W
+	            Save As...				    Ctrl-Alt-S
+	            Exit					    Alt-F4
+            Sections (A) 1-22				<None>
+            Sections (B) 23-44				<None>
+            Edit Mode					    <None>
+	            Start Edit Mode				<None>
+	            Exit Edit Mode				<None>
+	            Reparse Sections			<None>
+            Tools						    <None>
+	            Clear Markers				<None>
+	            Couplers (Encode/Decode)	<None>
+	            Trace a Sample				<None>
+            ?						        <None>
+	            View Help				    Ctrl-F1
+	            About AECHO				    F1
+
+    11) When coloring Section Titles (on load, on recompute), fixed off-by-one error that didn't alter the final character. 
+        Set the Title's font size to 1pt more than the current normal text setting. When initially loading an ODF, use
+        the current font-size setting, rather than a fixed 10 pt default. Changed overall Font to Arial from MS Sans, for
+        improved scaling when changing ODF font size. Also changed XML Rows and Tag Displays to Arial 10 Regular.
+
+    12) After loading a new ODF, position to the "DisplayPage" Section by default. Init the Start/End/Line#/Position values;
+        displaying them in country-correct numerical form e.e (USA 1,234,567 rather than 1234567.)
+
+    13) Consolidated the three AdvanceByN (1, 10, 100) Events into a single Routine, taking the # of lines to advance
+        from the activated Button's .Tag property. Eliminated the routine NextLineCommun, as all code is now in one place. Support
+        bi-directional movement: Previous Line, 10 Lines, 100 Lines.
+
+    14) Fixed feature where resizing the display font of the ODF would remove the special emphasis formatting that had been applied
+        to Section Titles when they were first parsed. Introduced new routine setRTBFontSize that can (optionally) scan for
+        and re-apply the relative emphasis used for ODF titles. This routine can operate on any RTB Control.
+
+    15) Warn gracefully if an ODF has too many Sections (presently must be <=44), to prevent index-out-of-bounds error during
+        Section parsing. Note that user editing could introduce such as error in real-time, cannot rely upon an industrial
+        ODF that is well-formed.
+
+    16) Fixed bug where displaying the Help File or doing a "silent" recompute would not change the application's memory of what
+        was displayed in the Descriptive Text box - going back to the same Section as just before the Help/ReCompute request would
+        fail to update the Section Description text, as AECHO would believe the correct text was already on display.
+        Added more robust messaging if correct .RFT file or its default backup cannot be found.
+
+    17) Made Title transitions over the Descriptive Text Box more robust, painting/repainting the correct Titles for each AECHO
+        state. Implemented optional 2-line titles. For the default and Help titles, 1 line (bottom) is displayed centered over the
+        box. The Section Load & Section Display modes place the main title centered on the top line, and display a column-oriented
+        legend left-justified on the bottom line. Section Load data is presented in a more regualr column format, and Section
+        Descriptive Text has been rewritten to line up with its legend.
+
+    18) Line numbers were often displayed "off-by-one", as many VB functions are zero-based, not 1-based - therfore the line index
+        of the first line in an RTB Control is "0". Resolved this, displaying 1-based numbers. Lode correct Line Start/End &
+        Caret Position when initially positioning to the Section DisplayPage upon initial ODF file load.
+
+    19) For Image File Display: only present the "DisplayImage" button when there is an actionable image file in the current Row
+        (avoids accessing an incorrect image file); explicitly retain the index to Section "ImageSet" in S_Section, using
+        G_ImageSetIndex (rather than assume it is always 5); improve parsing of ImageSet and ImageSetElement Rows, to remove
+        assumption that Tags appear in a pre-determined order (original code assumes <c>...</c> always appears after <a>...</a>,
+        which is not required.) Altered FindImagePackageID() and DisplayImage() to accept all globals as parameters, removing
+        direct reference to globals from code. Eliminated use of intermediate bitmap, loading Image Files directly into the
+        Pbox Control. Changed RTB Tag searches in FindImagePackageID() from .None to .NoHighlight, for execution speed.
+
+    20) When loading a .rtf file, such as a Section's Descriptive Text, removed the code that forced the font to Verdana 10pt, as
+        this also removes other formatting associated with the Font.Style property - such as bolding and underlining (color is
+        preserved, as that is a different attribute in a Rich Text Box.) This allows richer formatting of the text using an outside
+        .rtf-aware text editor. Modified the "Set Fonts" button to processed the RTB one character at a time, which allows forcing
+        the Font to Verdana 10, while retaining other attributes - but this is slow, and visible on the screen: OK for the "Set
+        Fonts" Button, but not for real-time loading of a .rtf file in response to clicking on ODF text. Rewrote LoadRTFFile()
+        as a Function, whose input parameters are the read-only globals, and that returns the path/filename of the loaded file.
+
+    21) Enable/Disable the "Set Font" and "Save Description" buttons based on the present content of the Descriptive display
+        box: allow those functions when Section Descriptive Text is on display, disable them when the RTB control is
+        empty, displaying Section Parsing Data (upon initial ODF load), or Help File content. Tightened logic for remembering
+        what, if anything, is currently displayed, and eliminated global G_RTFFile, while retaining G_PreviousRTFFile. Added
+        exception handlers to Load/Save RTF_Descr and Load Help File routines.
+
+    22) Changed all forward text searches, regardless of source RTB Contol, to use FindMyTag(), a more generalized version of
+        the original FindMyText(). Moved FindMyText() out of the program, into Deprecated_Unused_Code.txt.
+
+    23) Updated the content of the Section-Description .rtf files. Completed all fields; updated to HW6.02 definitions; corrected
+        typos; added content for deprecated fields (tag, name, deprecated as of HW version); standardized format, and introduced
+        tab alignment of columns; standardized use of color, bolding, and underlining. First line: "Section: <SectionName>". All
+        bold, "Section" in black, "Name" in blue. All field definitions in regular black font. Title line for obsoleted tags in
+        red, bold, underlined font. When a Tag's shortcut is unknown, "?" is used, over a yellow background to highlight.
+
+    24) Added Previous 1, 10, and 100 Line repositioning Buttons to match the existing +1, 10, and 100. Reworked repositioning
+        logic to eliminate bugs, to explicitly stay inbounds, and to retain accuracy in displayed position info (Line, Cursor...)
+
+    25) Consolidated functions of ClearTagsPanel() and ShowTagsPanel() into a single routine with a boolean parameter to
+        control visibility: TagsPanelVisible(). Renamed modified ClearTagsPanel() to this new name, retired ShowTagsPanel()
+        to Deprecated_Unused_Code.txt.
+
+    26) Removed all references to unused global variables: G_StartPos; G_EndPos; G_SectionStart; G_SectionEnd; G_Section; G_LastSectionName
+        G_ItemToFollow. Converted a number of global variables to locals or constants, or eliminated then: G_MainTitle; G_CaretPos; G_AppPath;
+        G_TextToFind; G_FindStartPos; G_RowText.
+
+    27) Modified FindText functions to perform FindNext/Prev continuing from the +/-1 from the last successful search if the cursor hasn't moved, 
+        or from the cursor's position if it has moved. This allows the user to click or otherwise change position to an arbitrary location, 
+        and continue a FindNext or FindPrev from that spot. On success, cursor is to the right of the located text, not the left.
+        If text is not found, leave the cursor visible, from the point the search started. No longer clears the XML Row/Record, Tags Panel, 
+        or Descriptive Text; leaves Section Title unaltered: now similar to single Mouse-click semantics.
+
+    28) Recolored the "Edit Mode" Menu choice to show the standard "Gainsboro" background color when in its default, read-only mode; retained
+        the Red highlight when editing is enabled. Modified the "ODF Editing Enabled" and "ODF Editing Disabled" submenu choices to act as a
+        toggle, with the checked option disabled: this prevents irrelevant warnings and actions when accidently selecting the mode that is
+        already set. When exiting Edit-Mode, only solicit a ReCompute if something was actually changed in the ODF since entering Edit-Mode,
+        and the Sections have not been recomputed already since the change. Removed the Recompute warning when entering Edit-Mode, and shortened
+        it when recommending a Recompute upon leaving Edit-Mode.
+
+    29) When positioning onto a Line, decode the Row-Type, and display the type on the Status-Bar. When in Edit-Mode, do not reset the cursor
+        to the beginning of the Line, just leave it at the click-point.
+
+    30) Modified GetSectionByName from a subroutine to a function that returns the Section Name. Eliminated any reference inside this function
+        to G_SectionName, and removed screen-update of Name: that is now the caller's responsibility. Function returns the dynamic location
+        of the Section's Start and End.
+
+    31) Corrected the parsing of Record Rows (<o>...</o>), these can now be comprised of any number of adjacent Lines - the actual Start and End
+        Tags are searched for, without assumptions. If an extended Start or exetended End is not found, the present Line's value is used instead.
+        Navigation is now allowed to anywhere in the ODF, and any text can be double-clicked. The correct Row content is isolated and handled
+        properly, including the _General Section, and extra-Sectional content, such as Headers and Trailers.
+
+    32) Added the _General Section to the Menu-Bar, as it can now be displayed safely. Added a Descriptive .rtf file, code as a "virtual" Section
+        named "None".
+
+    33) In new Status-Bar, indicate the Row-type of the line we have positioned to. Provide a File-Dirty indicator: dark-orange when there is no
+        ODF loaded; green when the current loaded ODF has a copy as a file; red when the ODF has been modified but not saved. Provide a 
+        Section-Dirty indicator that follows the same color logic, tracking the need to recompute Section Data.
+
+    34) Correctly handle single and double-clicks while in either the header (content before _General), or the trailer (content after the last
+        </ObjectList> Tag). Treat these as psudo-Section "None". Content can be copied to the XML Row, but is not parsed. "None" Section's
+        Descriptive .rtf is displayed when expected. When in the header area, Section Start is 0 (opening of ODF), End is end of last line before _General
+        Section begins. If in the trailer area, Setion Start and end will be computed as the Start/End of all content after the final normal
+        Section closing Tag.
+
+    35) Markers modified to operate on Line Numbers, rather than character positions. Left-clicking an active Marker simulates a single Mouse-click
+        at the left edge of the marked Line, updating Line Number, Cursor Position, Line Start/End, & Row Start-End. It does not update section content,
+        nor does it extract Tag content or alter the Descriptive Text area.
+
+    36) Made the position data fields hotlinks: Line Number; Cursor Position; Section Start; Sectio End; Line Start; Line End; Row Start; Row End.
+        If these is no ODF loaded, these are disabled. Line Number will position to the beginning of the referenced Line.
+        
+    37) Added modern HTML-style Help. HTML assets are stored in \DATA\AECHOHelpFiles. On startup, AECHO checks if the directory exists - if not, it
+        falls-back to the old-style Help for the remainder of this executio. If the directory exists, Help attempts to load AECHOMain.HTM in the
+        default browser, to fulfill a View Help request. If this succeeds, we're done. If that file does not exists, or another exception triggers
+        while attempting to find/load the HTML help, AECHO warns the user, and falls back to the old-style Help.
+
+    38) Eliminated all use of ReCompute & the related S_Sections data-structure array. Instead, all required navigation information is retrieved
+        dynamically. The Edit Mode->ReCompute menu item has been replaced with "List Sections", which populates the Descriptive Text area with the
+        same information as the old ReCompute, but this no longer build/rebuilds any useful internal data. The "silent recompute" of the Led button
+        is no longr implmented. Entering and Leaving Edit-Mode no longer warns about nor solicits a ReCompute. AECHO no longer tracks if ODF
+        data has been changed by editing since a ReCompute, though it does track changes since the last save-to-a-file.
+
+    39) Rewrote Trace-Sample, eliminating Find_a_Tag() and Read_a_Tag(): instead, use the new Function ReadAndDisplayTag() that combines those
+        two routines plus managing the output. Use direct RTB.Find() method invocations for misc. searches. Relocated from the Follow Form to
+        SharedCode. Added Default Value info for missing or null-content Fields. Completed logic for Sample Section, and relationally-linked
+        Sections Pipe_SoundEngine01_AttackSample, PipeSoundEngine01_ReleaseSample, TremulantWaveform (both foreign-key linkages), and 
+        RequiredInstallationPackage. Widened both Form and ListBox, and added horizontal scrolling to the ListBox. Use new function 
+        LocateRecRowByKey() to standardize searches for any Row in any Section based on a Record Key Value. Added "Trace Sample" button
+        to Record-Row display when in the Sample Section - when the parsed row contains a SampleID, the "Trace Sample" button appears - clicking
+        it will open the Trace-Sample form, transfer the SampleID to the form, and invoke Trace.
+
+
+    7)  Established a separate Module (SharedCode.vb) for shared Functions and Subroutines, moving them out of the Main Form's
+        own code. Reduced naming scope of declarations from "Public" to "Friend". Populated it with:
+
+Friend              Constant Declarations / Init    <Relocated from MAIN form>
+Friend              Global Variable Declarations    <Relocated from MAIN form>
+Friend              Structure Definition(s)         <Relocated from MAIN form>
+Friend Sub          DispMsg()                       <New - Debug, Informational, and Error Message central routine>
+Friend Function     IsRegistered()                  <Relocated from MAIN form; renamed from RegisteredUnregistered()>
+Friend Function     CenterLbl()                     <New - to center label/text presentation within margins>
+Friend Function     CenterText()                    <New, insert new text into a Control, and center it between margins>
+Friend Function     GetDataPath()                   <New, moved inline code from MAIN form>
+Friend Function     GetODFLibPath()                 <Relocated from MAIN form; changed from Sub to Func, renamed from ReadInitialDir()>
+Friend Function     GetPackagePath()                <Relocated from MAIN form; changed from Sub to Func>
+Friend Sub          TagsPanelVisible()              <Relocated from MAIN form; renamed from ClearTagsPanel()>
+Friend Sub          ResetToNoODF()                  <New, initializes Menus, Variables, and Controls to the "No ODF Loaded" state>
+Friend Sub          RemoveImage()                   <Relocated from MAIN form>
+Friend Sub          ClearMarkers()                  <New, clears Markers and sets their default color>
+Friend Sub          CheckUnloadODF()                <New, check if there is a dirty ODF loaded, offer to SaveAs>
+Friend Function     SaveODFAs()                     <New, moved code from Menu SaveAs, to make reusable>
+Friend Sub          PositionToSectionByName()       <Relocated from MAIN form; renamed from GetSectionFromMenu()>
+Friend Function     CountTags()                     <Relocated from MAIN form; rewrote: changed semantics, simplified>
+Friend Function     FindText()                      <Relocated from MAIN form; Combined functions of FindMyText() & FindMyTag(); simplified.>
+Friend Sub          DisplayXMLRow()                 <Relocated from MAIN form; renamed from DisplayObject()>
+Friend Function     LoadRTFFile()                   <Relocated from MAIN form; changed from Sub to Func>
+Friend Sub          DisplayTagText()                <Relocated from MAIN form>
+Friend Function     ReadTag()                       <Relocated from MAIN form>
+Friend Sub          FindButtonsProc()               <Relocated from MAIN form; renamed from NextLineCommun()>
+Friend Sub          EnumerateSectionsSetFont()      <New, moved code from MAIN form event handler to fix bug, renamed from SetODFFontSize>
+Friend Sub          DisplayImage()                  <Relocated from MAIN form>
+Friend Function     FindImagePackageID()            <Relocated from MAIN form; changed from Sub to Func>
+Friend Sub          SetRTBDescButtons()             <New, to enable/disable "Set Font" and "Save Description" Controls>
+Friend Sub          SetODFButtons()                 <New, to enable/disable Controls that operate on ODF Text e.g. Search...>
+Friend Function     GetSectionFromIndex()           <Relocated from MAIN form; changed from Sub to Func>
+Friend Sub          GetRowFromIndex()               <Relocated from MAIN form; changed from Sub to Func; renamed from GetLineFromIndex()>
+Friend Function     FindReverse()                   <Relocated from MAIN form>
+Friend Function     MoveToPosition()                <New, move to cursor position, update Data, return Row's text; optionally extend selection>
+Friend Function     GotSectionDataByName()          <New, dynamically calculates the data previsously stored in the Sections array, for 1 named Section>
+Friend Sub          HotClickCursorPosition()        <New, Position to an index value, updating all screen fields using single-click semantics>
+Friend Function     ReadAndDisplayTag()             <New, combines old Find_A_Tag() & Read_A_Tag() from Trace, plus logic to append to screen>
+Friend Sub          TraceSample()                   <Relocated from Follow Form>
+Friend Function     LocateRecRowByKey()             <New, modified logic from old TraceSample, now generalized for reuse>
+
+
+Private Sub         ColorSectionTitles()            <Deleted, no longer used>
+Friend Sub          GetSectionsInfos()              <Deleted, no longer needed with elimination of ReCompute & S_Sections array>

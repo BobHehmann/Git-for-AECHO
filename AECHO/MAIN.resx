@@ -57,6 +57,50 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Menu_OpenHauptwerkOrgan.ToolTipText" xml:space="preserve">
+    <value>Select an ODF file to open, using a stanard Windows File 
+Open Dialog. Windows will remember the last directory
+that you opened an ODF from, and make that the initial
+search direcrtory. If AECHO currently has an active ODF 
+that has been modified since it was opened or last saved,
+AECHO will prompt you to save that ODF to a file before
+opening the new ODF.</value>
+  </data>
+  <data name="Menu_ReComputeSections.ToolTipText" xml:space="preserve">
+    <value>AECHO will scan the entire ODF, indentifying all Sections,
+and displaying in the Descriptive Text Box each Section's 
+ID #, Starting &amp; Ending positions, Starting &amp; Ending Line 
+Numbers, and Name, in the order found. Upon completion,
+the main display will be positioned to the DisplayPage
+Section.</value>
+  </data>
+  <data name="Menu_CouplersCode.ToolTipText" xml:space="preserve">
+    <value>Displays an independant Window, which decodes Integer
+Coupler Codes into their Sources, Destinations, 
+and Types; it also translates choices of Source /
+Destination / Type into the corresponding  internal
+HW code.</value>
+  </data>
+  <data name="Menu_FollowASample.ToolTipText" xml:space="preserve">
+    <value>Invokes an independant Window that traces data
+related to a (sound) SampleID, presenting this data on
+a single consolidated form. It displays the Installation 
+Package ID, Filename, Pitch Specification Method Code,
+Pitch Rank Base, Pitch Normal MIDI Note, Pitch Exact
+Sample Pitch, License Info, and Pipe Sound Engine 01
+Attack Sample.</value>
+  </data>
+  <data name="Status_RowTypeVal.ToolTipText" xml:space="preserve">
+    <value>The type of the Row containing the current Line:
+  NA - No ODF
+  XML Header - the opening header of an ODF
+  ODF Start-Tag - the opening &lt;Haupterk...&gt; tag
+  ODF End-Tag - the closing &lt;/Hauptwerk&gt; tag
+  Gen Sec Data - content inside the _General Section
+  Sec Start-Tag - Section Start &lt;ObjectList...&gt;
+  Sec End-Tag - Section End &lt;/ObjectList&gt;
+  Record - &lt;o&gt;...&lt;/o&gt; content within a Section</value>
+  </data>
   <assembly alias="System.Drawing.Common" name="System.Drawing.Common, Version=5.0.0.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing.Common" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

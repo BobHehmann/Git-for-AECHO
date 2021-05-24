@@ -1,0 +1,406 @@
+﻿    '   Code moved here is from early releases, routines that are no longer used, but may embody
+    '   useful ideas.
+
+    ' <1.060.2>
+    Friend Sub OldGetSectionFromMenu(section As String)
+
+        ' TROUVER UNE SECTION DE L'ORGUE A PQRTIR DU MENU
+
+        ' Purpose:      Deprecated, replace by GetSectionFromMenu(section). This variant looked for Sections
+        '               dynamically, rather than using precomputed S_Section data.
+        ' Called By:    <None>
+        ' Side Effects: <NA> - Not invoked
+        ' Notes:        Should Section handling be a combination of Static & Dynamic e.g. switching to dynamic processing
+        '               while editing, reverting to static when not in Edit Mode. Suspect that static was to minimize
+        '               processing times through very large ODF files. However, extensive use is made of dynamic searching
+        '               throughout the code, except for when going to a Section via the Menu bar. Consider auto recomputing
+        '               when both: a) text length has changed since last recompute, and; b) Menu repositioning is done.
+        '               Can also recompute when leaving Edit Mode or Saving File while in Edit Mode, if text has changed.
+
+        ' memoriser nom de la section precedente
+        If G_SectionName <> Nothing Then G_LastSectionName = G_SectionName
+        ' trouver le début de section
+        G_StartPos = FindMyText(section, 1)
+        G_EndPos = G_StartPos + Len(section)
+        G_SectionStart = G_StartPos
+        Rtb_ODF.SelectionStart = G_StartPos
+        Rtb_ODF.SelectionLength = Len(section)
+        Rtb_ODF.SelectionFont = New Font("Arial", 11)
+        Rtb_ODF.SelectionColor = Color.Red
+        Lbl_SecStartVal.Text = G_StartPos.ToString
+        ' trouver fin de section
+        G_SectionEnd = FindMyText("</ObjectList>", G_StartPos)
+        Lbl_SecEndVal.Text = G_SectionEnd.ToString
+
+        ' MODIF 026
+        ' trouver le premier <o> apres la section
+        G_LineStart = FindMyText("<o>", G_SectionStart)
+        GetLineFromIndex(G_LineStart)
+        ' afficher la ligne dans Rtb_XMLRow
+        Rtb_XMLRow.Text = G_LineText
+        ' retrouver la section auquel il appartient
+        GetSectionFromIndex(G_LineStart)
+        ' compter les tags de la ligne dans Rtb_XMLRow
+        CountTags(1, Rtb_XMLRow.TextLength)
+        ' montrer les infos de la ligne
+        DisplayObject()                                          ' <1.059.0> Removed parameter (1), DisplayObject is now parameterless
+        ' se positionner sur la ligne avec le nom de la section
+        Rtb_ODF.SelectionStart = G_SectionStart
+        Rtb_ODF.SelectionLength = 0
+
+        ' charger le fichier RTF
+        LoadRTFFile()
+
+
+        Exit Sub
+        ' trouver la premiere ligne objet si elle existe
+        GetFirstLine(G_StartPos)
+        ' Afficher le nom de la section
+        G_SectionName = section.Substring(24, Len(section) - 26)
+        Lbl_SectionName.Text = G_SectionName
+        ' charger le fichier RTF
+        LoadRTFFile()
+
+    End Sub
+
+    Friend Sub GetFirstLine(startPos As Integer)
+
+        ' trouver la premiere ligne objet d'une section si cette ligne existe
+
+        ' Purpose:      Deprecated
+        ' Called By:    OldGetSectionFromMenu()
+        ' Side Effects: <NA> - not invoked
+        ' Notes:        <None>
+
+        G_LineStart = FindMyText("<o>", startPos)
+        G_LineEnd = FindMyText("</o>", startPos)
+
+        If G_LineStart < G_SectionEnd Then
+            Lbl_LineStartVal.Text = G_LineStart.ToString
+            Lbl_LineEndVal.Text = G_LineEnd.ToString
+            ' afficher la 1ere ligne entiere si elle existe
+            Rtb_ODF.SelectionStart = G_LineStart
+            Rtb_ODF.SelectionLength = G_LineEnd - G_LineStart + 4
+            Rtb_XMLRow.Text = Rtb_ODF.SelectedText
+            ' afficher les valeurs des tags de la 1ere ligne
+            DisplayObject()                                          ' <1.059.0> Removed parameter (G_LineStart), DisplayObject is now parameterless
+        Else
+            Lbl_LineStartVal.Text = "No line"
+            Lbl_LineEndVal.Text = "No line"
+            Rtb_XMLRow.Text = "No Item in this section"
+        End If
+
+    End Sub
+
+    Public Function FindMyText(text As String,                  ' Text string to search for
+                               start As Integer                 ' Starting location for search within Rtb_ODF
+                               ) As Integer                     ' Index to first character of found string, -1 if not found
+
+        ' CHERCHE UN TEXTE DE HAUT EN BAS DANS Rtb_ODF
+
+        ' Purpose:      Search Rtb_ODF for [text], beginning from position [start], returning the position
+        '               of the first character of [text] if found.
+        ' Process:      Validate parameters, use RichTextBox Find Method to execute search.
+        ' Called By:    GetSectionFromIndex(); FindButtonProcedure(); OldGetSectionFromMenu() (deprecated)
+        ' Side Effects: <None>
+        ' Notes:        Need to correct several bugs & flow.
+        ' Updates:      <1.060.2> Modified search to include .NoHighlight, to improve execution time and reduce screen flashing
+        Const lclProcname As String = "FindMyText"
+
+        Dim returnValue As Integer = -1                         ' Initialize the return value to false by default.
+
+        If (Rtb_ODF.TextLength <= 0) Or                         ' <1.060.2> Guard code to ensure search can be attempted without an exception
+            (start > Rtb_ODF.TextLength) Then
+            Return -1
+        End If
+        If text.Length <= 0 Then
+            DispMsg(lclProcName, MsgBoxStyle.Exclamation,       ' <1.060.2> Let user know about internal error, search text should not be null
+                    "Function called with null search text.")
+            Return -1
+        End If
+        If start < 0 Then
+            DispMsg(lclProcName, MsgBoxStyle.Exclamation,       ' <1.060.2> Let user know about internal error, search start should be >=0
+                    "Function called with start of search before beginning." & vbCrLf &
+                    "start is : " & start)
+            Return -1
+        End If
+
+        If text.Length > 0 And start >= 0 Then                  ' Ensure that a search string has been specified and a valid start point.
+            Dim indexToText As Integer =
+                Rtb_ODF.Find(text,                              ' Obtain the location of the search string in richTextBox.
+                             start,
+                             RichTextBoxFinds.NoHighlight)      ' <1.060.2> Changed from .None to .NoHighlight
+            If indexToText >= 0 Then returnValue = indexToText  ' Determine whether the text was found
+        End If
+
+        Return returnValue
+
+    End Function
+
+    Friend Sub ShowTagsPanel()                  '  AFFICHANT LES TAGS
+
+        ' Purpose:      Make visible all the controls in the panel used to display Element Names and Contents.
+        ' Process:		Let runtime loop through all controls, while we turn on their .Visible property.
+        ' Called By:    DisplayXMLRow()
+        ' Side Effects: Changes properties of all Controls in MAIN.PnlTags
+        ' Notes:        <None>
+        ' Updates:      <1.060.2> Relocated from MAIN form. Added object reference to "MAIN".
+
+        Const lclProcName As String =           ' <1.060.2> Routine's name for message handling
+            "ShowTagsPanel"
+
+        Dim ctrL As Control                     ' Object definition for loop
+
+        For Each ctrL In MAIN.Pnl_Tags.Controls ' Cycle through collection of all controls in Tags Panel
+            ctrL.Visible = True                 ' "Let there be light..."
+        Next
+
+    End Sub
+
+    Friend Sub ParseSections(verbose As Boolean)                                    ' If verbose, display Section info, otherwise clear Rtb_DescText
+
+        ' EXAMINE L'ODF ET REPERE LES SECTIONS
+        ' AFFICHE SI VERBOSE=TRUE
+
+        ' Purpose:      Parse the ODF, building the S_Section data structure. If [verbose], displays progress
+        '               in the Rtb_DescText control, updated as each Section in completed. If not [verbose],
+        '               clear the Rtb_DescText at the start, but do not post updates. Clicking on Btn_Led
+        '               does a non-verbose recompute - all other invocations are verbose.
+        ' Process:		Assumes Rtb_ODF contains a well-structured ODF. Searches for sucessive instances of
+        '               the Section Element Start-Tag, then extracts needed info into the S_Section array.
+        '               The process loops until the Start-Tag is no longer found (all Sections have been
+        '               processed.
+        ' Called By:    Menu_OpenHauptwerkOrgan_Click(); Menu_ExitEditMode_Click();
+        '               Menu_ReComputeSections_Click(); Btn_Led_Click()
+        ' Side Effects: Alters S_Section array structure, Rtb_DescText, Btn_Led
+        ' Notes:        The general approach is fairly robust, as missing or out-of-order Sections still result
+        '               in correct navigation by AECHO.
+        ' Updates:      <1.060.2> Relocated from MAIN form; renameds from GetSectionsInfos() to ParseSections().
+        '               Changed MAIN loop from Do to While. Added Guard Conditions to ensure we have data
+        '               to parse. Adjust Title over Descriptive Text Box: if in Silent-mode, set title to 
+        '               its default, otherwise set & center the Section Locations Title. Replace .len with
+        '               .titleLen, as storing the length of the Section Start-Tag is more useful. Eliminate
+        '               unused structure variables. Changes parsing to locate a "First Data Row" by searching
+        '               for the "<o>..."</o>" Element. Change RTB searches from "None" to "NoHighlight" i.e. do
+        '               not Highlight found text - increased speed several fold. Added call to code to clear
+        '               Tags, Markers, Images, and XML Row. Ensure we handle "too many Sections" gracefully.
+        '               Handle boolean G_NoODF, setting it to False when we complete parsing. Store index of
+        '               the ImageSet Section in G_ImageSetIndex, for use later in Image file display. Clear
+        '               G_ODFModSinceParsed flag, let's us know if we need to reparse at a future point.
+
+        Const lclProcName As String = "ParseSections"       ' <1.060.2> Routine's name, for calls to DispMsg
+
+        Dim idx As Integer = 0                              ' Index into S_Section array, incremented as we find Section Start-Tags
+        Dim searchPos As Integer                            ' Current position within ODF as we parse data
+        Dim ODFLength As Integer                            ' <1.060.2> Total length of the ODF, in characters
+        Dim tagValueStart As Integer                        ' <1.060.2> Position of the Element's Attribute Value, 1 past the opening "
+        Dim startTagEnd As Integer                          ' <1.060.2> Position of the Start-Tag's closing ">"
+        Dim endTagStart As Integer                          ' <1.060.2> Position of the End-Tag's opening "<"
+        Dim endOfSec As Integer                             ' <1.060.2> Position of CrLf folllowing closing ">" of the End-Tag
+        Dim rowStart As Integer                             ' <1.060.2> Position of opening "<" of an "<o>" Start-Tag
+        Dim RowEnd As Integer                               ' <1.060.2> Position of opening "<" of "</o>" End-Tag
+
+        RemoveImage()                                                   ' <1.060.2> Set initial Panel sizes (callable once Pnl_Tags initial height/width are initialized); hide PackageID placeholder
+        TagsPanelVisible(False)                                         ' <1.060.2> Hide all controls in the PackageID Panel
+        ClearMarkers()                                                  ' <1.060.2> Reset Markers
+
+        With MAIN
+            .Rtb_DescText.Clear()                                       ' vider Rtb_DescText; clear the control that displays descriptive/help text
+            G_PreviousRTFFile = ""                                      ' <1.060.2> To enforce re-display of Section Text if menu-clicking on the present Section
+            SetRTBDescButtons(False)                                    ' <1.060.2> Disable "Set Font" and "Save Description" buttons, no Section content to work with
+            .Rtb_XMLRow.Clear()                                         ' <1.060.2> Reset Markers
+            ODFLength = .Rtb_ODF.Text.Length                            ' <1.060.2> Check length, if not > than a SecStartTag, no need to parse
+
+            If (ODFLength <= conSecStartTag.Length) Then                ' <1.060.2> Too short / null, exit immediately without searching
+                DispMsg(lclProcName, MsgBoxStyle.Critical,
+                            "ODF is too short, no Sections to be found. Length: " & ODFLength)
+                Return
+            End If
+
+            If verbose Then                                             ' <1.060.2> Choose which Title to display and center
+                CenterText(conTextBoxTitle_ODFLoad,                     ' <1.060.2> Use "Section Locations" if in Verbose-mode
+                               .Lbl_TextBoxTitle1,                          ' <1.060.2> Center text on the Top Title Line
+                               .Rtb_DescText.Left,
+                               .Rtb_DescText.Right)
+                .Lbl_TextBoxTitle2.Left = .Rtb_DescText.Left            ' <1.060.2> Place legend text on the left of the Bottom Title Line
+                .Lbl_TextBoxTitle2.Text = "  Sec ID.        Start                                      End                          Section Name"
+                .Rtb_DescText.SelectAll()                               ' <1.060.2> Set tab locations to approximate columnar alignment
+                .Rtb_DescText.SelectionTabs = New Integer() {70, 170, 210, 310}
+                .Rtb_DescText.AcceptsTab = True
+            Else                                                        ' <1.060.2> Use Default if doing a Silent-mode reparse
+                .Lbl_TextBoxTitle1.Text = ""                            ' <1.060.2> Terse mode, clear the Top Title Line
+                CenterText(conTextBoxTitle_Def, .Lbl_TextBoxTitle2,     ' <1.060.2> Center the default text on the Bottom Title Line
+                               .Rtb_DescText.Left, .Rtb_DescText.Right)
+            End If
+
+            .Lbl_TextBoxTitle1.Refresh()
+            .Lbl_TextBoxTitle2.Refresh()
+
+            searchPos = .Rtb_ODF.Find(conSecStartTag, 0,
+                                          RichTextBoxFinds.NoHighlight)     ' Prime the loop, find first Section Start Tag, if any
+            .Btn_Led.BackColor = Color.Red                              ' At the start, change Btn_Led to Red, then back to Green when done
+            .Btn_Led.Refresh()
+
+            While (searchPos > 0) And (searchPos < ODFLength)           ' Boucle; main loop, exit when StartTag not found, or past end-of-ODF
+                idx += 1                                                ' <1.060.2> Advance to save next Section's info
+                If idx > S_Section.GetUpperBound(0) Then                ' <1.060.2> Error in an ODF, prevent index-out-of-bounds from too many Sections
+                    DispMsg(lclProcName, MsgBoxStyle.Exclamation, "Found more Sections than permitted in the ODF Specification." & vbCrLf &
+                                "The present limit is " & S_Section.GetUpperBound(0) & vbCrLf &
+                                "The extra content will not be parsed, though it is shown in the ODF window.")
+                    Exit While
+                End If
+                S_Section(idx).startPos = searchPos                     ' Save position of the first character of the Section's Start-Tag ("<")
+                startTagEnd =
+                        .Rtb_ODF.Find(">", searchPos,
+                                      RichTextBoxFinds.NoHighlight)     ' trouver la fin du tag "<ObjectList ObjectType="; locate end of the Start-Tag, ">"
+                S_Section(idx).titleLen = startTagEnd - searchPos + 1   ' <1.060.2> Replace .endpos with .titleLen: length is more useful than end position. Does not include terminal CrLf.
+                tagValueStart = searchPos + conSecStartTag.Length + 1   ' <1.060.2> First char of Attribute Value, skip opening "
+                S_Section(idx).name =                                   ' <1.060.2> Extract Attribute Value into .name, without the enclosing ""
+                        .Rtb_ODF.Text.Substring(tagValueStart,
+                                                (startTagEnd - tagValueStart) - 1)
+                'If S_Section(idx).name = "ImageSet" Then                ' <1.060.2> Retain direct index to ImageSet Section, for use in later Image retrieval and display
+                '    G_ImageSetIndex = idx
+                'End If
+                endTagStart =
+                    .Rtb_ODF.Find(conSecEndTag,
+                                  startTagEnd,
+                                  RichTextBoxFinds.NoHighlight)         ' trouver la fin de la section; locate the Section's End-Tag, save position of its last character
+
+                endOfSec = endTagStart + conSecEndTag.Length            ' <1.060.2> endOfSec points to CrLF after closing ">" of End-Tag
+                S_Section(idx).endPos = endOfSec                        ' <1.060.2> Save End-OF-Section pointer in Structure
+
+                rowStart =
+                    .Rtb_ODF.Find(conRowStartTag,
+                                  startTagEnd + 1,
+                                  endTagStart,
+                                  RichTextBoxFinds.NoHighlight)         ' <1.060.2> See if there is at least one Row ("<o>...</o>" between Start/End-Tags)
+                If rowStart < 0 Then                                    ' <1.060.2> No "o" Start-Tag, so no data rows
+                    S_Section(idx).firstRowStart = -1                   ' il n'y aura donc pas de 1ere ligne; set position of first Child Element to -1
+                    S_Section(idx).firstRowLen = 0                      ' <1.060.2> No Data Rows, mark Section as empty
+                Else
+                    S_Section(idx).firstRowStart = rowStart             ' trouver debut 1ere ligne; save beginning of first Child Element Row
+                    RowEnd =
+                        .Rtb_ODF.Find(conRowEndTag,                     ' Search for End-Tag "</o>", starting immediately after Start-Tag "<o>"
+                                      S_Section(idx).firstRowStart + 4,
+                                      RichTextBoxFinds.NoHighlight)     ' Locate and save position of first char of the first Child Element's End-Tag
+                    S_Section(idx).firstRowLen = RowEnd - rowStart + 5  ' <1.060.2> Add 5 to push past the "o" End-Tag and subsequent CrLf
+                End If
+
+                ColorSectionTitles(idx,                                 ' colorer le titre de la section
+                                   conTitleColor,                       ' <1.060.2> Change color from hardcoded to constant
+                                   conTitleFontInc)                     ' <1.060.2> Added parameter to specify Font-size emphasis over normal, in points
+                If verbose = True Then                                  ' verif dans Rtb_DescText; if verbose, add a Section Info Line to Rtb_DescText
+                    .Rtb_DescText.Text +=                               ' <1.060.2> Use tabs to left align content; String.Format to format & embed values
+                            String.Format("{0,5:N0}{1,1}{2,-1:N0}{3,1}{4,2}{5,1}{6,-1:N0}{7,1}{8,-1}",
+                                          idx, vbTab, S_Section(idx).startPos, vbTab, "to", vbTab,
+                                          S_Section(idx).endPos, vbTab, S_Section(idx).name) & vbCrLf
+                End If
+
+                'DispMsg(lclProcName, MsgBoxStyle.Information,
+                '"Section Structure - idx = " & idx & vbCrLf &
+                ' "   name                  " & S_Section(idx).name & vbCrLf &
+                ' "   startPos              " & S_Section(idx).startPos & vbCrLf &
+                ' "   endPos                " & S_Section(idx).endPos & vbCrLf &
+                ' "   titleLen              " & S_Section(idx).titleLen & vbCrLf &
+                ' "   firstRowStart         " & S_Section(idx).firstRowStart & vbCrLf &
+                ' "   firstRowLen           " & S_Section(idx).firstRowLen)
+
+                searchPos =
+                    .Rtb_ODF.Find(conSecStartTag,
+                                  endOfSec + 1,
+                                  RichTextBoxFinds.NoHighlight)         ' trouver le tag de début de section' locate the start of the next Section
+                .Rtb_DescText.Refresh()                                 ' <1.060.2> Repaint the progress description
+            End While                                                   ' Loop until search for the next Start-Tag fails
+
+            .Btn_Led.BackColor = Color.LightGreen                       ' Set Led color to Green to indicate completion of parsing
+            .Btn_Led.Refresh()
+            G_NoODF = False                                             ' <1.060.2> Sections data is parsed and present
+            G_ODFModSinceParsed = False                                 ' <1.060.2> Reset. Will get set if we alter the ODF while in Edit-Mode.
+            .Status_SecDirtyVal.BackColor = Color.LightGreen            ' <1.060.2> Wash the Dirt-bit indicator on the Status Bar
+
+        End With
+
+    End Sub
+
+        Private Sub ColorSectionTitles(idx As Integer,              ' Index into S_Sections array, entry contains Position Information
+                                    color As Color,             ' Color to apply to Title's font
+                                    fontInc As Integer)         ' <1.060.2> Amount to increment Font size over the present normal-text size
+
+        ' COLORIER LE TITRE DE LA SECTION IDX
+
+        ' Purpose:      Apply a color to Section[idx] Title text in the ODF. Force font-size to be [fontInc]
+        '               points larger than the present setting for the mainstream ODF text.
+        ' Process:		Use the S_Section array to locate the start and end of the Title Text in the ODF;
+        '               select it, force the font-size to the mainstream + increment, and apply the desired
+        '               color. Deselect.
+        ' Called By:    ParseSections(); SetRTBFontSize()
+        ' Side Effects: Change the font settings of select text in Rtb_ODF
+        ' Notes:        Perhaps change to applying a Font, Size, Style, and Color to any Font range -
+        '               then use to color several key elements of the ODF display.
+        ' Updates:      <1.060.2> Relocated from MAIN form. Added "With MAIN" block to establish reference to
+        '               the form's objects. Fixed miscalculation of Length, was 1 short. Set text-size to 1pt
+        '               greater than the current ODF text-size. Added parameter to allow caller to control
+        '               the amount of size-increase over the present normal-text size.
+
+        Const lclProcName As String = "ColorSectionTitles"      ' <1.060.2> Routine's name for message handling
+
+        With MAIN                                               ' <1.060.2> Introduced With Main block to gain reference to form's fields
+            If (S_Section(idx).startPos > 0) And
+                (S_Section(idx).titleLen > 0) Then              ' <1.060.2> Make sure we have a useful value before selecting...
+                .Rtb_ODF.Select(S_Section(idx).startPos,        ' <1.060.2> Select Title
+                            S_Section(idx).titleLen)
+                .Rtb_ODF.SelectionFont =                        ' <1.060.2> Made font-size relative to present normal size.
+                    New Font(conFont,
+                             .Num_ODFFontSize.Value + fontInc,
+                             FontStyle.Bold)
+                .Rtb_ODF.SelectionColor = color                 ' <1.060.2> And set its color
+                .Rtb_ODF.DeselectAll()
+            End If
+        End With
+
+    End Sub
+
+    Public Function Read_a_Tag(                                     ' Searches for an XML tag, selecting and returning the value of the tag
+            tag As String,                                          ' Tag name to find: 'a' -> search for '<a>TextToReturn</a>
+            pos As Integer                                          ' Starting position of search
+            ) As String                                             ' CHERCHE UN TAG DANS RTBOXLINE ET LIT LE  TEXTE CONTENU DANS LE TAG; return null if not found, else content of the tag
+
+        Dim returnValue As String                                   ' Removed initialization, not required
+        Dim tagStart As Integer                                     ' Index to opening '<' of tag, if the tag is located
+        Dim tagEnd As Integer                                       ' Index to closing '</' of tag, if located
+
+        tagStart = Find_a_Tag("<" & tag & ">", pos) + 2 + Len(tag)  ' trouve le tag de début et de fin; look for opening of the tag
+        If tagStart = -1 Then Return "" : Exit Function
+
+        tagEnd = Find_a_Tag("</" & tag & ">", tagStart)             ' trouve le tag de fin; look for the close of the tag
+        If tagEnd = -1 Then Return "" : Exit Function
+
+        MAIN.Rtb_ODF.SelectionStart = tagStart                        ' lit le contenu du tag; found it, select the text between the opening and closing, without the tag markers
+        MAIN.Rtb_ODF.SelectionLength = tagEnd - tagStart
+        returnValue = MAIN.Rtb_ODF.SelectedText                       ' Return the selected string
+
+        Return returnValue                                          ' Return null string if tag is not found
+
+    End Function
+
+    Public Function Find_a_Tag(                                     ' Searches the RTF, from start to F_LimitPos
+            text As String,                                         ' text to search for
+            start As Integer                                        ' Begin search from character position 'start'
+            ) As Integer                                            ' CHERCHE UN TAG DE HAUT EN BAS DANS RTBOX ET RETOURNE SA POSITION; return -1 if not found, otherwise position of match
+
+        Dim returnValue As Integer = -1                             ' Initialize the default return value to false
+        ' dans les limites de la ligne ?
+        ' If start > F_LimitPos Then Return returnValue
+        ' Ensure that a search string has been specified and a valid start point.
+
+        If text.Length > 0 Then                                     ' Return "no match" if search text is null
+            Dim indexToText As Integer = MAIN.Rtb_ODF.Find(text, start, RichTextBoxFinds.None)
+            '                                                         Obtain the location of the search string in richTextBox
+            '                                                         Determine whether the text was found in richTextBox1.
+            If indexToText > F_LimitPos Then Return returnValue     ' dans les limites de la ligne ? If found, but past the outer search bound, return "no match"
+            If indexToText >= 0 Then returnValue = indexToText      ' Found it, it is within limit, return index
+        End If
+
+        Return returnValue                                          ' Return either -1 -> "no match within range", or index to match
+
+    End Function

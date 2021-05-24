@@ -2,47 +2,79 @@
 
 Public Class Couplers
 
-    Private Sub TextBox1_KeyDown(                           ' Standard Control event parms...
+    Private Sub Txt_CplrCode_KeyDown(                       ' Standard Control event parms...
             sender As Object,
             e As KeyEventArgs
-            ) Handles TBoxCplrCode.KeyDown                  ' VALIDATION AVEC LA TOUCHE ENTER
+            ) Handles Txt_CplrCode.KeyDown                  ' VALIDATION AVEC LA TOUCHE ENTER
 
-        ' Purpose:      Decode the entered Coupler-Code, and set the Radio Buttons to show the
-        '               code's functional interpretation. Inverse function to ButtonFindCode().
+        ' Purpose:      Decode a Coupler-Code, setting the Radio Buttons to show the
+        '               Code's functional interpretation. Inverse function to ButtonFindCode().
         ' Process:		Decode 3 sections by moduli -> Destination is hundreds, Source is mod 100,
         '               Type is mod 5. Unison off is 8' Type, where Dest=Source.
         ' Called By:    TBoxCplrCode KeyDown Event
         ' Side Effects: Updates form fields
-        ' Notes:        Validate integer input? Improve checking of Code, do not update Buttons
-        '               with invalid data. Button initialization is suspect. Considering clearing
-        '               all radio buttons on invalid code.
+        ' Notes:        <None>
+        ' Updates:      <1.060.2> Modified Control names to standard. Added use of DispMsg for display
+        '               of user messages. Validate input - only update buttons if code is valid.
 
-        Dim cplrCode As Integer = Val(TBoxCplrCode.Text)    ' Full code as entered on the form
-        Dim destCode As Integer = Int(cplrCode / 100)       ' "Hundreds" is Destination Code
-        Dim srcCode As Integer = cplrCode Mod 100           ' Source is 
-        Dim typeCode As Integer = cplrCode Mod 5
+        Const lclProcName As String = "TextBox1_KeyDown"
+
+        Dim cplrCode As Integer                             ' Full code as entered on the form
+        Dim destCode As Integer                             ' "Hundreds" is Destination Code
+        Dim srcCode As Integer                              ' Source is 
+        Dim typeCode As Integer
 
         If e.KeyCode = Keys.Enter Then                      ' Only process an "Enter" - ignore other typing in the field
+            If Not Integer.TryParse(
+                Trim(Txt_CplrCode.Text), cplrCode) Then     ' <1.060.2> Strip surrounding whitespace, check if is a valid number
+                DispMsg("", MsgBoxStyle.Information, "Coupler Codes must be an integer value.")
+                Txt_CplrCode.Clear()                        ' <1.060.2> Erase entry and try again
+                Return
+            End If
+            If Trim(Txt_CplrCode.Text).Length <> 4 Then     ' <1.060.2> Must be exactly 4 digits
+                DispMsg("", MsgBoxStyle.Information, "Coupler Codes must be exactly 4-digits long.")
+                If Trim(Txt_CplrCode.Text).Length < 4 Then  ' <1.060.2> Too short, leave alone
+                    Return
+                End If
+                Txt_CplrCode.Text =
+                    Strings.Left(Txt_CplrCode.Text, 4)      ' <1.060.2> Too long, truncate from the right end
+                Return
+            End If
+
+            cplrCode = Val(Txt_CplrCode.Text)               ' Full code as entered on the form
+            destCode = Int(cplrCode / 100)                  ' "Hundreds" is Destination Code
+            srcCode = cplrCode Mod 100                      ' Source is groups of 5, lowest 2 digits
+            typeCode = cplrCode Mod 5                       ' Type is Code mod 5
+
+            If (destCode < 10) Or (destCode > 16) Then      ' <1.060.2> Validate Destination range
+                DispMsg("", MsgBoxStyle.Information, "The leftmost 2 digits must be between 10 & 16 inclusive.")
+                Txt_CplrCode.Clear()                        ' <1.060.2> Clear, and try again...
+                Return
+            End If
+            If srcCode > 34 Then                            ' <1.060.2> Validate Source & Type range
+                DispMsg("", MsgBoxStyle.Information, "The rightmost 2 digits must be between 00 & 34 inclusive.")
+                Txt_CplrCode.Clear()                        ' <1.060.2> Clear, and try again...
+                Return
+            End If
+
+            Select Case srcCode                             ' Lower 2 digits, grouped by 5
+                Case 0 To 4 : RadioSPed.Checked = True      ' xx00 - xx04
+                Case 5 To 9 : RadioSMan1.Checked = True     ' xx05 - xx09
+                Case 10 To 14 : RadioSMan2.Checked = True
+                Case 15 To 19 : RadioSMan3.Checked = True
+                Case 20 To 24 : RadioSMan4.Checked = True
+                Case 29 To 29 : RadioSMan5.Checked = True
+                Case 30 To 34 : RadioSMan6.Checked = True
+            End Select
+
             Select Case destCode                            ' Hundreds digits
                 Case 10 : RadioDPed.Checked = True          ' 10xx
                 Case 11 : RadioDMan1.Checked = True         ' 11xx
                 Case 12 : RadioDMan2.Checked = True
                 Case 13 : RadioDMan3.Checked = True
                 Case 14 : RadioDMan4.Checked = True
-                Case 15 : RadioDman5.Checked = True
+                Case 15 : RadioDMan5.Checked = True
                 Case 16 : RadioDMan6.Checked = True
-                Case Else : MsgBox("Error ! This is not a valid coupler code")
-            End Select
-
-            Select Case srcCode                             ' Lower 2 digits, grouped by 5
-                Case 0 To 4 : RadioSPed.Checked = True      ' xx00 - xx04
-                Case 5 To 9 : RadioSMan1.Checked = True     ' xx05 - xx09
-                Case 10 To 14 : RadioSMan2.Checked = True
-                Case 15 To 19 : RadioSman3.Checked = True
-                Case 20 To 24 : RadioSMan4.Checked = True
-                Case 29 To 29 : RadioSMan5.Checked = True
-                Case 30 To 34 : RadioSMan6.Checked = True
-                Case Else : MsgBox("Error ! This is not a valid coupler code")
             End Select
 
             Select Case typeCode                            ' Mod 5 remainder
@@ -54,61 +86,81 @@ Public Class Couplers
             End Select
 
             ' cas de unisson off
-            If RadioSPed.Checked = True And RadioDPed.Checked = True And typeCode = 1 Then RadioUOff.Checked = True
-            If RadioSMan1.Checked = True And RadioDMan1.Checked = True And typeCode = 1 Then RadioUOff.Checked = True
-            If RadioSMan2.Checked = True And RadioDMan2.Checked = True And typeCode = 1 Then RadioUOff.Checked = True
-            If RadioSman3.Checked = True And RadioDMan3.Checked = True And typeCode = 1 Then RadioUOff.Checked = True
-            If RadioSMan4.Checked = True And RadioDMan4.Checked = True And typeCode = 1 Then RadioUOff.Checked = True
-            If RadioSMan5.Checked = True And RadioDman5.Checked = True And typeCode = 1 Then RadioUOff.Checked = True
-            If RadioSMan6.Checked = True And RadioDMan6.Checked = True And typeCode = 1 Then RadioUOff.Checked = True
+            If (typeCode = 1) And
+            (Int(srcCode / 5) = (destCode - 10)) Then       ' <1.060.2> If Src = Dest, then change from "8 ft." to "Unison-Off"
+                RadioUOff.Checked = True
+            End If
 
+            e.SuppressKeyPress = True                       ' <1.060.2> Suppress "Enter" to avoid console "Ding" sound
         End If
 
     End Sub
 
 
-    Private Sub ButtonFindCode_Click(                           ' Standard Control event parms...
+    Private Sub Btn_FindCode_Click(                     ' Standard Control event parms...
             sender As Object,
             e As EventArgs
-            ) Handles ButtonFindCode.Click                      ' TROUVE LE CODE A PARTIR DE L'ETAT DES RADIO BUTTONS
+            ) Handles Btn_FindCode.Click                ' TROUVE LE CODE A PARTIR DE L'ETAT DES RADIO BUTTONS
 
-        ' Purpose:      Display the encoding of the functional Radio-Buttons into an integer Couple-
+        ' Purpose:      Display the encoding of the functional Radio-Buttons into an integer Coupler-
         '               Code. Inverse function to TextBox1().
-        ' Process:		Sum the defined encodings for the Destination, Source, and Type; display onscreen.
-        ' Called By:    TButtonFindCode Click Event Event
+        ' Process:		Sum the defined encodings for the Destination, Source, and Type. Validate consistancy
+        '               of Uni-Off/8ft. choices with Source/Destination selections. Display code onscreen.
+        ' Called By:    ButtonFindCode Click Event Event
         ' Side Effects: Updates form fields
-        ' Notes:        Should validate: one button enabled per category - there are cases where a Radio Button
-        '               group may have nothing checked, while other groups are checked - should be all or
-        '               nothing before processing a Find?
+        ' Notes:        <None>
+        ' Updates:      <1.060.2> Ensure 1 button from each of the three classes is checked on form load; Place values
+        '               of buttons in their Btn.Tag fields, eliminating long if/then series - instead, loop over each
+        '               collection. Upon "Find", ensure that if Type=8' is checked, Source/Dest are different; likewise, if
+        '               Type=Uni-Off is checked, Source and Dest must be the same.
+        ' Button Tag Codes (contain the values that each Radio Button contributes to the Coupler Code):
 
-        Dim cplrCode As Integer = 0                             ' Build the code - sum of the values of the 3 parts
+        '   Destinations:   RadioDPed  = 1000   RadioDMan1 = 1100   RadioDMan2  = 1200
+        '                   RadioDMan3 = 1300   RadioDMan4 = 1400   RadioDMan5  = 1500  RadioDMan6 = 1600
 
-        If RadioDPed.Checked = True Then cplrCode = 1000        ' Destination Codes = 100's; determine Destination and init running total
-        If RadioDMan1.Checked = True Then cplrCode = 1100
-        If RadioDMan2.Checked = True Then cplrCode = 1200
-        If RadioDMan3.Checked = True Then cplrCode = 1300
-        If RadioDMan4.Checked = True Then cplrCode = 1400
-        If RadioDman5.Checked = True Then cplrCode = 1500
-        If RadioDMan6.Checked = True Then cplrCode = 1600
-        '
-        If RadioSPed.Checked = True Then cplrCode += 0          ' Source Codes = Fives; determine Source and add to total
-        If RadioSMan1.Checked = True Then cplrCode += 5
-        If RadioSMan2.Checked = True Then cplrCode += 10
-        If RadioSman3.Checked = True Then cplrCode += 15
-        If RadioSMan4.Checked = True Then cplrCode += 20
-        If RadioSMan5.Checked = True Then cplrCode += 25
-        If RadioSMan6.Checked = True Then cplrCode += 30
-        '
-        If Radio16.Checked = True Then cplrCode += 0            ' Coupling Type = Ones (mod 5); determine Type and add to total
-        If Radio8.Checked = True Then cplrCode += 1
-        If RadioUOff.Checked = True Then cplrCode += 1
-        If Radio4.Checked = True Then cplrCode += 2
-        If RadioBass.Checked = True Then cplrCode += 3
-        If RadioMelody.Checked = True Then cplrCode += 4
+        '   Sources:        RadioSPed  =    0   RadioSMan1 =    5   RadioSMan2  =   10
+        '                   RadioSMan3 =   15   RadioSMan4 =   20   RadioSMan5  =   25  RadioSMan6 =   30
+
+        '   Types:          Radio16    =    0   Radio8     =    1   RadioUOff   =    1
+        '                   Radio4     =    2   RadioBass  =    3   RadioMelody =    4
 
 
-        TBoxCplrCode.Text = cplrCode.ToString                   ' afficher; Display the encoding
-        TBoxCplrCode.Focus()                                    ' Position focus on the interger encoding field
+        Const lclProcName As String =
+            "Btn_FindCode_Click"                        ' <1.060.2> Routine name for message handling
+
+        Dim r As RadioButton                            ' <1.060.2> Collection context variable, to loop through controls
+        Dim destVal As Integer = 0                      ' <1.060.2> 3 Integers, the contribution of each Panel to the Code
+        Dim srcVal As Integer = 0
+        Dim typeVal As Integer = 0
+
+        For Each r In Pnl_Dest.Controls                 ' <1.060.2> Within each of the 3 Panels, find the .Tag value of the
+            If r.Checked Then destVal = CInt(r.Tag)     ' <1.060.2> checked Radio Button.
+        Next
+        For Each r In Pnl_Source.Controls
+            If r.Checked Then srcVal = CInt(r.Tag)
+        Next
+        For Each r In Pnl_Type.Controls
+            If r.Checked Then typeVal = CInt(r.Tag)
+        Next
+
+        If RadioUOff.Checked AndAlso                    ' <1.060.2> If Unison-Off, ensure Source = Destination
+            (srcVal * 20) <> (destVal - 1000) Then      ' <1.060.2> This bit of math allows comparison of Source & Destination
+            DispMsg("", MsgBoxStyle.Information,        ' <1.060.2> Warn User
+                    "For Unison-Off, Source and Destination must be the same.")
+            Txt_CplrCode.Clear()                        ' <1.060.2> Clear any residual value in the Coupler Code display
+            Return                                      ' <1.060.2> And dismiss the interaction
+        End If
+
+        If Radio8.Checked AndAlso                       ' <1.060.2>, Using similar logic to previous snippet, if coupling is
+            (srcVal * 20) = (destVal - 1000) Then       ' <1.060.2> 8 ft./Unison, Source and Destination must be different
+            DispMsg("", MsgBoxStyle.Information,
+                    " For 8 ft., Source and Destination must be different.")
+            Txt_CplrCode.Clear()
+            Return
+        End If
+
+        Txt_CplrCode.Text = srcVal + destVal + typeVal  ' afficher; Display the encoding (1.060.2> Sum all 3 contributions
+        Txt_CplrCode.Focus()                            ' Position focus on the integer encoding field
 
     End Sub
 End Class

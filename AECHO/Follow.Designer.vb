@@ -22,58 +22,65 @@ Partial Class Follow
     'Ne la modifiez pas à l'aide de l'éditeur de code.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.Label1 = New System.Windows.Forms.Label
-        Me.TextBoxItemID = New System.Windows.Forms.TextBox
-        Me.FollowListBox = New System.Windows.Forms.ListBox
-        Me.ButtonFollowOK = New System.Windows.Forms.Button
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.Txt_SampleID = New System.Windows.Forms.TextBox()
+        Me.Lb_TraceSample = New System.Windows.Forms.ListBox()
+        Me.Btn_TraceSample = New System.Windows.Forms.Button()
         Me.SuspendLayout()
         '
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(109, 44)
+        Me.Label1.Location = New System.Drawing.Point(152, 55)
+        Me.Label1.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(65, 13)
+        Me.Label1.Size = New System.Drawing.Size(72, 15)
         Me.Label1.TabIndex = 0
-        Me.Label1.Text = "   Sample ID"
+        Me.Label1.Text = "   Sample ID:"
         '
-        'TextBoxItemID
+        'Txt_SampleID
         '
-        Me.TextBoxItemID.Location = New System.Drawing.Point(192, 44)
-        Me.TextBoxItemID.Name = "TextBoxItemID"
-        Me.TextBoxItemID.Size = New System.Drawing.Size(83, 20)
-        Me.TextBoxItemID.TabIndex = 1
+        Me.Txt_SampleID.Location = New System.Drawing.Point(224, 51)
+        Me.Txt_SampleID.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.Txt_SampleID.Name = "Txt_SampleID"
+        Me.Txt_SampleID.Size = New System.Drawing.Size(96, 23)
+        Me.Txt_SampleID.TabIndex = 1
         '
-        'FollowListBox
+        'Lb_TraceSample
         '
-        Me.FollowListBox.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.FollowListBox.FormattingEnabled = True
-        Me.FollowListBox.ItemHeight = 16
-        Me.FollowListBox.Location = New System.Drawing.Point(12, 108)
-        Me.FollowListBox.Name = "FollowListBox"
-        Me.FollowListBox.Size = New System.Drawing.Size(542, 372)
-        Me.FollowListBox.TabIndex = 2
+        Me.Lb_TraceSample.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
+        Me.Lb_TraceSample.FormattingEnabled = True
+        Me.Lb_TraceSample.HorizontalScrollbar = True
+        Me.Lb_TraceSample.ItemHeight = 16
+        Me.Lb_TraceSample.Location = New System.Drawing.Point(14, 125)
+        Me.Lb_TraceSample.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.Lb_TraceSample.Name = "Lb_TraceSample"
+        Me.Lb_TraceSample.Size = New System.Drawing.Size(825, 420)
+        Me.Lb_TraceSample.TabIndex = 2
         '
-        'ButtonFollowOK
+        'Btn_TraceSample
         '
-        Me.ButtonFollowOK.Location = New System.Drawing.Point(302, 44)
-        Me.ButtonFollowOK.Name = "ButtonFollowOK"
-        Me.ButtonFollowOK.Size = New System.Drawing.Size(32, 19)
-        Me.ButtonFollowOK.TabIndex = 3
-        Me.ButtonFollowOK.Text = "OK"
-        Me.ButtonFollowOK.UseVisualStyleBackColor = True
+        Me.Btn_TraceSample.AutoSize = True
+        Me.Btn_TraceSample.Location = New System.Drawing.Point(352, 51)
+        Me.Btn_TraceSample.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.Btn_TraceSample.Name = "Btn_TraceSample"
+        Me.Btn_TraceSample.Size = New System.Drawing.Size(87, 25)
+        Me.Btn_TraceSample.TabIndex = 3
+        Me.Btn_TraceSample.Text = "Trace Sample"
+        Me.Btn_TraceSample.UseVisualStyleBackColor = True
         '
         'Follow
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 15.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(566, 499)
-        Me.Controls.Add(Me.ButtonFollowOK)
-        Me.Controls.Add(Me.FollowListBox)
-        Me.Controls.Add(Me.TextBoxItemID)
+        Me.ClientSize = New System.Drawing.Size(852, 576)
+        Me.Controls.Add(Me.Btn_TraceSample)
+        Me.Controls.Add(Me.Lb_TraceSample)
+        Me.Controls.Add(Me.Txt_SampleID)
         Me.Controls.Add(Me.Label1)
+        Me.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Name = "Follow"
-        Me.Opacity = 0.9
+        Me.Opacity = 0.9R
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Follow"
         Me.ResumeLayout(False)
@@ -81,7 +88,7 @@ Partial Class Follow
 
     End Sub
     Friend WithEvents Label1 As System.Windows.Forms.Label
-    Friend WithEvents TextBoxItemID As System.Windows.Forms.TextBox
-    Friend WithEvents FollowListBox As System.Windows.Forms.ListBox
-    Friend WithEvents ButtonFollowOK As System.Windows.Forms.Button
+    Friend WithEvents Txt_SampleID As System.Windows.Forms.TextBox
+    Friend WithEvents Lb_TraceSample As System.Windows.Forms.ListBox
+    Friend WithEvents Btn_TraceSample As System.Windows.Forms.Button
 End Class
