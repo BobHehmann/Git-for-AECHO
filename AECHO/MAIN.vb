@@ -2,6 +2,7 @@
 Imports System.IO
 Imports System.Windows.Forms
 Imports System.Math
+
 Public Class MAIN
 
     ' Version Log Summary (see ChangeLog.txt file for more detail)
@@ -28,8 +29,14 @@ Public Class MAIN
     '   Summary:    Deeper clean, remove many side-effect; bug fixes; standardized naming conventions; no-wrap ODF display
     '               Much faster; enhanced menus. Moving non-event handler routines from here to SharedCode.vb.
 
+    '   1.060.3     March 23, 2021 Bob Hehmann
+    '   Git:        Printing
+    '   Summary:    More robust printing of Descriptive Text RTB
+
     Dim M_FoundStart As Integer = -1     ' <1.060.2> When a text-search succeeds, this becomes index of start of located text
     Dim M_FoundEnd As Integer = 0        ' <1.060.2> Defines the end of located text; when 0, there is no located text defined.
+    Dim M_FirstChar As Integer
+    Dim Rtb_DText As RTBPrint = New RTBPrint
 
     ' MAIN FORM LOAD
     Private Sub MAIN_Load(sender As Object,                     ' AECHO's base Form
@@ -49,6 +56,7 @@ Public Class MAIN
         '               for dynamically adjustable form-sizing by calculating control positions, centering title-text in code...
         '               In Demo Mode, also hide Title for Control to change ODF Font Size, not just the Control itself. Eliminate
         '               global G_AppPath.
+        '               <1.060.3> Create hidden instance (Rtb_DText) of printing-enhanced RTB, placed behind the Tags panel.
 
         Const lclProcName As String =                           ' <1.060.2> Routine's name for message handling
             "MAIN_Load"
@@ -64,14 +72,14 @@ Public Class MAIN
         G_HelpFilePath = Path.Combine(G_DataPath,               ' <1.060.2> Construct offset to HTMl Help directory with \DATA
                                       conHTMLHelpDir)
         If Not Directory.Exists(G_HelpFilePath) Then            ' <1.060.2> If HTML Directory doesn't exist, warn user and fallback to classic Help
-            DispMsg(lclProcName, MsgBoxStyle.Exclamation,
+            DispMsg(lclProcName, conMsgExcl,
                     "Unable to locate HTML Help Directory:" & vbCrLf &
                     G_HelpFilePath & vbCrLf &
                     "Will fallback to simplified Help displayed in the Decriptive Text area.")
             G_HelpFilePath = ""                                 ' <1.060.2> Help loader will check this: when null, use old-style help
         End If
-        G_ODFLibPath = GetODFLibPath(G_DataPath, conInitialDir) ' <1.060.2> Modified to function call: Establishes G_ODFLibPath as (possible) location of HW's ODF files
 
+        G_ODFLibPath = GetODFLibPath(G_DataPath, conInitialDir) ' <1.060.2> Modified to function call: Establishes G_ODFLibPath as (possible) location of HW's ODF files
         G_Registered = IsRegistered(G_DataPath,
                                     conLicenseFileName)         ' Savoir si version enregistre ou non; detect if this version is registered or not - as of 1.057, always "Registered"
         If G_Registered = False Then                            ' Restriction si unRegistered; <1.060.2> Moved disabling-code here from IsRegistered()
@@ -91,7 +99,23 @@ Public Class MAIN
 
         ResetToNoODF()                                          ' <1.060.2> Initalize state when there is no ODF file loaded - general init routine
 
+        With Rtb_DText                                          ' <1.060.3> To support WYSIWYG printing, create hidden instance of enhanced RTB
+            .Font = New Font("Verdana", 10.0!, FontStyle.Regular, GraphicsUnit.Point)
+            .Location = New Point(50, 451)                      ' <1.060.3> Behind the Tags Panel
+            .Margin = New Padding(4, 3, 4, 3)                   ' Same parameters as Rtb_DescText, so layout will be the same
+            .Name = "Rtb_DText"
+            .Size = New Size(750, 380)
+            .Text = ""
+            .WordWrap = False
+            .TabStop = False
+            .ScrollBars = RichTextBoxScrollBars.Both
+            .AcceptsTab = True
+            .Visible = False                                    ' <1.060.3> Keep it hidden, it is just an internal scratch-pad, not to be seen onscreen
+        End With
+        Controls.Add(Me.Rtb_DText)                              ' <1.060.3> Create it
+
     End Sub
+
     ' FONCTIONS RICH TEXT BOX; Useful Functions for the Rich Text Boxes, ODF, XML Rows...
     ' CONTROLES
     Private Sub Num_ODFFontSize_ValueChanged(sender As Object,  ' Standard Control event parms...
@@ -118,6 +142,7 @@ Public Class MAIN
                                  True)                          ' <1.060.2> Re-emphasize Titles after setting overall ODF Font size (size change resets all other attributes)
 
     End Sub
+
     ' PROCEDURES RICH TEXT BOX
     Private Sub Rtb_ODF_MouseDoubleClick(sender As Object,                ' Standard Control event parms...
                                   e As MouseEventArgs
@@ -146,7 +171,7 @@ Public Class MAIN
         Dim lineStart As Integer
 
         If Rtb_ODF.TextLength = 0 Then                              ' ODF is empty, no text, issue informational message
-            DispMsg("", MsgBoxStyle.Information,
+            DispMsg("", conMsgInfo,
                     "There is presently no ODF text to select.")
             Return                                                  ' MODIF V058
         End If
@@ -170,6 +195,7 @@ Public Class MAIN
                                       G_PreviousRTFFile)
 
     End Sub
+
     Private Sub Rtb_ODF_MouseClick(sender As Object,                ' Standard Control event parms...
                                  e As MouseEventArgs
                                  ) Handles Rtb_ODF.MouseClick
@@ -204,6 +230,7 @@ Public Class MAIN
                        False)                                       ' <1.060.2> False -> Do not extend selection on screen, leave as user set it
 
     End Sub
+
     'FONCTIONS ET PROCEDURES
     Private Sub Btn_SaveDescText_Click(sender As Object,            ' Standard Control event parms...
                               e As EventArgs
@@ -229,8 +256,9 @@ Public Class MAIN
         Try
             If G_PreviousRTFFile =
             Path.Combine(G_DataPath, "help.rtf") Then               ' Disallow altering the Help file. <1.060.2> Modified to check PreviousRTFFile variable
-                DispMsg("", MsgBoxStyle.Information,
+                DispMsg("", conMsgInfo,
                         "Rewriting the Help File is not permitted.")
+                'Rtb_DescText.SaveFile(G_PreviousRTFFile)           ' temp - uncomment when need to write to the Help file, such as initial setup or major editing.
                 Exit Sub
             End If
 
@@ -240,13 +268,14 @@ Public Class MAIN
                 Rtb_DescText.SaveFile(pathToRTFFile)                ' Save Control's contents.
             End If
         Catch ex As ArgumentException                               ' Couldn't rewrite the requested data
-            DispMsg(lclProcName, MsgBoxStyle.Critical,
+            DispMsg(lclProcName, conMsgCrit,
                     "Unable to rewrite a Descriptive Text File" & vbCrLf &
                     "Section requested was: " & G_SectionName & vbCrLf &
                     "Exception Code is: " & ex.Message)
         End Try
 
     End Sub
+
     ' MENU FILES
     Private Sub Menu_OpenHauptwerkOrgan_Click(                              ' Standard Control event parms...
             sender As Object,
@@ -281,7 +310,7 @@ Public Class MAIN
 
         OpenFileDialog.RestoreDirectory = True                              ' Use Windows standard open-file: restore to initial directory when done
         OpenFileDialog.InitialDirectory = G_ODFLibPath                      ' "C:\HAUPTWERK\HauptwerkSampleSetsAndComponents\OrganDefinitions" is default
-        OpenFileDialog.Title = "Open one organ"
+        OpenFileDialog.Title = "Open an organ"
         OpenFileDialog.DefaultExt = "Organ_Hauptwerk_xml"
         OpenFileDialog.Filter =
             "organ files (*.Organ_Hauptwerk_xml)|*.Organ_Hauptwerk_xml"     ' <1.059.0> added the closing ) from 1.058b
@@ -298,7 +327,7 @@ Public Class MAIN
             '        "ODF File size: " &
             '       sizeInBytes.ToString("N0") & " bytes long.")             ' <1.060.2> Debug
             If (Not G_Registered) And (sizeInBytes > conDemoMaxODFBytes) Then
-                DispMsg(lclProcName, MsgBoxStyle.Information,
+                DispMsg("", conMsgInfo,
                         "DEMO VERSION " & vbCrLf &                          ' Max allowable when not regsistered is 1MB
                         "Only an ODF smaller than " &
                         conDemoMaxODFBytes.ToString("N0") &
@@ -314,7 +343,7 @@ Public Class MAIN
                 Rtb_ODF.Text = My.Computer.FileSystem.ReadAllText(          ' Copier dans la RichTextBox
                 G_OrganFile, System.Text.Encoding.UTF8)                     ' <1.059.0> Load Rtb_ODF, reading ODF file forcing UTF-8 decoding
             Catch ex As Exception                                           ' <1.060.2> If error, display message, clear box, reset Menus, exit
-                DispMsg(lclProcName, MsgBoxStyle.Critical,
+                DispMsg(lclProcName, conMsgCrit,
                     "General Exception while attempting to read ODF File" & vbCrLf &
                     "Exception Code is: " & vbCrLf & ex.ToString)
                 Return
@@ -362,6 +391,7 @@ Public Class MAIN
         End If
 
     End Sub
+
     Private Sub Menu_SaveAs_Click(          ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -386,6 +416,7 @@ Public Class MAIN
         End If
 
     End Sub
+
     Private Sub Menu_CloseODF_Click(        ' Standard Control event parms...
                                    sender As Object,
                                    e As EventArgs
@@ -407,6 +438,7 @@ Public Class MAIN
         ResetToNoODF()                      ' Clears data areas, resets menus and globals...
 
     End Sub
+
     Private Sub Menu_Quit_Click(            ' Standard Control event parms...
             sender As Object,
             e As EventArgs) Handles Menu_Quit.Click
@@ -428,6 +460,7 @@ Public Class MAIN
         End                                 ' Leave AECHO
 
     End Sub
+
     ' MENU SECTIONS
     Private Sub Menu_SectionChoice_Click(sender As ToolStripMenuItem,  ' Standard Control event parms...
                                    e As EventArgs
@@ -464,6 +497,7 @@ Public Class MAIN
 
     End Sub
     ' MENU EDIT MODE
+
     Private Sub Menu_StartEditMode_Click(           ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -494,10 +528,11 @@ Public Class MAIN
         Menu_EditMode.BackColor = Color.Red         ' Paint Main Menu text with RED background
         G_EditMode = True                           ' indique edition en cours (modif 055); save State
 
-        DispMsg("", MsgBoxStyle.Information,
+        DispMsg("", conMsgInfo,
                 "ODF Text is now editable")
 
     End Sub
+
     Private Sub Menu_ExitEditMode_Click(            ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -543,6 +578,7 @@ Public Class MAIN
         'End If
 
     End Sub
+
     Private Sub Menu_ReComputeSections_Click(           ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -568,6 +604,7 @@ Public Class MAIN
                                 False)                  ' <1.060.2> Position to the initial Section; False -> Don't display/parse a row, do not alter Descriptive Text area
 
     End Sub
+
     ' MENU TOOLS
     Private Sub Menu_ClearMarkers_Click(    ' Standard Control event parms...
             sender As Object,
@@ -586,6 +623,7 @@ Public Class MAIN
         ClearMarkers()                      ' Dispatch common routine
 
     End Sub
+
     Private Sub Menu_CouplersCode_Click(    ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -606,6 +644,7 @@ Public Class MAIN
         Couplers.Show(Me)                   ' Open the form; if already open, give it focus
 
     End Sub
+
     Private Sub FollowASampleToolStripMenuItem_Click(   ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -626,6 +665,7 @@ Public Class MAIN
         Follow.Show(Me)                                 ' Open the form, if already open, give it focus
 
     End Sub
+
     ' MENU ?
     Private Sub Menu_Help_Click(                                ' Standard Control event parms...
             sender As Object,
@@ -657,7 +697,7 @@ Public Class MAIN
                     Help.ShowHelp(Me, pathToHelpFile)           ' <1.060.2> Yes, display it
                     Return                                      ' <1.060.2> And we are done
                 Else                                            ' <1.060.2> HTML file is missing, warn user, and continue with old-style Help
-                    DispMsg("", MsgBoxStyle.Information,
+                    DispMsg("", conMsgInfo,
                         "Unable to locate the top HTML Help File:" & vbCrLf &
                         "Full file path is: " & pathToHelpFile & vbCrLf &
                         "Will attempt to continue with limited Help displayed in the Descriptive Text area.")
@@ -665,7 +705,8 @@ Public Class MAIN
                 End If
             End If
         Catch ex1 As Exception
-            DispMsg(lclProcName, MsgBoxStyle.Critical, "Exception while attempting to locate or load the HTML Help File." & vbCrLf &
+            DispMsg(lclProcName, conMsgCrit,
+                    "Exception while attempting to locate or load the HTML Help File." & vbCrLf &
                     "Full file path is: " & pathToHelpFile & vbCrLf &
                     "Will attempt to continue with limited Help displayed in the Descriptive Text area." & vbCrLf &
                     "Exception code is: " & ex1.Message)
@@ -684,19 +725,22 @@ Public Class MAIN
                            Lbl_TextBoxTitle2,
                            Rtb_DescText.Left,
                            Rtb_DescText.Right)
+                Menu_PrintDT.Enabled = True                     ' <1.060.3> Enable printing when short-help is on display
+                'Btn_SaveDescText.Enabled = True                 ' Temp - Enable this line to enable control to allow saving to the Help File e.g., to make major changes.
             Else                                                ' <1.060.2> Message the user
-                DispMsg(lclProcName, MsgBoxStyle.Critical,
+                DispMsg(lclProcName, conMsgCrit,
                         "Unable to locate Help File." & vbCrLf &
                         "Expected path is: " & pathToHelpFile)
             End If
         Catch ex As Exception
-            DispMsg(lclProcName, MsgBoxStyle.Critical,
+            DispMsg(lclProcName, conMsgCrit,
                        "Exception while attempting to locate or load the RTF Help File." & vbCrLf &
                        "Full file path is: " & pathToHelpFile & vbCrLf &
                        "Exception Code is: " & ex.Message)
         End Try
 
     End Sub
+
     ' BOUTONS
     Private Sub Btn_FindFirst_Click(    ' Standard Control event parms...
             sender As Object,
@@ -728,6 +772,7 @@ Public Class MAIN
                         True)           ' <1.060.2> Execute a forward search
 
     End Sub
+
     Private Sub Btn_FindNext_Click(     ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -759,6 +804,7 @@ Public Class MAIN
                         True)           ' <1.060.2> Search forward
 
     End Sub
+
     Private Sub Btn_Led_Click(                      ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -779,6 +825,7 @@ Public Class MAIN
         Return
 
     End Sub
+
     Private Sub Btn_SetFont_Click(              ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -811,6 +858,7 @@ Public Class MAIN
         Rtb_DescText.Refresh()                  ' Update screen
 
     End Sub
+
     Private Sub Btn_Markers_MouseDown(              ' Standard Control event parms...
             sender As Object,
             e As MouseEventArgs
@@ -862,6 +910,7 @@ Public Class MAIN
         End If
 
     End Sub
+
     Private Sub Btn_DisplayImage_Click(     ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -888,6 +937,7 @@ Public Class MAIN
                      G_MinPanelHeights)
 
     End Sub
+
     Private Sub Btn_DisplayImage_LostFocus(     ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -905,6 +955,7 @@ Public Class MAIN
         RemoveImage()                           ' <1.060.2> Moved logic to RemoveImage(), same logic as PBox_Click Event
 
     End Sub
+
     Private Sub Btn_NextLine_Click(                             ' Standard Control event parms...
             sender As Button,
             e As EventArgs
@@ -965,6 +1016,7 @@ Public Class MAIN
         End Try
 
     End Sub
+
     ' IMAGES
     Private Sub PBox_Click(             ' Standard Control event parms...
             sender As Object,
@@ -983,6 +1035,7 @@ Public Class MAIN
         RemoveImage()                   ' <1.06.2> Moved logic to new RemoveImage() routine, also called by Btn_DisplayImage_LostFocus()
 
     End Sub
+
     Private Sub Rtb_ODF_TextChanged(                    ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -1005,6 +1058,7 @@ Public Class MAIN
         End If
 
     End Sub
+
     Private Sub Menu_About_Click(       ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -1024,6 +1078,7 @@ Public Class MAIN
         AboutBox1.Show(Me)              ' Display the form
 
     End Sub
+
     Private Sub Btn_FindPrev_Click(     ' Standard Control event parms...
             sender As Object,
             e As EventArgs) Handles Btn_FindPrev.Click
@@ -1053,6 +1108,7 @@ Public Class MAIN
                         False)          ' <1.060.2> Search backwards from present cursor position
 
     End Sub
+
     Private Sub Lbl_LineNumVal_Click(       ' Standard Control event parms...
             sender As Object,
             e As EventArgs) Handles Lbl_LineNumVal.Click
@@ -1107,6 +1163,7 @@ Public Class MAIN
         HotClickCursorPosition(Lbl_SecStartVal.Text)
 
     End Sub
+
     Private Sub Lbl_SecEndVal_Click(        ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -1125,6 +1182,7 @@ Public Class MAIN
         HotClickCursorPosition(Lbl_SecEndVal.Text)
 
     End Sub
+
     Private Sub Lbl_LineStartVal_Click(     ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -1143,6 +1201,7 @@ Public Class MAIN
         HotClickCursorPosition(Lbl_LineStartVal.Text)
 
     End Sub
+
     Private Sub Lbl_LineEndVal_Click(       ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -1161,6 +1220,7 @@ Public Class MAIN
         HotClickCursorPosition(Lbl_LineEndVal.Text)
 
     End Sub
+
     Private Sub Lbl_RowStartVal_Click(      ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -1179,6 +1239,7 @@ Public Class MAIN
         HotClickCursorPosition(Lbl_RowStartVal.Text)
 
     End Sub
+
     Private Sub Lbl_RowEndVal_Click(        ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -1197,6 +1258,7 @@ Public Class MAIN
         HotClickCursorPosition(Lbl_RowEndVal.Text)
 
     End Sub
+
     Private Sub Lbl_CursorPosVal_Click(     ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -1216,83 +1278,167 @@ Public Class MAIN
 
     End Sub
 
-    Private Sub Menu_PrintDT_Click(         ' Standard Control event parms...
+    Private Sub Menu_PrintDT_Click(                 ' Standard Control event parms...
             sender As Object,
             e As EventArgs
             ) Handles Menu_PrintDT.Click
 
-        Dim result As DialogResult
+        ' Purpose:      Initialize Print Dialog, if User agrees, submit print job
+        ' Process:      Display dialog, get answer, if Yes, submit print job
+        ' Called By:    Menu_Print Click event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.2> First implemented as a test skeleton
+        '               <1.060.3> Added logic to copy text to hidden custom RTB, adding
+        '               headers in the custom box and printing from there. The hidden
+        '               RTB is extended through inheitence to add WYSIWYG printing capability,
+        '               which the standard RTB does not support.
 
-        PrintDialog1.Document = PrintDocument1
-        result = PrintDialog1.ShowDialog
-        If result = DialogResult.OK Then
-            PrintDocument1.Print()
+        Const lclProcName As String =               ' Routine's name for message handling
+            "Menu_PrintDR_Click"
+
+        Dim result As DialogResult
+        Dim header As String                        ' Build print header here...
+        Dim todayDateTime As Date                   ' Will be today's date and time for use in a heafer
+
+        If Rtb_DescText.TextLength = 0 Or Lbl_TextBoxTitle2.Text = conTextBoxTitle_Def Then
+            DispMsg("", conMsgInfo,                 ' Null content, display informational message and exit
+                    "Nothing to print...")
+            Return
+        End If
+        '                                             Set defaults to: Portrait;  <1/2-inch left, 
+        '                                             right, and bottom margins; 3/4-inch top margin
+        PrintDocument1.DocumentName = "AECHO Descriptive Text"
+        PrintDocument1.DefaultPageSettings.Margins.Left = 40
+        PrintDocument1.DefaultPageSettings.Margins.Right = 40
+        PrintDocument1.DefaultPageSettings.Margins.Top = 75
+        PrintDocument1.DefaultPageSettings.Margins.Bottom = 40
+
+        PrintDialog1.Document = PrintDocument1      ' Bind Print Dialog to Print Object
+        result = PrintDialog1.ShowDialog            ' User response
+
+        Rtb_DText.Clear()                           ' Eliminate any residue from prior printing
+
+        If result = DialogResult.OK Then            ' Detect content type of Descriptive Text Area and set appropriate Header Text
+            If Lbl_TextBoxTitle2.Text = conTextBoxTitle2_Desc Then
+                Rtb_DText.SelectionFont =           ' Add header content, centered, bold, larger font
+                New Font(conDescFont, conDefODFFontSize + 4, FontStyle.Bold Or FontStyle.Underline)
+                Rtb_DText.SelectionAlignment = HorizontalAlignment.Center
+                header = "Section Description"
+            ElseIf Lbl_TextBoxTitle2.Text = conTextBoxTitle_List Then
+                todayDateTime = Date.Now
+                Rtb_DText.SelectionFont =           ' First, display full filename of the organ, reduced font-size, regular weight, centered
+                    New Font(conDescFont, conDefODFFontSize - 2, FontStyle.Regular)
+                Rtb_DText.SelectionAlignment = HorizontalAlignment.Center
+                header = todayDateTime & vbCrLf & G_OrganFile & vbCrLf & vbCrLf & " "
+                Rtb_DText.SelectedText = header
+                Rtb_DText.Select(Rtb_DText.TextLength - 1, 1)
+                Rtb_DText.SelectionFont =           ' Then display Column Titles in regular size, bolded
+                    New Font(conDescFont, conDefODFFontSize, FontStyle.Bold)
+                Rtb_DText.SelectionAlignment = HorizontalAlignment.Left
+                header =
+                    "SecID   Start-Line      End-Line       Start-Char          End-Char     Section Name"
+            ElseIf Lbl_TextBoxTitle2.Text = conTextBoxTitle_Help Then
+                Rtb_DText.SelectionFont =           ' Add header content, centered, bold, larger font
+                New Font(conDescFont, conDefODFFontSize + 4, FontStyle.Bold Or FontStyle.Underline)
+                Rtb_DText.SelectionAlignment = HorizontalAlignment.Center
+                header = "Short Help"
+            Else
+                Rtb_DText.SelectionFont =           ' Add header content, centered, bold, larger font
+                New Font(conDescFont, conDefODFFontSize + 4, FontStyle.Bold Or FontStyle.Underline)
+                Rtb_DText.SelectionAlignment = HorizontalAlignment.Center
+                header = ""
+            End If
+            header =                                ' Add a blank line, and a closing <blank> character that will be replaced by the content text
+                header & vbCrLf & vbCrLf & " "
+
+            Rtb_DText.SelectedText = header         ' Insert header, includes spacing and sacrificial <blank>
+            Rtb_DText.DeselectAll()
+
+            Rtb_DText.Select(Rtb_DText.TextLength - 1, 1)
+            Rtb_DText.SelectionFont =               ' Return font settings & alignment to normal for the sacrificial character
+                New Font(conDescFont, conDefODFFontSize, FontStyle.Regular)
+            Rtb_DText.SelectionAlignment = HorizontalAlignment.Left
+
+            Rtb_DescText.SelectAll()                ' Select entire content are
+            Rtb_DText.SelectedRtf =                 ' Replace sacrificial blank with formatted text (.SelectedRTF)
+                Rtb_DescText.SelectedRtf
+            Rtb_DText.SelectionTabs =               ' Ensure tab stops are the same
+                Rtb_DescText.SelectionTabs
+            Rtb_DescText.DeselectAll()              ' Deselect both source & destination boxes
+            Rtb_DText.DeselectAll()
+            Try
+                PrintDocument1.Print()              ' Dispatch Print job for hidden, destination box
+            Catch ex As Exception
+                DispMsg(lclProcName, conMsgExcl,
+                        "Unable to submit the print job. " & vbCrLf &
+                        "Exception code is: " & ex.Message)
+            End Try
+
         End If
 
     End Sub
 
-    Private Sub PrintDocument1_PrintPage(sender As Object,
-                                         e As Printing.PrintPageEventArgs
-                                         ) Handles PrintDocument1.PrintPage
+    Private Sub PrintDocument1_BeginPrint() Handles PrintDocument1.BeginPrint
 
-        Static currentChar As Integer
-        Static currentLine As Integer
-        Dim textfont As Font = Rtb_DescText.Font
-        Dim h, w As Integer
-        Dim left, top As Integer
-        With PrintDocument1.DefaultPageSettings
-            h = .PaperSize.Height - .Margins.Top - .Margins.Bottom
-            w = .PaperSize.Width - .Margins.Left - .Margins.Right
-            left = PrintDocument1.DefaultPageSettings.Margins.Left
-            top = PrintDocument1.DefaultPageSettings.Margins.Top
-        End With
-        'Optional Rectangle Blue.
-        'e.Graphics.DrawRectangle(Pens.Blue, New Rectangle(left, top, w, h))
-        If PrintDocument1.DefaultPageSettings.Landscape Then
-            Dim a As Integer
-            a = h
-            h = w
-            w = a
-        End If
-        Dim lines As Integer = CInt(Math.Round(h / textfont.Height))
-        Dim b As New Rectangle(left, top, w, h)
-        Dim format As StringFormat
-        If Not Rtb_DescText.WordWrap Then
-            format = New StringFormat(StringFormatFlags.NoWrap)
-            format.Trimming = StringTrimming.EllipsisWord
-            Dim i As Integer
-            For i = currentLine To Math.Min(currentLine + lines, Rtb_DescText.Lines.Length - 1)
-                e.Graphics.DrawString(Rtb_DescText.Lines(i), textfont, Brushes.Black, New RectangleF(left, top + textfont.Height * (i - currentLine), w, textfont.Height), format)
-            Next
-            currentLine += lines
-            If currentLine >= Rtb_DescText.Lines.Length Then
-                e.HasMorePages = False
-                currentLine = 0
-            Else
-                e.HasMorePages = True
-            End If
-            Exit Sub
-        End If
-        format = New StringFormat(StringFormatFlags.LineLimit)
-        Dim line, chars As Integer
-        e.Graphics.MeasureString(Mid(Rtb_DescText.Text, currentChar + 1), textfont, New SizeF(w, h), format, chars, line)
-        If currentChar + chars < Rtb_DescText.Text.Length Then
-            If Rtb_DescText.Text.Substring(currentChar + chars, 1) <> " " And Rtb_DescText.Text.Substring(currentChar + chars, 1) <> vbLf Then
-                While chars > 0
-                    Rtb_DescText.Text.Substring(currentChar + chars, 1)
-                    Rtb_DescText.Text.Substring(currentChar + chars, 1)
-                    chars -= 1
-                End While
-                chars += 1
-            End If
-        End If
-        e.Graphics.DrawString(Rtb_DescText.Text.Substring(currentChar, chars), textfont, Brushes.Black, b, format)
-        currentChar += chars
-        If currentChar < Rtb_DescText.Text.Length Then
+        ' Purpose:      Initializer invoked as start of print job. Sets start to 1 char in control
+        ' Process:      Set a shared variable that tracks the next char to print
+        ' Called By:    PrintDocument1 BeginPRint Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.3> First implemented, supports extended RTB printing
+
+        Const lclProcName As String =   ' Routine's name for message handling
+            "PrintDocument1_BeginPrint"
+
+        M_FirstChar = 0                 ' Start at first character
+
+    End Sub
+    Private Sub PrintDocument1_EndPrint() Handles PrintDocument1.EndPrint
+
+        ' Purpose:      Free graphics memory used by formatter, once print job is fully rendered
+        ' Process:      Have an appropriate message sent
+        ' Called By:    PrintDocument1 EndPrint Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.3> First implemented, supports extended RTB printing
+
+        Const lclProcName As String =   ' Routine's name for message handling
+            "PrintDocument1_BeginPrint"
+
+        Rtb_DText.FormatRangeDone()     ' Free graphics memory now that we're done
+
+    End Sub
+
+    Private Sub PrintDocument1_PrintPage(                   ' Standard Control event parms...
+            sender As Object,
+            e As Printing.PrintPageEventArgs
+            ) Handles PrintDocument1.PrintPage
+
+        ' Purpose:      Handle each page in order as print job progresses
+        ' Process:      Invoke formatter, set Property that controls subsequent page printing. Called once
+        '               for each page, until it sets e.HasMorePages to False
+        ' Called By:    PrintDocument1 PrintPage Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.2> First implemented as a concept skeleton
+        '               <1.060.3> Modified for production use with extended RTB print-capable control
+
+        Const lclProcName As String =                       ' Routine's name for message handling
+            "PrintDocument1_BeginPrint"
+
+        M_FirstChar =
+            Rtb_DText.FormatRange(False,                    ' Select Render mode
+                                  e,                        ' Control to print
+                                  M_FirstChar,              ' First char on this page
+                                  Rtb_DText.TextLength)     ' End of print content
+
+
+        If (M_FirstChar < Rtb_DText.TextLength) Then        ' check if there are more pages to print
             e.HasMorePages = True
         Else
             e.HasMorePages = False
-            currentChar = 0
         End If
     End Sub
+
 End Class

@@ -51,7 +51,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>true</SignManifests>
-    <PackageReleaseNotes>Conversion to .NET 5.0</PackageReleaseNotes>
+    <PackageReleaseNotes>Added Printing</PackageReleaseNotes>
     <AssemblyName>Aecho</AssemblyName>
     <RootNamespace>Aecho</RootNamespace>
     <ApplicationIcon>Icon_Color_Pipe_Organ.ico</ApplicationIcon>

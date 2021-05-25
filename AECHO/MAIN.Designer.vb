@@ -889,6 +889,7 @@ Partial Class MAIN
         '
         'Rtb_DescText
         '
+        Me.Rtb_DescText.AcceptsTab = True
         Me.Rtb_DescText.Font = New System.Drawing.Font("Verdana", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
         Me.Rtb_DescText.Location = New System.Drawing.Point(722, 451)
         Me.Rtb_DescText.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
@@ -2046,7 +2047,7 @@ Partial Class MAIN
         '
         'PrintDocument1
         '
-        Me.PrintDocument1.DocumentName = "Descriptive Text"
+        Me.PrintDocument1.DocumentName = "AECHODescText"
         '
         'MAIN
         '

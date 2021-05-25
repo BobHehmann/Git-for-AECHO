@@ -111,13 +111,14 @@
 	            Open Hauptwerk Organ...		Ctrl-O
 	            Close ODF				    Ctrl-W
 	            Save As...				    Ctrl-Alt-S
+                Print Descriptive Text...   Ctrl-P
 	            Exit					    Alt-F4
             Sections (A) 1-22				<None>
             Sections (B) 23-44				<None>
             Edit Mode					    <None>
-	            Start Edit Mode				<None>
-	            Exit Edit Mode				<None>
-	            Reparse Sections			<None>
+	            ODF Editing Enabled			<None>
+	            ODF Editing Disabled    	<None>
+	            List Sections			    <None>
             Tools						    <None>
 	            Clear Markers				<None>
 	            Couplers (Encode/Decode)	<None>
@@ -232,8 +233,7 @@
         named "None".
 
     33) In new Status-Bar, indicate the Row-type of the line we have positioned to. Provide a File-Dirty indicator: dark-orange when there is no
-        ODF loaded; green when the current loaded ODF has a copy as a file; red when the ODF has been modified but not saved. Provide a 
-        Section-Dirty indicator that follows the same color logic, tracking the need to recompute Section Data.
+        ODF loaded; green when the current loaded ODF has a copy as a file; red when the ODF has been modified but not saved.
 
     34) Correctly handle single and double-clicks while in either the header (content before _General), or the trailer (content after the last
         </ObjectList> Tag). Treat these as psudo-Section "None". Content can be copied to the XML Row, but is not parsed. "None" Section's
@@ -267,6 +267,23 @@
         LocateRecRowByKey() to standardize searches for any Row in any Section based on a Record Key Value. Added "Trace Sample" button
         to Record-Row display when in the Sample Section - when the parsed row contains a SampleID, the "Trace Sample" button appears - clicking
         it will open the Trace-Sample form, transfer the SampleID to the form, and invoke Trace.
+
+1.060.2     March 23, 2021 Bob Hehmann
+    Git:        Printing
+    Summary:    Implemented formatted Print function for the Descriptive Text area.
+    Details:    Created an enhanced RTB control, inheriting the standard Rich Text Box, augmenting it with methods to pass print-rendering
+                off to the Win32 API, which can correctly render a formatted RTB for printing. Enhancements are coded in a new Class,
+                RTBPrint: code structure courtesy of Martin Mueller 1/18/2008 article for Microsoft. Modified standard print logic to
+                invoke the new formatter.
+
+    1)  Added Print function, to print contents of the Descriptive Text Box (Section Info, Section Descriptions). Creates a hidden RBTPrint
+        control (Rtb_DTExt), and copies formatted text over from the Rtb_DescText control, adding appropriate headers. It then invokes the enhanced
+        print formatting of the new control to render the content to any printer.
+
+    2)  Modified "\DATA\initial.txt" file, removing the quotation marks from the string defining the default ODF directory path - the existence of
+        these quotes causes AECHO to take a system default directory, rather than use the contents of the initial.txt file.
+
+    3)  Updated fallback-Help file (help.rtf) to accurately reflect the complete functionality.
 
 
     7)  Established a separate Module (SharedCode.vb) for shared Functions and Subroutines, moving them out of the Main Form's

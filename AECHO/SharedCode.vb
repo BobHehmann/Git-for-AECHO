@@ -12,6 +12,7 @@ Module SharedCode
 
     ' Global Constants      <1.060.2> Moved many Global Constant declarations from Main Form to here, and
     '                       narrowed their scope from "Public" to "Friend".
+    '                       <1.060.2> Minor changes to optimize Printing
 
     Friend Const conHTMLHelpDir As String = "AECHOHelpFiles"                ' <1.060.2> Location of HTML Help Files with \DATA dir
     Friend Const conHTMLHelpFile As String = "AECHOMain.HTM"                ' <1.060.2> Top level HTML Help File
@@ -31,6 +32,7 @@ Module SharedCode
     Friend Const conTextBoxTitle_Desc As String = "Section Field/Tag Descriptions"
     Friend Const conTextBoxTitle2_Desc As String = " Tag       Expanded Tag Name"
     Friend Const conTextBoxTitle_Help As String = "AECHO Help Text"
+    Friend Const conTextBoxTitle_List As String = "  Sec ID.    Start-Line               End-Line                 Start-Char                      End-Char              Section Name"
     Friend Const conMainTitle As String = "AECHO: Hauptwerk Organ Analyzer, Version "
 
     Friend Const conDefSectionName As String = "None"
@@ -239,26 +241,29 @@ Module SharedCode
         Const lclProcName As String = "CenterLbl"       ' <1.060.2> Function's name for DispMsg calls
 
         If (leftMargin < conLeftMargin) Or (rightMargin > MAIN.Right) Then
-            DispMsg(lclProcName, MsgBoxStyle.Exclamation, "Requested Margin is out-of bounds" & vbCrLf &
-                         " Left Min: " & conLeftMargin & vbCrLf &
-                         " Right Max: " & MAIN.Right & vbCrLf &
-                         " Left Requested: " & leftMargin & vbCrLf &
-                         " Right Requested: " & rightMargin & vbCr)
+            DispMsg(lclProcName, conMsgExcl,
+                    "Requested Margin is out-of bounds" & vbCrLf &
+                    " Left Min: " & conLeftMargin & vbCrLf &
+                    " Right Max: " & MAIN.Right & vbCrLf &
+                    " Left Requested: " & leftMargin & vbCrLf &
+                    " Right Requested: " & rightMargin & vbCr)
             Return False
         End If
         If (leftMargin >= rightMargin) Then
-            DispMsg(lclProcName, MsgBoxStyle.Exclamation, "Requested Left Margin must be less than the Right Margin" & vbCrLf &
-                         " Left Margin: " & leftMargin & vbCrLf &
-                         " Right Margin: " & rightMargin)
+            DispMsg(lclProcName, conMsgExcl,
+                    "Requested Left Margin must be less than the Right Margin" & vbCrLf &
+                    " Left Margin: " & leftMargin & vbCrLf &
+                    " Right Margin: " & rightMargin)
             Return False
         End If
         If (item.Width >= (rightMargin - leftMargin) - 1) Then
-            DispMsg(lclProcName, MsgBoxStyle.Information, "Text is too long to fit within the requested margins" & vbCrLf &
-                         "Will still attempt to display text." & vbCrLf &
-                         " Left Margin: " & leftMargin & vbCrLf &
-                         " Right Margin: " & rightMargin & vbCrLf &
-                         " Text Width: " & item.Width & vbCrLf &
-                         " Text: " & item.Text & vbCrLf)
+            DispMsg(lclProcName, conMsgExcl,
+                    "Text is too long to fit within the requested margins" & vbCrLf &
+                    "Will still attempt to display text." & vbCrLf &
+                    " Left Margin: " & leftMargin & vbCrLf &
+                    " Right Margin: " & rightMargin & vbCrLf &
+                    " Text Width: " & item.Width & vbCrLf &
+                    " Text: " & item.Text & vbCrLf)
             item.Left = leftMargin + (0.5 * (rightMargin - leftMargin))
             Return True
         End If
@@ -319,11 +324,13 @@ Module SharedCode
         Dim idx As Integer                                          ' <1.060.1> String-search index
 
         If appPath = "" Then                                        ' <1.060.2> Guard Code, validate parameters: must not be null
-            DispMsg(lclProcName, MsgBoxStyle.Critical, "appPath is Null. " & lclWarning)
+            DispMsg(lclProcName, conMsgCrit,
+                    "appPath is Null. " & lclWarning)
             Return ""
         End If
         If dataFileName = "" Then
-            DispMsg(lclProcName, MsgBoxStyle.Critical, "dataFileName is Null. " & lclWarning)
+            DispMsg(lclProcName, conMsgCrit,
+                    "dataFileName is Null. " & lclWarning)
             Return ""
         End If
 
@@ -346,14 +353,15 @@ Module SharedCode
                 End If
             End If
             '                                                         we get here if we fail at any point, present a warning message
-            DispMsg(lclProcName, MsgBoxStyle.Information, "Cannot locate the \DATA directory. " & lclWarning & vbCrLf &
-                "appPath: " & appPath & vbCrLf &
-                "dataFileName: " & dataFileName & vbCrLf &
-                "workingDataDir: " & workingDataDir)
+            DispMsg(lclProcName, conMsgExcl,
+                    "Cannot locate the \DATA directory. " & lclWarning & vbCrLf &
+                    "appPath: " & appPath & vbCrLf &
+                    "dataFileName: " & dataFileName & vbCrLf &
+                    "workingDataDir: " & workingDataDir)
             Return ""                                               ' Error return
 
         Catch ex As Exception                                       ' Catch general exceptions here
-            DispMsg(lclProcName, MsgBoxStyle.Critical,
+            DispMsg(lclProcName, conMsgCrit,
                     "General Exception, " & lclWarning & vbCrLf &
                     "appPath: " & appPath & vbCrLf &
                     "dataFileName: " & dataFileName & vbCrLf &
@@ -379,26 +387,25 @@ Module SharedCode
         '               OS-independant file path; relocated from MAIN form to here. Messaging through DispMsg.     
 
         Const lclProcName As String = "GetODFLibPath"               ' <1.060.2> Function's name for DispMsg calls
-        Const conDefODFPath As String = "C:\HAUPTWERK\HauptwerkSampleSetsAndComponents\OrganDefinitions"
+        Const conDefODFPath As String = "D:\Hauptwerk\HauptwerkSampleSetsAndComponents\OrganDefinitions"
 
         Dim sr As StreamReader                                      ' Stream to use to read initialdir.txt file
         Dim retValue As String                                      ' <1.060.2> Working var for Path to ODF library
         Dim initialdirFName As String                               ' <1.060.2> Working var for Path to InitialDir.txt
 
         If dataPath = "" Then                                       ' <1.060.2> Test guard conditions for parameter validity
-            DispMsg(lclProcName, MsgBoxStyle.Exclamation,
+            DispMsg(lclProcName, conMsgExcl,
                     "DataPath is null, will use default ODF Library location")
             Return conDefODFPath
         End If
         If initFileName = "" Then
-            DispMsg(lclProcName, MsgBoxStyle.Exclamation,
+            DispMsg(lclProcName, conMsgExcl,
                     "Init Filename is null, will use default ODF Library location")
             Return conDefODFPath
         End If
 
         initialdirFName = Path.Combine(dataPath, initFileName)      ' Create path to InitialDir.txt; <1.060.2> Changed literal string to constant
         retValue = conDefODFPath                                    ' Default to hard-coded path, to be used when InitialDir.txt can't be read
-
         Try                                                         ' Absorb exceptions, targets "File not found..."
             If File.Exists(initialdirFName) Then                    ' Did we find InitialDir.txt?
                 sr = New StreamReader(initialdirFName)              ' Open InitialDir.txt, read its record, close
@@ -444,7 +451,7 @@ Module SharedCode
         idx = fnameODF.LastIndexOf(organDefPath,            ' <1.060.2> LastIndexOf Method is 0 based, not VB's normal 1 based - find last instance
                                    fnameODF.Length - 1)     ' <1.060.2> Find last instance of OrganDefinitions Directory
         If idx < 0 Then
-            DispMsg(lclProcName, MsgBoxStyle.Critical,
+            DispMsg(lclProcName, conMsgCrit,
                     "Unable to locate Organ Definitions Directory" & vbCrLf &
                     "Some functions will fail.")            ' <1.060.2> Never found organDefPath
             Return ""
@@ -456,7 +463,7 @@ Module SharedCode
             Return newPath                                  ' <1.060.2> It does, let's go with it...
         End If
 
-        DispMsg(lclProcName, MsgBoxStyle.Critical,          ' <1.060.2> Oopsie, no such dir, message and return empty string
+        DispMsg(lclProcName, conMsgCrit,                    ' <1.060.2> Oopsie, no such dir, message and return empty string
                 "Unable to locate Organ Definitions Directory" & vbCrLf &
                 "Some functions will fail.")
         Return ""
@@ -671,7 +678,7 @@ Module SharedCode
                                                     MAIN.Rtb_ODF.Text, False, UTF8NoBOM)
                 SaveODFAs = True                                                    ' <1.060.2> Safely written, update status to True
             Catch ex As Exception                                                   ' <1.060.2> I/O blew up, display exception message, return default False
-                DispMsg(lclProcName, MsgBoxStyle.Critical,
+                DispMsg(lclProcName, conMsgCrit,
                     "General Exception while attempting to write ODF File" & vbCrLf &
                     "Output filename is: " & saveFileDialog.FileName & vbCrLf &
                     "Exception Code is: " & vbCrLf & ex.ToString)
@@ -713,7 +720,7 @@ Module SharedCode
         sec.name = ""                                                       ' <1.060.2> Need to allocate instance of the structure.
 
         If Not GotSectionDataByName(secName, sec) Then                      ' <1.060.2> True -> Found secName, its data is now in structure sec
-            DispMsg(lclProcName, MsgBoxStyle.Critical,                      ' <1.060.2> False -> Whoops, didn't find it, alert and return.
+            DispMsg(lclProcName, conMsgCrit,                                ' <1.060.2> False -> Whoops, didn't find it, alert and return.
                 "Unable to locate Section named """ & secName & """ " & vbCrLf &
                 "Could be either an ill-formed ODF, or an internal AECHO error.")
             Return
@@ -822,12 +829,12 @@ Module SharedCode
             Return -1                                           ' MODIF V058; to avoid searching an empty source
         End If
         If searchText.Length <= 0 Then
-            DispMsg(lclProcName, MsgBoxStyle.Exclamation,       ' <1.060.2> Let user know about internal error, search text should not be null
+            DispMsg(lclProcName, conMsgExcl,                    ' <1.060.2> Let user know about internal error, search text should not be null
                     "Function called with null search text.")
             Return -1
         End If
         If start < 0 Then
-            DispMsg(lclProcName, MsgBoxStyle.Exclamation,       ' <1.060.2> Let user know about internal error, search start should be >=0
+            DispMsg(lclProcName, conMsgExcl,                    ' <1.060.2> Let user know about internal error, search start should be >=0
                     "Function called with start of search before beginning." & vbCrLf &
                     "start is: " & start)
             Return -1
@@ -932,6 +939,7 @@ Module SharedCode
                                 sectionName As String,                      ' <1.060.2> Section Name we are requesting
                                 prevFile As String                          ' <1.060.> Full Path/File of rtf file currently on display, "" if none
                                 ) As String                                 ' <1.060.2> Full Path/File of newly loaded file, "" if none found, prevFile if already loaded
+
         ' CHARGE LE FICHIER RTF DECRIVANT UNE SECTION
 
         ' Purpose:      Display the Descriptive Text file (.rtf) associated with a Section, or modele.rtf
@@ -981,7 +989,7 @@ Module SharedCode
                         SetRTBDescButtons(True)                             ' <1.060.2> Model Text is loaded, enable "Set Font" and "Save Description" Buttons
                     Else                                                    ' What if both Section and Model are missing?
                         SetRTBDescButtons(False)                            ' <1.060.2> Nothing to edit, disable "Set Font" and "Save Description" Buttons
-                        DispMsg(lclProcName, MsgBoxStyle.Critical,          ' <1.060.2> Whine to the user...
+                        DispMsg(lclProcName, conMsgCrit,                    ' <1.060.2> Whine to the user...
                                 "Unable to locate a Descriptive Text file." & vbCrLf &
                                 "Section requested was: " & sectionName & vbCrLf &
                                 "Data Path was: " * dataPath & vbCrLf &
@@ -990,7 +998,7 @@ Module SharedCode
                     End If
                 End If
             Catch ex As ArgumentException                                   ' <1.060.2> Couldn't retrieve the requested data, & raised an Exception
-                DispMsg(lclProcName, MsgBoxStyle.Critical,
+                DispMsg(lclProcName, conMsgCrit,
                         "Unable to load a Descriptive Text File" & vbCrLf &
                         "Section requested was: " & sectionName & vbCrLf &
                         "Data Path was: " * dataPath & vbCrLf &
@@ -1135,7 +1143,7 @@ Module SharedCode
                            tagStart,
                            MAIN.Rtb_XMLRow)                         ' trouve le tag de fin; Search for End-Tag ("</x>"), continuing from start of Content
         If tagEnd = -1 Then                                         ' Didn't find the matching End-Tag: warn user, return failure.
-            DispMsg(lclProcName, MsgBoxStyle.Exclamation,
+            DispMsg(lclProcName, conMsgExcl,
                     "While parsing the XML Row, did not find matching End-Tag for Start-Tag: <" & tag & ">" & vbCrLf &
                     "Content or End-Tag search began at position: " & tagStart & vbCrLf &
                     "Likely syntax error in the ODF - will continue processing.")
@@ -1143,7 +1151,7 @@ Module SharedCode
         End If
 
         If tagEnd - tagStart < 1 Then                               ' End was before Start, signal error. Note that End can equal Start, if there is no Content
-            DispMsg(lclProcName, MsgBoxStyle.Exclamation,
+            DispMsg(lclProcName, conMsgExcl,
                     "tagEnd: " & tagEnd & " was < tagStart: " & tagStart & vbCrLf &
                     "While searching for Tag <" & tag & ">" & vbCrLf &
                     "From position: " & pos & vbCrLf &
@@ -1287,10 +1295,9 @@ Module SharedCode
                     MAIN.Rtb_DescText.Right)
                 MAIN.Lbl_TextBoxTitle2.Left =
                     MAIN.Rtb_DescText.Left                          ' Place legend text on the left of the Bottom Title Line
-                MAIN.Lbl_TextBoxTitle2.Text = "  Sec ID.        Start                                      End                          Section Name"
+                MAIN.Lbl_TextBoxTitle2.Text = conTextBoxTitle_List
                 MAIN.Rtb_DescText.SelectAll()                       ' Set tab locations to approximate columnar alignment
-                MAIN.Rtb_DescText.SelectionTabs = New Integer() {70, 170, 210, 310}
-                MAIN.Rtb_DescText.AcceptsTab = True
+                MAIN.Rtb_DescText.SelectionTabs = New Integer() {60, 130, 160, 260, 350, 380, 470}
                 MAIN.Lbl_TextBoxTitle1.Refresh()
                 MAIN.Lbl_TextBoxTitle2.Refresh()
             End If
@@ -1305,7 +1312,7 @@ Module SharedCode
                                    srchPos + conSecStartTag.Length,
                                    conQuickNoH)
                 If eTag < 0 Then                                    ' No closing ">"?
-                    DispMsg(lclProcName, MsgBoxStyle.Critical,
+                    DispMsg(lclProcName, conMsgCrit,
                             "Failed to locate closing '>' of Section Start-Tag from position " & srchPos & vbCrLf &
                             "Possible ill-formed ODF")
                 Else
@@ -1326,8 +1333,7 @@ Module SharedCode
                                              secNameStart,          ' Begin search from opening char of Section Name
                                              conQuickNoH)
                     If secNameEnd < 0 Then
-                        DispMsg(lclProcName,
-                                MsgBoxStyle.Exclamation,
+                        DispMsg(lclProcName, conMsgExcl,
                                 "Did not find closing quotes at end of Section Name. Search began at position: " & secNameStart & vbCrLf &
                                 "Possible ill-formed ODF.")
                         secName = ""
@@ -1340,8 +1346,7 @@ Module SharedCode
                                          secNameStart,
                                          conQuickNoH)
                     If secEnd < 0 Then                              ' Did not find it, warn
-                        DispMsg(lclProcName,
-                                MsgBoxStyle.Exclamation,
+                        DispMsg(lclProcName, conMsgExcl,
                                 "Did not find Section End-Tag. Search began at position: " & secNameStart & vbCrLf &
                                 "Possible ill-formed ODF.")
                         secEnd = 0
@@ -1350,9 +1355,11 @@ Module SharedCode
                     End If
 
                     MAIN.Rtb_DescText.Text +=                       ' Use tabs to left align content; String.Format to format & embed values
-                            String.Format("{0,5:N0}{1,1}{2,-1:N0}{3,1}{4,2}{5,1}{6,-1:N0}{7,1}{8,-1}",
-                                          secNum, vbTab, srchPos, vbTab, "to", vbTab,
-                                          secEnd, vbTab, secName) & vbCrLf
+                            String.Format("{0,5:N0}{1,1}{2,-1:N0}{3,1}{4,2}{5,1}{6,-1:N0}{7,1}{8,-1:N0}{9,1}{10,1}{11,1}{12,-1:N0}{13,1}{14,-1}",
+                                          secNum, vbTab,
+                                          srcRTB.GetLineFromCharIndex(srchPos) + 1, vbTab, "to", vbTab,
+                                          srcRTB.GetLineFromCharIndex(secEnd) + 1, vbTab,
+                                          srchPos, vbTab, "to", vbTab, secEnd, vbTab, secName) & vbCrLf
                     MAIN.Rtb_DescText.Refresh()                     ' Repaint the progress description
                     eTag = Max(eTag, secEnd)                        ' Begin search for next section from farthest known location in previous one
                 End If
@@ -1413,7 +1420,7 @@ Module SharedCode
             pID = packageID                                 ' <1.060.2> ImageSet Row, so we have the PackageID directly, from the XML, passed in through [packageID]
         End If
         If pID = "" Then
-            DispMsg(lclProcName, MsgBoxStyle.Exclamation,
+            DispMsg(lclProcName, conMsgExcl,
                     "Unable to determine a PackageID to locate the Image File: " & imageFileName & vbCrLf &
                     "imageSetID is: " & imageSetID & vbCrLf &
                     "packageID is: " & packageID)
@@ -1448,7 +1455,7 @@ Module SharedCode
                 .PBox.Visible = True                        ' Display it
 
             Catch ex As ArgumentException                   ' Couldn't retrieve the requested data - could be missing file, or a non-image file type.
-                DispMsg(lclProcName, MsgBoxStyle.Exclamation,
+                DispMsg(lclProcName, conMsgExcl,
                         "Unable to display an Image file." & vbCrLf &
                         "Requested URL was: " & url & vbCrLf &
                         "Exception Code Is: " & ex.Message)
@@ -1498,7 +1505,7 @@ Module SharedCode
             Return ""
         End If
         If retStatus <> 1 Then                                      ' <1.060.2> Got Section, but no Record
-            DispMsg(lclProcName, MsgBoxStyle.Exclamation,           ' <1.060.2> Implies FK from ImageSetElement has no matching PK in the ImageSet Section
+            DispMsg(lclProcName, conMsgExcl,                        ' <1.060.2> Implies FK from ImageSetElement has no matching PK in the ImageSet Section
                    "Unable to locate the ImageSet Row with ImageSetID Element (primary key): '<a>" & imgSetID & "</a>'" & vbCrLf &
                    "This may be an error in the ODF, or in the AECHO code.")
             Return ""
@@ -1510,7 +1517,7 @@ Module SharedCode
                                       tagEndRow,
                                       conQuickNoH)
             If tagStartC < 0 Then
-                DispMsg(lclProcName, MsgBoxStyle.Exclamation,           ' <1.060.2> Implies "<c>" Tag (PackageID) is missing in ImageSet Row
+                DispMsg(lclProcName, conMsgExcl,                        ' <1.060.2> Implies "<c>" Tag (PackageID) is missing in ImageSet Row
                         "Unable to locate the PackageID Start-Tag " & conCStartTag & " from ImageSetID: '<a>" & imgSetID & "</a>'" & vbCrLf &
                         "This may be an error in the ODF, or in the AECHO code.")
                 Return ""                                               ' Didn't find the PackageID Start-Tag, return empty-handed...
@@ -1521,7 +1528,7 @@ Module SharedCode
                                     tagEndRow,
                                     conQuickNoH)
             If tagEndC < 0 Then
-                DispMsg(lclProcName, MsgBoxStyle.Exclamation,           ' <1.060.2> Implies "<c>" Tag (PackageID) is missing in ImageSet Row
+                DispMsg(lclProcName, conMsgExcl,                        ' <1.060.2> Implies "<c>" Tag (PackageID) is missing in ImageSet Row
                        "Unable to locate the PackageID End-Tag " & conCEndTag & " from ImageSetID: '<a>" & imgSetID & "</a>'" & vbCrLf &
                        "This may be an error in the ODF, or in the AECHO code.")
                 Return ""                                               ' Didn't find the matching PackageID End-Tag, return empty-handed...
@@ -1731,7 +1738,8 @@ Module SharedCode
                                      rowEnd + 1,
                                      MAIN.Rtb_ODF)
                 If rowExtEnd < 0 Then                                   ' <1.060.2> Never found it, just keep Row ending on this Line
-                    DispMsg(lclProcName, MsgBoxStyle.Exclamation, "Did not find subsequent closing </o> tag, will not extend this Line")
+                    DispMsg(lclProcName, conMsgExcl,
+                            "Did not find subsequent closing </o> tag, will not extend this Line.")
                 Else                                                    ' <1.060.2> We did find it, add in the closing Tag, that's our new Row End
                     rowEnd = rowExtEnd + conRowEndTag.Length
                 End If
@@ -1745,7 +1753,8 @@ Module SharedCode
                                           rowStart,
                                           MAIN.Rtb_ODF)
                 If rowExtStart < 0 Then                                 ' <1.060.2> Never found a prior opening Tag, just use the Line Start we have
-                    DispMsg(lclProcName, MsgBoxStyle.Exclamation, "Did not find prior opening <o> Tag, will not extend this Line")
+                    DispMsg(lclProcName, conMsgExcl,
+                            "Did not find prior opening <o> Tag, will not extend this Line.")
                 Else
                     rowStart = rowExtStart                              ' <1.060.2> Found it, index already points to start of the Tag
                 End If
@@ -1796,12 +1805,12 @@ Module SharedCode
             Return -1
         End If
         If text.Length <= 0 Then
-            DispMsg(lclProcName, MsgBoxStyle.Exclamation,
+            DispMsg(lclProcName, conMsgExcl,
                     "Function called with null search text.")
             Return -1
         End If
         If start < 0 Then
-            DispMsg(lclProcName, MsgBoxStyle.Exclamation,
+            DispMsg(lclProcName, conMsgExcl,
                     "Function called with start of search before beginning." & vbCrLf &
                     "start is: " & start)
             Return -1
@@ -1861,7 +1870,7 @@ Module SharedCode
 
         With MAIN.Rtb_ODF                                               ' For easier reference
             If secName = "" Or (.TextLength = 0) Then
-                DispMsg(lclProcName, MsgBoxStyle.Information,
+                DispMsg("", conMsgInfo,
                         "Either no Section Name or no ODF" & vbCrLf &
                         "Requested Section: " & secName & vbCrLf &
                         "ODF Length: " & .TextLength.ToString(conIntFmt))
@@ -1872,7 +1881,7 @@ Module SharedCode
             secTag = conSecStartTag & """" & secName & """>"            ' Build Start-Tag: '<ObjectList ObjectType="secName">'
             secStart = .Find(secTag, 0, conQuickNoH)                    ' Locate the Section Start-Tag
             If secStart < 0 Then
-                DispMsg(lclProcName, MsgBoxStyle.Exclamation,
+                DispMsg(lclProcName, conMsgExcl,
                         "Did not find Section Start-Tag for Section: " & secName & vbCrLf &
                         "Start-Tag string is: " & secTag & vbCrLf &
                         "May be either an ill-formed ODF or an AECHO error.")
@@ -1885,7 +1894,7 @@ Module SharedCode
                            secStart,
                            conQuickNoH)                                 ' Find End-Tag, "</ObjectList>"
             If secEnd < 0 Then                                          ' Did not locate an End-Tag
-                DispMsg(lclProcName, MsgBoxStyle.Exclamation,
+                DispMsg(lclProcName, conMsgExcl,
                         "Did not find Section End-Tag for Section: " & secName & vbCrLf &
                         "Start-Tag string is: " & secTag & vbCrLf &
                         "May be either an ill-formed ODF or an AECHO error.")
@@ -1905,7 +1914,7 @@ Module SharedCode
                 rowEnd = .Find(conRowEndTag, rowStart + 3,              ' Look for matching Row End-Tag
                                secEnd, conQuickNoH)
                 If rowEnd < 0 Then                                      ' Nope. Is an error, but we can continue
-                    DispMsg(lclProcName, MsgBoxStyle.Exclamation,
+                    DispMsg(lclProcName, conMsgExcl,
                             "Did not find matching Record-Row End Tag." & vbCrLf &
                             "This may be an ill-formed ODF, will continue.")
                     secData.firstRowStart = -1
@@ -2282,8 +2291,7 @@ Module SharedCode
 
         sec.name = ""                                                   ' Init as "Section Not Found"
         If Not GotSectionDataByName(secName, sec) Then                  ' Didn't find the requested Section
-            DispMsg(lclProcName,
-                    conMsgExcl,
+            DispMsg(lclProcName, conMsgExcl,
                     "Could not locate the " & secName & " Section. This may be an ill-formed ODF.")
             Return -2                                                   ' Error return, nothing was found, no good data returned
         End If
@@ -2305,7 +2313,8 @@ Module SharedCode
                                      recPos,                            ' Start search from the previsouly located Key-Tag
                                      conQuickNoH + conSrchRev)
         If rowStart < 0 Then                                            ' Not found, display message and return
-            DispMsg(lclProcName, conMsgExcl, "Could not locate the Record Start-Tag '<o>'. This may be an ill-formed ODF.")
+            DispMsg(lclProcName, conMsgExcl,
+                    "Could not locate the Record Start-Tag '<o>'. This may be an ill-formed ODF.")
             Return -1                                                   ' Section is OK, but an error while identifying the Row
         End If
 
@@ -2314,7 +2323,8 @@ Module SharedCode
                                       sec.endPos,                       ' Limit search to the Section's boundaries
                                       conQuickNoH)
         If rowEnd < 0 Then                                              ' Row End-Tag not found, display message and return
-            DispMsg(lclProcName, conMsgExcl, "Could not locate the Record End-Tag '</o>'. This may be an ill-formed ODF.")
+            DispMsg(lclProcName, conMsgExcl,
+                    "Could not locate the Record End-Tag '</o>'. This may be an ill-formed ODF.")
             Return -1                                                   ' Section is OK, but an error while identifying the Row
         End If
 

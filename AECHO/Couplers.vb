@@ -27,12 +27,12 @@ Public Class Couplers
         If e.KeyCode = Keys.Enter Then                      ' Only process an "Enter" - ignore other typing in the field
             If Not Integer.TryParse(
                 Trim(Txt_CplrCode.Text), cplrCode) Then     ' <1.060.2> Strip surrounding whitespace, check if is a valid number
-                DispMsg("", MsgBoxStyle.Information, "Coupler Codes must be an integer value.")
+                DispMsg("", conMsgInfo, "Coupler Codes must be an integer value.")
                 Txt_CplrCode.Clear()                        ' <1.060.2> Erase entry and try again
                 Return
             End If
             If Trim(Txt_CplrCode.Text).Length <> 4 Then     ' <1.060.2> Must be exactly 4 digits
-                DispMsg("", MsgBoxStyle.Information, "Coupler Codes must be exactly 4-digits long.")
+                DispMsg("", conMsgInfo, "Coupler Codes must be exactly 4-digits long.")
                 If Trim(Txt_CplrCode.Text).Length < 4 Then  ' <1.060.2> Too short, leave alone
                     Return
                 End If
@@ -47,12 +47,12 @@ Public Class Couplers
             typeCode = cplrCode Mod 5                       ' Type is Code mod 5
 
             If (destCode < 10) Or (destCode > 16) Then      ' <1.060.2> Validate Destination range
-                DispMsg("", MsgBoxStyle.Information, "The leftmost 2 digits must be between 10 & 16 inclusive.")
+                DispMsg("", conMsgInfo, "The leftmost 2 digits must be between 10 & 16 inclusive.")
                 Txt_CplrCode.Clear()                        ' <1.060.2> Clear, and try again...
                 Return
             End If
             If srcCode > 34 Then                            ' <1.060.2> Validate Source & Type range
-                DispMsg("", MsgBoxStyle.Information, "The rightmost 2 digits must be between 00 & 34 inclusive.")
+                DispMsg("", conMsgInfo, "The rightmost 2 digits must be between 00 & 34 inclusive.")
                 Txt_CplrCode.Clear()                        ' <1.060.2> Clear, and try again...
                 Return
             End If
@@ -145,7 +145,7 @@ Public Class Couplers
 
         If RadioUOff.Checked AndAlso                    ' <1.060.2> If Unison-Off, ensure Source = Destination
             (srcVal * 20) <> (destVal - 1000) Then      ' <1.060.2> This bit of math allows comparison of Source & Destination
-            DispMsg("", MsgBoxStyle.Information,        ' <1.060.2> Warn User
+            DispMsg("", conMsgInfo,                     ' <1.060.2> Warn User
                     "For Unison-Off, Source and Destination must be the same.")
             Txt_CplrCode.Clear()                        ' <1.060.2> Clear any residual value in the Coupler Code display
             Return                                      ' <1.060.2> And dismiss the interaction
@@ -153,7 +153,7 @@ Public Class Couplers
 
         If Radio8.Checked AndAlso                       ' <1.060.2>, Using similar logic to previous snippet, if coupling is
             (srcVal * 20) = (destVal - 1000) Then       ' <1.060.2> 8 ft./Unison, Source and Destination must be different
-            DispMsg("", MsgBoxStyle.Information,
+            DispMsg("", conMsgInfo,
                     " For 8 ft., Source and Destination must be different.")
             Txt_CplrCode.Clear()
             Return
