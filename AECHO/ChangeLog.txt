@@ -268,7 +268,7 @@
         to Record-Row display when in the Sample Section - when the parsed row contains a SampleID, the "Trace Sample" button appears - clicking
         it will open the Trace-Sample form, transfer the SampleID to the form, and invoke Trace.
 
-1.060.2     March 23, 2021 Bob Hehmann
+1.060.3     March 23, 2021 Bob Hehmann
     Git:        Printing
     Summary:    Implemented formatted Print function for the Descriptive Text area.
     Details:    Created an enhanced RTB control, inheriting the standard Rich Text Box, augmenting it with methods to pass print-rendering
@@ -284,6 +284,9 @@
         these quotes causes AECHO to take a system default directory, rather than use the contents of the initial.txt file.
 
     3)  Updated fallback-Help file (help.rtf) to accurately reflect the complete functionality.
+
+    4)  Always close the Sample Trace form when initializing to "No ODF". Note that this does not require knowing if Trace is open, no exception is
+        thrown either way. Renamed the form & vb code to from "Follow" to "Trace", for consistency.
 
 
     7)  Established a separate Module (SharedCode.vb) for shared Functions and Subroutines, moving them out of the Main Form's

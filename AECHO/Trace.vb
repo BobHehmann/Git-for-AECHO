@@ -1,6 +1,6 @@
 ﻿Imports System.Windows.Forms
 
-Public Class Follow
+Public Class Trace
 
     Private Sub Btn_TraceSample_Click(          ' User clicked the "OK" Button
             sender As Object,
@@ -25,5 +25,7 @@ Public Class Follow
 
     End Sub
 
+    Private Sub Follow_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
+    End Sub
 End Class

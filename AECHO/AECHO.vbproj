@@ -81,8 +81,8 @@
     <Compile Update="Couplers.Designer.vb">
       <DependentUpon>Couplers.vb</DependentUpon>
     </Compile>
-    <Compile Update="Follow.Designer.vb">
-      <DependentUpon>Follow.vb</DependentUpon>
+    <Compile Update="Trace.Designer.vb">
+      <DependentUpon>Trace.vb</DependentUpon>
     </Compile>
     <Compile Update="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

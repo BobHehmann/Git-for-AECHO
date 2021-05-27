@@ -560,6 +560,8 @@ Module SharedCode
             SetRTBDescButtons(False)                        ' <1.060.2> Only enable the Section Set/Save Buttons when usable e.g. when a Section's text is loaded
             SetODFButtons(False)                            ' <1.060.2> Disable Controls that require presence of ODF text, such as Search, Marker, and Next/Prev
 
+            Trace.Close()                                   ' <1.060.2> Close Sample Trace form - note, no error if Trace is not open.
+
         End With
 
         MAIN.Refresh()                                      ' Update screen now, before loading ODF
@@ -1406,11 +1408,11 @@ Module SharedCode
         Dim pID As String                                   ' <1.060.2> Becomes the PackageID, either from passed parm, or from search of the parent ImageSet Row
 
         If MAIN.Btn_DisplayImage.Text = conTraceSample Then ' <1.060.2> Load the TraceSample form, supplying it with the SampleID
-            Follow.Visible = False
-            Follow.Show(MAIN)
-            Follow.Txt_SampleID.Text = G_SampleID           ' <1.060.2> Preload the current SampleID
-            TraceSample(Val(Follow.Txt_SampleID.Text),
-                    Follow.Lb_TraceSample)                  ' <1.060.2> Call TraceSample to execute Trace in the Follow form
+            Trace.Visible = False
+            Trace.Show(MAIN)
+            Trace.Txt_SampleID.Text = G_SampleID           ' <1.060.2> Preload the current SampleID
+            TraceSample(Val(Trace.Txt_SampleID.Text),
+                    Trace.Lb_TraceSample)                  ' <1.060.2> Call TraceSample to execute Trace in the Follow form
             Return
         End If
 

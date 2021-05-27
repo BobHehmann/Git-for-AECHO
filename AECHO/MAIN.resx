@@ -58,13 +58,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Menu_OpenHauptwerkOrgan.ToolTipText" xml:space="preserve">
-    <value>Select an ODF file to open, using a stanard Windows File 
-Open Dialog. Windows will remember the last directory
-that you opened an ODF from, and make that the initial
-search direcrtory. If AECHO currently has an active ODF 
-that has been modified since it was opened or last saved,
-AECHO will prompt you to save that ODF to a file before
-opening the new ODF.</value>
+    <value>Select and load an ODF file using a standard Windows
+File-Open Dialog. Windows uses the last opened ODF's
+directory as the starting place to locate this ODF.
+
+If there is a modified but unsaved ODF currently loaded,
+prompts to save it before opening a new one.</value>
   </data>
   <data name="Menu_ReComputeSections.ToolTipText" xml:space="preserve">
     <value>AECHO will scan the entire ODF, indentifying all Sections,

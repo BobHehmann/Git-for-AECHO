@@ -1,5 +1,5 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
-Partial Class Follow
+Partial Class Trace
     Inherits System.Windows.Forms.Form
 
     'Form remplace la méthode Dispose pour nettoyer la liste des composants.
@@ -69,7 +69,7 @@ Partial Class Follow
         Me.Btn_TraceSample.Text = "Trace Sample"
         Me.Btn_TraceSample.UseVisualStyleBackColor = True
         '
-        'Follow
+        'Trace
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 15.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
@@ -79,10 +79,10 @@ Partial Class Follow
         Me.Controls.Add(Me.Txt_SampleID)
         Me.Controls.Add(Me.Label1)
         Me.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.Name = "Follow"
+        Me.Name = "Trace"
         Me.Opacity = 0.9R
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "Follow"
+        Me.Text = "Sample Trace"
         Me.ResumeLayout(False)
         Me.PerformLayout()
 

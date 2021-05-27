@@ -661,8 +661,8 @@ Public Class MAIN
         Const lclProcName As String =                   ' <1.060.2> Routine's name for message handling
             "FollowASampleToolStripMenuItem_Click"
 
-        Follow.Visible = False
-        Follow.Show(Me)                                 ' Open the form, if already open, give it focus
+        Trace.Visible = False
+        Trace.Show(Me)                                 ' Open the form, if already open, give it focus
 
     End Sub
 
