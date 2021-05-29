@@ -288,6 +288,12 @@
     4)  Always close the Sample Trace form when initializing to "No ODF". Note that this does not require knowing if Trace is open, no exception is
         thrown either way. Renamed the form & vb code to from "Follow" to "Trace", for consistency.
 
+    5)  Support formatted printing of Trace Data. Changed out the form's List Box with an enhanced RTB for printing, and aligned parameter types
+        in routines that passed these controls around. Changed .Item.Add method to .AppendText, and appended Cr/Lf to ends of lines. Added blank
+        line at end of a Trace, for visual separation. Added a menu bar to the Trace form, with Exit (close form), Clear Traces (reset the 
+        Trace display area to blank), and Print Traces... (formatted printing of the Trace display area.) Color coded the output, and improved
+        indentation
+
 
     7)  Established a separate Module (SharedCode.vb) for shared Functions and Subroutines, moving them out of the Main Form's
         own code. Reduced naming scope of declarations from "Public" to "Friend". Populated it with:
@@ -329,7 +335,9 @@ Friend Function     GotSectionDataByName()          <New, dynamically calculates
 Friend Sub          HotClickCursorPosition()        <New, Position to an index value, updating all screen fields using single-click semantics>
 Friend Function     ReadAndDisplayTag()             <New, combines old Find_A_Tag() & Read_A_Tag() from Trace, plus logic to append to screen>
 Friend Sub          TraceSample()                   <Relocated from Follow Form>
+Private Sub         TraceAddSection                 <New, abstracts repeated code from TraceSample()>
 Friend Function     LocateRecRowByKey()             <New, modified logic from old TraceSample, now generalized for reuse>
+Friend Sub          AppendTxt()                     <New, appends text to any enhanced RTB, allowing choice of Font and Color>
 
 
 Private Sub         ColorSectionTitles()            <Deleted, no longer used>

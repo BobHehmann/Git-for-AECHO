@@ -57,6 +57,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <metadata name="Menu_Strip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
   <data name="Menu_OpenHauptwerkOrgan.ToolTipText" xml:space="preserve">
     <value>Select and load an ODF file using a standard Windows
 File-Open Dialog. Windows uses the last opened ODF's
@@ -89,6 +92,12 @@ Pitch Rank Base, Pitch Normal MIDI Note, Pitch Exact
 Sample Pitch, License Info, and Pipe Sound Engine 01
 Attack Sample.</value>
   </data>
+  <metadata name="OpenFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>130, 17</value>
+  </metadata>
+  <metadata name="Status_Strip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>265, 17</value>
+  </metadata>
   <data name="Status_RowTypeVal.ToolTipText" xml:space="preserve">
     <value>The type of the Row containing the current Line:
   NA - No ODF
@@ -100,8 +109,14 @@ Attack Sample.</value>
   Sec End-Tag - Section End &lt;/ObjectList&gt;
   Record - &lt;o&gt;...&lt;/o&gt; content within a Section</value>
   </data>
-  <assembly alias="System.Drawing.Common" name="System.Drawing.Common, Version=5.0.0.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
-  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing.Common" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <metadata name="PrintDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>387, 17</value>
+  </metadata>
+  <metadata name="PrintDocument1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>506, 17</value>
+  </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAYAAAAAAAEAIAAtwwAAZgAAABAQAAABACAAaAQAAJPDAAAwMAAAAQAgAKglAAD7xwAAICAAAAEA
         IACoEAAAo+0AAICAAAABACAAKAgBAEv+AABAQAAAAQAgAChCAABzBgIAiVBORw0KGgoAAAANSUhEUgAA

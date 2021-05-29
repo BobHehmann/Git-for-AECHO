@@ -33,10 +33,11 @@ Public Class MAIN
     '   Git:        Printing
     '   Summary:    More robust printing of Descriptive Text RTB
 
-    Dim M_FoundStart As Integer = -1     ' <1.060.2> When a text-search succeeds, this becomes index of start of located text
-    Dim M_FoundEnd As Integer = 0        ' <1.060.2> Defines the end of located text; when 0, there is no located text defined.
-    Dim M_FirstChar As Integer
-    Dim Rtb_DText As RTBPrint = New RTBPrint
+    Dim M_FoundStart As Integer = -1    ' <1.060.2> When a text-search succeeds, this becomes index of start of located text
+    Dim M_FoundEnd As Integer = 0       ' <1.060.2> Defines the end of located text; when 0, there is no located text defined.
+    Dim M_FirstChar As Integer          ' <1.060.2> Current position in print-stream, between page calls
+    Dim Rtb_DText As RTBPrint =         ' <1.060.2> Hidden "enhanced" RTB for formatted printing of the Display Text area
+        New RTBPrint
 
     ' MAIN FORM LOAD
     Private Sub MAIN_Load(sender As Object,                     ' AECHO's base Form
@@ -113,6 +114,20 @@ Public Class MAIN
             .Visible = False                                    ' <1.060.3> Keep it hidden, it is just an internal scratch-pad, not to be seen onscreen
         End With
         Controls.Add(Me.Rtb_DText)                              ' <1.060.3> Create it
+
+        fnt_Fname = New Font(conDescFont,                       ' <1.060.3> Init useful fonts: slightly reduced size, these path/filename strings can be very long
+                      conDefODFFontSize - 1,
+                      FontStyle.Regular)
+        fnt_Title = New Font(conDescFont,                       ' <1.060.3> Increased size and bold
+                             conDefODFFontSize + 1,
+                             FontStyle.Bold)
+        fnt_Fields = New Font(conDescFont,                      ' <1.060.3> Standard vanilla
+                              conDefODFFontSize,
+                              FontStyle.Regular)
+        fnt_Section = New Font(conDescFont,                     ' <1.060.3> Standard size, but bold
+                                     conDefODFFontSize,
+                                     FontStyle.Bold)
+
 
     End Sub
 
@@ -195,7 +210,6 @@ Public Class MAIN
                                       G_PreviousRTFFile)
 
     End Sub
-
     Private Sub Rtb_ODF_MouseClick(sender As Object,                ' Standard Control event parms...
                                  e As MouseEventArgs
                                  ) Handles Rtb_ODF.MouseClick
@@ -391,7 +405,6 @@ Public Class MAIN
         End If
 
     End Sub
-
     Private Sub Menu_SaveAs_Click(          ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -416,7 +429,6 @@ Public Class MAIN
         End If
 
     End Sub
-
     Private Sub Menu_CloseODF_Click(        ' Standard Control event parms...
                                    sender As Object,
                                    e As EventArgs
@@ -438,7 +450,6 @@ Public Class MAIN
         ResetToNoODF()                      ' Clears data areas, resets menus and globals...
 
     End Sub
-
     Private Sub Menu_Quit_Click(            ' Standard Control event parms...
             sender As Object,
             e As EventArgs) Handles Menu_Quit.Click
@@ -496,8 +507,8 @@ Public Class MAIN
         PositionToSectionByName(sender.Tag, True)                       ' <1.060.2> Pass embedded Tag data to search: Tag = SectionName; True -> update Descriptive Box
 
     End Sub
-    ' MENU EDIT MODE
 
+    ' MENU EDIT MODE
     Private Sub Menu_StartEditMode_Click(           ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -532,7 +543,6 @@ Public Class MAIN
                 "ODF Text is now editable")
 
     End Sub
-
     Private Sub Menu_ExitEditMode_Click(            ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -578,7 +588,6 @@ Public Class MAIN
         'End If
 
     End Sub
-
     Private Sub Menu_ReComputeSections_Click(           ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -623,7 +632,6 @@ Public Class MAIN
         ClearMarkers()                      ' Dispatch common routine
 
     End Sub
-
     Private Sub Menu_CouplersCode_Click(    ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -644,7 +652,6 @@ Public Class MAIN
         Couplers.Show(Me)                   ' Open the form; if already open, give it focus
 
     End Sub
-
     Private Sub FollowASampleToolStripMenuItem_Click(   ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -772,7 +779,6 @@ Public Class MAIN
                         True)           ' <1.060.2> Execute a forward search
 
     End Sub
-
     Private Sub Btn_FindNext_Click(     ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -804,7 +810,6 @@ Public Class MAIN
                         True)           ' <1.060.2> Search forward
 
     End Sub
-
     Private Sub Btn_Led_Click(                      ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -825,7 +830,6 @@ Public Class MAIN
         Return
 
     End Sub
-
     Private Sub Btn_SetFont_Click(              ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -858,7 +862,6 @@ Public Class MAIN
         Rtb_DescText.Refresh()                  ' Update screen
 
     End Sub
-
     Private Sub Btn_Markers_MouseDown(              ' Standard Control event parms...
             sender As Object,
             e As MouseEventArgs
@@ -910,7 +913,6 @@ Public Class MAIN
         End If
 
     End Sub
-
     Private Sub Btn_DisplayImage_Click(     ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -937,7 +939,6 @@ Public Class MAIN
                      G_MinPanelHeights)
 
     End Sub
-
     Private Sub Btn_DisplayImage_LostFocus(     ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -955,7 +956,6 @@ Public Class MAIN
         RemoveImage()                           ' <1.060.2> Moved logic to RemoveImage(), same logic as PBox_Click Event
 
     End Sub
-
     Private Sub Btn_NextLine_Click(                             ' Standard Control event parms...
             sender As Button,
             e As EventArgs
@@ -1035,7 +1035,6 @@ Public Class MAIN
         RemoveImage()                   ' <1.06.2> Moved logic to new RemoveImage() routine, also called by Btn_DisplayImage_LostFocus()
 
     End Sub
-
     Private Sub Rtb_ODF_TextChanged(                    ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -1058,7 +1057,6 @@ Public Class MAIN
         End If
 
     End Sub
-
     Private Sub Menu_About_Click(       ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -1078,7 +1076,6 @@ Public Class MAIN
         AboutBox1.Show(Me)              ' Display the form
 
     End Sub
-
     Private Sub Btn_FindPrev_Click(     ' Standard Control event parms...
             sender As Object,
             e As EventArgs) Handles Btn_FindPrev.Click
@@ -1108,7 +1105,6 @@ Public Class MAIN
                         False)          ' <1.060.2> Search backwards from present cursor position
 
     End Sub
-
     Private Sub Lbl_LineNumVal_Click(       ' Standard Control event parms...
             sender As Object,
             e As EventArgs) Handles Lbl_LineNumVal.Click
@@ -1144,7 +1140,6 @@ Public Class MAIN
                        False)               ' False -> Do not extend selection on screen, leave as user set it
 
     End Sub
-
     Private Sub Lbl_SecStartVal_Click(      ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -1163,7 +1158,6 @@ Public Class MAIN
         HotClickCursorPosition(Lbl_SecStartVal.Text)
 
     End Sub
-
     Private Sub Lbl_SecEndVal_Click(        ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -1182,7 +1176,6 @@ Public Class MAIN
         HotClickCursorPosition(Lbl_SecEndVal.Text)
 
     End Sub
-
     Private Sub Lbl_LineStartVal_Click(     ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -1201,7 +1194,6 @@ Public Class MAIN
         HotClickCursorPosition(Lbl_LineStartVal.Text)
 
     End Sub
-
     Private Sub Lbl_LineEndVal_Click(       ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -1220,7 +1212,6 @@ Public Class MAIN
         HotClickCursorPosition(Lbl_LineEndVal.Text)
 
     End Sub
-
     Private Sub Lbl_RowStartVal_Click(      ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -1239,7 +1230,6 @@ Public Class MAIN
         HotClickCursorPosition(Lbl_RowStartVal.Text)
 
     End Sub
-
     Private Sub Lbl_RowEndVal_Click(        ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -1258,7 +1248,6 @@ Public Class MAIN
         HotClickCursorPosition(Lbl_RowEndVal.Text)
 
     End Sub
-
     Private Sub Lbl_CursorPosVal_Click(     ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -1277,7 +1266,6 @@ Public Class MAIN
         HotClickCursorPosition(Lbl_CursorPosVal.Text)
 
     End Sub
-
     Private Sub Menu_PrintDT_Click(                 ' Standard Control event parms...
             sender As Object,
             e As EventArgs
@@ -1378,7 +1366,6 @@ Public Class MAIN
         End If
 
     End Sub
-
     Private Sub PrintDocument1_BeginPrint() Handles PrintDocument1.BeginPrint
 
         ' Purpose:      Initializer invoked as start of print job. Sets start to 1 char in control
@@ -1404,12 +1391,11 @@ Public Class MAIN
         ' Updates:      <1.060.3> First implemented, supports extended RTB printing
 
         Const lclProcName As String =   ' Routine's name for message handling
-            "PrintDocument1_BeginPrint"
+            "PrintDocument1_EndPrint"
 
         Rtb_DText.FormatRangeDone()     ' Free graphics memory now that we're done
 
     End Sub
-
     Private Sub PrintDocument1_PrintPage(                   ' Standard Control event parms...
             sender As Object,
             e As Printing.PrintPageEventArgs
@@ -1425,7 +1411,7 @@ Public Class MAIN
         '               <1.060.3> Modified for production use with extended RTB print-capable control
 
         Const lclProcName As String =                       ' Routine's name for message handling
-            "PrintDocument1_BeginPrint"
+            "PrintDocument1_PrintPage"
 
         M_FirstChar =
             Rtb_DText.FormatRange(False,                    ' Select Render mode
@@ -1439,6 +1425,7 @@ Public Class MAIN
         Else
             e.HasMorePages = False
         End If
+
     End Sub
 
 End Class

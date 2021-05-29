@@ -127,6 +127,11 @@ Module SharedCode
 
     ' Global Variables                      <1.060.2> Relocated here from Main Form, narrowed naming scope from Public to Friend
 
+    Friend fnt_Fname As Font                ' Font types useful for the Trace display: File Name
+    Friend fnt_Title As Font                ' Top-of-display Title
+    Friend fnt_Section As Font              ' Other Section Headers
+    Friend fnt_Fields As Font               ' Field Lines
+
     Friend G_Registered As Boolean          ' version payante ou demo; set to True if copy of AECHO is registered (now Freeware, always set True at initialization
     Friend G_EditMode As Boolean            ' true si actif; True if Edit Mode is active - allows modifications to ODF copy in Rtb_ODF
     Friend G_ODFModSinceSaved As Boolean    ' <1.060.2> False when freshly loaded, set to True when modified. Used to determine if we should prompt to save modified ODF.
@@ -1412,7 +1417,7 @@ Module SharedCode
             Trace.Show(MAIN)
             Trace.Txt_SampleID.Text = G_SampleID           ' <1.060.2> Preload the current SampleID
             TraceSample(Val(Trace.Txt_SampleID.Text),
-                    Trace.Lb_TraceSample)                  ' <1.060.2> Call TraceSample to execute Trace in the Follow form
+                    Trace.Rtb_Trace)                  ' <1.060.2> Call TraceSample to execute Trace in the Follow form
             Return
         End If
 
@@ -1970,7 +1975,7 @@ Module SharedCode
                                       endPos As Integer,    ' End of search range
                                       longTag As String,    ' Long form of Tag's Name
                                       defVal As String,     ' Default value, presented if not found
-                                      lBox As ListBox       ' Append output to this ListBox
+                                      tBox As RTBPrint      ' Append output to this printable RTB
                                       ) As String           ' Tag's content: "" if Tag not found, or found but has no content
 
         ' Purpose:      Between the startPos and endPos (usually a Record-Row's limits), locate the
@@ -1987,6 +1992,7 @@ Module SharedCode
         ' Side Effects: <None>
         ' Notes:        <None>
         ' Updates:      <1.060.2> First code.
+        '               <1.060.3> Changed output control from List Box to enhanced RTB, to support printing of Traces
 
         Dim tagStart As Integer                             ' Position of the Start-Tag
         Dim tagEnd As Integer                               ' Position of the End-Tag
@@ -2011,20 +2017,23 @@ Module SharedCode
                     MAIN.Rtb_ODF.Text.Substring(tagStart,   ' Extract the content from between the Tags
                                                 (tagEnd - tagStart))
                 If tagVal <> "" Then                        ' We have the Tag, and content
-                    lBox.Items.Add("  " & longTag & " (<" & tag & ">) = " & tagVal)
+                    AppendTxt(tBox, fnt_Fields, Color.Black,
+                              "    " & longTag & " (<" & tag & ">) = '" & tagVal & "'" & vbCrLf)
                 Else                                        ' We have the Tag, but null content, present Default Value
-                    lBox.Items.Add("  " & longTag & " (<" & tag & ">) is present, but has no value. Default Value = '" & defVal & "'")
+                    AppendTxt(tBox, fnt_Fields, Color.Brown,
+                              "    " & longTag & " (<" & tag & ">) is present, but has no value. Default Value = '" & defVal & "'" & vbCrLf)
                 End If
                 Return tagVal                               ' Return the Tag's content, can be ""
             End If
         End If
 
-        lBox.Items.Add("  No tag " & longTag & " (<" & tag & ">), Default Value = '" & defVal & "'")
+        AppendTxt(tBox, fnt_Fields, Color.Brown,
+                  "    No tag " & longTag & " (<" & tag & ">), Default Value = '" & defVal & "'" & vbCrLf)
         Return ""                                           ' All or part of the Tag wasn't found
 
     End Function
     Friend Sub TraceSample(sampleID As Integer,                     ' <1.060.2> Sample to Trace
-                           LB As ListBox)                           ' <1.060.2> Append output here
+                           tb As RTBPrint)                          ' <1.060.3> Append output here - a printable RTB
 
         ' SUIT UN SAMPLE DANS LES DIFFERENTES SECTIONS QU'IL UTILISE
 
@@ -2052,6 +2061,10 @@ Module SharedCode
         '               searching for <a>SampleID</a>, ensure search remains in bounds of the Sample Section, doesn't find some
         '               other <a> tag match in a different Section. Receive SampleID to Trace and Output ListBox as parms.
         '               Call LocateRecRowByKey() to find arbitrary Record inside arbitrary Section by Primary of Foreign Key.
+        '               <1.060.3> Modified to support extended RTB as output control, replacing the prior List Box - this is
+        '               to allow easy printing. Changed .Item.Add methodes to .AppendText, adde CR/LFs at line ends. Added blank
+        '               line between Traces, for visual separation. Use AppendTxt() to control font size, style, and color as
+        '               text is appended into the enhanced RTB.
 
         Const lclProcName As String = "TraceSample"                 ' <1.060.2> Routine's name for message handling
 
@@ -2072,27 +2085,31 @@ Module SharedCode
         If retStatus = -2 Then                                      ' <1.060.2> Nothing found, there were errors in ODF
             Return
         End If
+        If tb.Text.Length > 0 Then
+            AppendTxt(tb, fnt_Fields, Color.Black, vbCrLf)          ' <1.060.3> Add a blank line before a Trace for visual seperation, except for first Trace
+        End If
+
+        Trace.MenuTSPrint.Enabled = True                            ' <1.060.3> Something printable, so enable the Print menu choice
         If retStatus > -2 Then                                      ' <1.060.2> Though not everything was located, the Section was, so output its record
-            LB.Items.Add("Section '" & sec.name &                   ' Append starting position of Sample Section to output, and continue
-                             "' (Starts at " & sec.startPos.ToString(conIntFmt) &
-                             ",  Ends at " & sec.endPos.ToString(conIntFmt) & ")")
+            TraceAddSection(tb, "", sec)                            ' <1.060.3> Output the Section header: for Sample, no prefix
         End If
         If retStatus = -1 Then                                      ' <1.060.2> The search errored while looking for Record, already displayed dialog
             Return                                                  ' <1.060.2> So just return, can't continue with Record processing
         End If
         If retStatus = 0 Then                                       ' <1.060.2> We found the Sample Section, but not the requested Record. Append notice and return.
-            LB.Items.Add("  No " & sec.name & " Record located with Key " & conFieldSID & " (<a>) = '" & sampleID.ToString & "'")
-            Return                                                              ' <1.060.2> No errors, but no Record to process - also don't need to continue with other Sections
+            AppendTxt(tb, fnt_Fields, Color.Red,
+                      "    No " & sec.name & " Record located with Key " & conFieldSID & " (<a>) = '" & sampleID.ToString & "'" & vbCrLf)
+            Return                                                  ' <1.060.2> No errors, but no Record to process - also don't need to continue with other Sections
         End If
 
-        ReadAndDisplayTag("a", rowStartTag, rowEndTag, conFieldSID, "", LB)     ' <1.060.2> Search for Tag "<a>...</a>", (SampleID i.e. the Record Key Field)
-        reqInstID = ReadAndDisplayTag("b", rowStartTag, rowEndTag, conFieldIPID, "", LB)    ' <1.060.2> Search for Tag "<b>...</b>", (InstallationPackageID Field), save content
-        ReadAndDisplayTag("c", rowStartTag, rowEndTag, conFieldFName, "", LB)   ' <1.060.2> Search for Tag "<c>...</c>", (SampleFilename Field)
-        ReadAndDisplayTag("d", rowStartTag, rowEndTag, conFieldPSpec, "1", LB)  ' <1.060.2> Search for Tag "<d>...</d>", (Pitch_SpecificationMethodCode Field)
-        ReadAndDisplayTag("e", rowStartTag, rowEndTag, conFieldPRank, "0", LB)  ' <1.060.2> Search for Tag "<e>...</e>", (Pitch_RankBasePitch64ftHarmonicNum Field)
-        ReadAndDisplayTag("f", rowStartTag, rowEndTag, conFieldPNorm, "0", LB)  ' <1.060.2> Search for Tag "<f>...</f>", (Pitch_NormalMIDINoteNumber Field)
-        ReadAndDisplayTag("g", rowStartTag, rowEndTag, conFieldPEx, "0", LB)    ' <1.060.2> Search for Tag "<g>...</g>", (Pitch_ExactSamplePitch Field)
-        ReadAndDisplayTag("h", rowStartTag, rowEndTag, conFieldLic, "0", LB)    ' <1.060.2> Search for Tag "<h>...</h>", (LicenseSerialNumRequiredForSampleFile Field)
+        ReadAndDisplayTag("a", rowStartTag, rowEndTag, conFieldSID, "", tb)     ' <1.060.2> Search for Tag "<a>...</a>", (SampleID i.e. the Record Key Field)
+        reqInstID = ReadAndDisplayTag("b", rowStartTag, rowEndTag, conFieldIPID, "", tb)    ' <1.060.2> Search for Tag "<b>...</b>", (InstallationPackageID Field), save content
+        ReadAndDisplayTag("c", rowStartTag, rowEndTag, conFieldFName, "", tb)   ' <1.060.2> Search for Tag "<c>...</c>", (SampleFilename Field)
+        ReadAndDisplayTag("d", rowStartTag, rowEndTag, conFieldPSpec, "1", tb)  ' <1.060.2> Search for Tag "<d>...</d>", (Pitch_SpecificationMethodCode Field)
+        ReadAndDisplayTag("e", rowStartTag, rowEndTag, conFieldPRank, "0", tb)  ' <1.060.2> Search for Tag "<e>...</e>", (Pitch_RankBasePitch64ftHarmonicNum Field)
+        ReadAndDisplayTag("f", rowStartTag, rowEndTag, conFieldPNorm, "0", tb)  ' <1.060.2> Search for Tag "<f>...</f>", (Pitch_NormalMIDINoteNumber Field)
+        ReadAndDisplayTag("g", rowStartTag, rowEndTag, conFieldPEx, "0", tb)    ' <1.060.2> Search for Tag "<g>...</g>", (Pitch_ExactSamplePitch Field)
+        ReadAndDisplayTag("h", rowStartTag, rowEndTag, conFieldLic, "0", tb)    ' <1.060.2> Search for Tag "<h>...</h>", (LicenseSerialNumRequiredForSampleFile Field)
 
         ' SOUND ENGINE 01 ATTACK; see if this section exists
 
@@ -2106,28 +2123,27 @@ Module SharedCode
         If retStatus = -2 Then                                      ' <1.060.2> Nothing found, there were errors in ODF
             Return
         End If
-        If retStatus > -2 Then                                      ' <1.060.2> Though not everything was located, the Section was, so output its record
-            LB.Items.Add("Section '" & sec.name &                   ' Append Section's starting position to output, and continue
-                             "' (Starts at " & sec.startPos.ToString(conIntFmt) &
-                             ",  Ends at " & sec.endPos.ToString(conIntFmt) & ")")
+        If retStatus > -2 Then                                      ' <1.060.2> Though not everything was located, the Attack Section was, so output its record
+            TraceAddSection(tb, "  ", sec)                          ' <1.060.3> Insert the Section Header, indent by 2
         End If
         If retStatus = -1 Then                                      ' <1.060.2> The search errored while looking for Record, already displayed dialog
             Return                                                  ' <1.060.2> So just return, can't continue with Record processing
         End If
-        If retStatus = 0 Then                                       ' <1.060.2> We found the Section, but not the requested Record. Append notice and continue with next Section.
-            LB.Items.Add("  No " & sec.name & " Record located with Key " & conFieldSID & " (<c>) = '" & sampleID.ToString & "'")
+        If retStatus = 0 Then                                       ' <1.060.2> We found the Attack Section, but not the requested Record. Append notice and continue with next Section.
+            AppendTxt(tb, fnt_Fields, Color.Red,
+                      "    No " & sec.name & " Record located with Key " & conFieldSID & " (<c>) = '" & sampleID.ToString & "'" & vbCrLf)
         Else                                                                            ' <1.060.2> Got the Record, display all present and non-present Fields
-            ReadAndDisplayTag("c", rowStartTag, rowEndTag, conFieldSID, "", LB)         ' <1.060.2> Search for Tag "<c>...</c>", (SampleID from Sample Section, foreign-key into the Attack Records)
-            ReadAndDisplayTag("a", rowStartTag, rowEndTag, conFieldUID, "", LB)         ' <1.060.2> Search for Tag "<a>...</a>", (UniqueID Field)
-            ReadAndDisplayTag("b", rowStartTag, rowEndTag, conFieldLayID, "", LB)       ' <1.060.2> Search for Tag "<b>...</b>", (LayerID Field)
-            ReadAndDisplayTag("d", rowStartTag, rowEndTag, conFieldLSRSPTC, "1", LB)    ' <1.060.2> Search for Tag "<d>...</d>", (LoadSampleRange_StartPositionTypeCode Field)
-            ReadAndDisplayTag("e", rowStartTag, rowEndTag, conFieldLSRSPV, "0", LB)     ' <1.060.2> Search for Tag "<e>...</e>", (LoadSampleRange_StartPositionValue Field)
-            ReadAndDisplayTag("f", rowStartTag, rowEndTag, conFieldLSREPTC, "6", LB)    ' <1.060.2> Search for Tag "<f>...</f>", (LoadSampleRange_EndPositionTypeCode Field)
-            ReadAndDisplayTag("g", rowStartTag, rowEndTag, conFieldLSREPV, "0", LB)     ' <1.060.2> Search for Tag "<g>...</g>", (LoadSampleRange_EndPositionValue Field)
-            ReadAndDisplayTag("h", rowStartTag, rowEndTag, conFieldASCHV, "127", LB)    ' <1.060.2> Search for Tag "<h>...</h>", (AttackSelCriteria_HighestVelocity Field)
-            ReadAndDisplayTag("i", rowStartTag, rowEndTag, conFieldASCMTS, "0", LB)     ' <1.060.2> Search for Tag "<i>...</i>", (AttackSelCriteria_MinTimeSincePrevPipeCloseMs Field)
-            ReadAndDisplayTag("j", rowStartTag, rowEndTag, conFieldASCHCC, "127", LB)   ' <1.060.2> Search for Tag "<j>...</j>", (AttackSelCriteria_HighestCtsCtrlValue Field)
-            ReadAndDisplayTag("k", rowStartTag, rowEndTag, conFieldLCL, "80", LB)       ' <1.060.2> Search for Tag "<k>...</k>", (LoopCrossfadeLengthInSrcSamples<s Field)
+            ReadAndDisplayTag("c", rowStartTag, rowEndTag, conFieldSID, "", tb)         ' <1.060.2> Search for Tag "<c>...</c>", (SampleID from Sample Section, foreign-key into the Attack Records)
+            ReadAndDisplayTag("a", rowStartTag, rowEndTag, conFieldUID, "", tb)         ' <1.060.2> Search for Tag "<a>...</a>", (UniqueID Field)
+            ReadAndDisplayTag("b", rowStartTag, rowEndTag, conFieldLayID, "", tb)       ' <1.060.2> Search for Tag "<b>...</b>", (LayerID Field)
+            ReadAndDisplayTag("d", rowStartTag, rowEndTag, conFieldLSRSPTC, "1", tb)    ' <1.060.2> Search for Tag "<d>...</d>", (LoadSampleRange_StartPositionTypeCode Field)
+            ReadAndDisplayTag("e", rowStartTag, rowEndTag, conFieldLSRSPV, "0", tb)     ' <1.060.2> Search for Tag "<e>...</e>", (LoadSampleRange_StartPositionValue Field)
+            ReadAndDisplayTag("f", rowStartTag, rowEndTag, conFieldLSREPTC, "6", tb)    ' <1.060.2> Search for Tag "<f>...</f>", (LoadSampleRange_EndPositionTypeCode Field)
+            ReadAndDisplayTag("g", rowStartTag, rowEndTag, conFieldLSREPV, "0", tb)     ' <1.060.2> Search for Tag "<g>...</g>", (LoadSampleRange_EndPositionValue Field)
+            ReadAndDisplayTag("h", rowStartTag, rowEndTag, conFieldASCHV, "127", tb)    ' <1.060.2> Search for Tag "<h>...</h>", (AttackSelCriteria_HighestVelocity Field)
+            ReadAndDisplayTag("i", rowStartTag, rowEndTag, conFieldASCMTS, "0", tb)     ' <1.060.2> Search for Tag "<i>...</i>", (AttackSelCriteria_MinTimeSincePrevPipeCloseMs Field)
+            ReadAndDisplayTag("j", rowStartTag, rowEndTag, conFieldASCHCC, "127", tb)   ' <1.060.2> Search for Tag "<j>...</j>", (AttackSelCriteria_HighestCtsCtrlValue Field)
+            ReadAndDisplayTag("k", rowStartTag, rowEndTag, conFieldLCL, "80", tb)       ' <1.060.2> Search for Tag "<k>...</k>", (LoopCrossfadeLengthInSrcSamples<s Field)
         End If
 
         ' SOUND ENGINE 01 RELEASE; see if this section exists
@@ -2142,35 +2158,34 @@ Module SharedCode
         If retStatus = -2 Then                                      ' <1.060.2> Nothing found, there were errors in ODF
             Return
         End If
-        If retStatus > -2 Then                                      ' <1.060.2> Though not everything was located, the Section was, so output its record
-            LB.Items.Add("Section '" & sec.name &                   ' Append Section's starting position to output, and continue
-                             "' (Starts at " & sec.startPos.ToString(conIntFmt) &
-                             ",  Ends at " & sec.endPos.ToString(conIntFmt) & ")")
+        If retStatus > -2 Then                                      ' <1.060.2> Though not everything was located, the Release Section was, so output its record
+            TraceAddSection(tb, "  ", sec)                          ' <1.060.3> Insert the Section Header, indent by 2
         End If
         If retStatus = -1 Then                                      ' <1.060.2> The search errored while looking for Record, already displayed dialog
             Return                                                  ' <1.060.2> So just return, can't continue with Record processing
         End If
-        If retStatus = 0 Then                                       ' <1.060.2> We found the Section, but not the requested Record. Append notice and continue with next Section.
-            LB.Items.Add("  No " & sec.name & " Record located with Key " & conFieldSID & " (<c>) = '" & sampleID.ToString & "'")
+        If retStatus = 0 Then                                       ' <1.060.2> We found the Release Section, but not the requested Record. Append notice and continue with next Section.
+            AppendTxt(tb, fnt_Fields, Color.Red,
+                      "    No " & sec.name & " Record located with Key " & conFieldSID & " (<c>) = '" & sampleID.ToString & "'" & vbCrLf)
         Else                                                                            ' <1.060.2> Got the Record, display all present and non-present Fields
-            ReadAndDisplayTag("c", rowStartTag, rowEndTag, conFieldSID, "", LB)         ' <1.060.2> Search for Tag "<c>...</c>", (SampleID from Sample Section, foreign-key into the Release Records)
-            ReadAndDisplayTag("a", rowStartTag, rowEndTag, conFieldUID, "", LB)         ' <1.060.2> Search for Tag "<a>...</a>", (UniqueID Field)
-            ReadAndDisplayTag("b", rowStartTag, rowEndTag, conFieldLayID, "", LB)       ' <1.060.2> Search for Tag "<b>...</b>", (LayerID Field)
-            ReadAndDisplayTag("d", rowStartTag, rowEndTag, conFieldLSRSPTC, "1", LB)    ' <1.060.2> Search for Tag "<d>...</d>", (LoadSampleRange_StartPositionTypeCode Field)
-            ReadAndDisplayTag("e", rowStartTag, rowEndTag, conFieldLSRSPV, "0", LB)     ' <1.060.2> Search for Tag "<e>...</e>", (LoadSampleRange_StartPositionValue Field)
-            ReadAndDisplayTag("f", rowStartTag, rowEndTag, conFieldLSREPTC, "6", LB)    ' <1.060.2> Search for Tag "<f>...</f>", (LoadSampleRange_EndPositionTypeCode Field)
-            ReadAndDisplayTag("g", rowStartTag, rowEndTag, conFieldLSREPV, "0", LB)     ' <1.060.2> Search for Tag "<g>...</g>", (LoadSampleRange_EndPositionValue Field)
-            ReadAndDisplayTag("h", rowStartTag, rowEndTag, conFieldASCHV, "127", LB)    ' <1.060.2> Search for Tag "<h>...</h>", (AttackSelCriteria_HighestVelocity Field)
-            ReadAndDisplayTag("i", rowStartTag, rowEndTag, conFieldASCMTS, "0", LB)     ' <1.060.2> Search for Tag "<i>...</i>", (AttackSelCriteria_MinTimeSincePrevPipeCloseMs Field)
-            ReadAndDisplayTag("j", rowStartTag, rowEndTag, conFieldASCHCC, "127", LB)   ' <1.060.2> Search for Tag "<j>...</j>", (AttackSelCriteria_HighestCtsCtrlValue Field)
-            ReadAndDisplayTag("k", rowStartTag, rowEndTag, conFieldSAA, "Y", LB)        ' <1.060.2> Search for Tag "<k>...</k>", (ScaleAmplitudeAutomatically Field)
-            ReadAndDisplayTag("l", rowStartTag, rowEndTag, conFieldDBA, "N", LB)        ' <1.060.2> Search for Tag "<l>...</l>", (DontBypassAmplitudeScalingIfUserDisablesMultipleReleases Field)
-            ReadAndDisplayTag("m", rowStartTag, rowEndTag, conFieldPAA, "Y", LB)        ' <1.060.2> Search for Tag "<m>...</m>", (PhaseAlignAutomatically Field)
-            ReadAndDisplayTag("n", rowStartTag, rowEndTag, conFieldRCL, "45", LB)       ' <1.060.2> Search for Tag "<n>...</n>", (ReleaseCrossfadeLengthMS Field)
-            ReadAndDisplayTag("p", rowStartTag, rowEndTag, conFieldRSCHV, "127", LB)    ' <1.060.2> Search for Tag "<p>...</p>", (ReleaseSelCriteria_HighestVelocity Field)
-            ReadAndDisplayTag("q", rowStartTag, rowEndTag, conFieldRSCLKR, "9999", LB)  ' <1.060.2> Search for Tag "<q>...</q>", (ReleaseSelCriteria_LatestKeyReleaseTimeMs Field)
-            ReadAndDisplayTag("r", rowStartTag, rowEndTag, conFieldRSCHCC, "127", LB)   ' <1.060.2> Search for Tag "<r>...</r>", (ReleaseSelCriteria_HighestCtsCtrlValue Field)
-            ReadAndDisplayTag("s", rowStartTag, rowEndTag, conFieldRSCPTR, "", LB)      ' <1.060.2> Search for Tag "<s>...</s>", (ReleaseSelCriteria_PreferThisRelForAttackID Field)
+            ReadAndDisplayTag("c", rowStartTag, rowEndTag, conFieldSID, "", tb)         ' <1.060.2> Search for Tag "<c>...</c>", (SampleID from Sample Section, foreign-key into the Release Records)
+            ReadAndDisplayTag("a", rowStartTag, rowEndTag, conFieldUID, "", tb)         ' <1.060.2> Search for Tag "<a>...</a>", (UniqueID Field)
+            ReadAndDisplayTag("b", rowStartTag, rowEndTag, conFieldLayID, "", tb)       ' <1.060.2> Search for Tag "<b>...</b>", (LayerID Field)
+            ReadAndDisplayTag("d", rowStartTag, rowEndTag, conFieldLSRSPTC, "1", tb)    ' <1.060.2> Search for Tag "<d>...</d>", (LoadSampleRange_StartPositionTypeCode Field)
+            ReadAndDisplayTag("e", rowStartTag, rowEndTag, conFieldLSRSPV, "0", tb)     ' <1.060.2> Search for Tag "<e>...</e>", (LoadSampleRange_StartPositionValue Field)
+            ReadAndDisplayTag("f", rowStartTag, rowEndTag, conFieldLSREPTC, "6", tb)    ' <1.060.2> Search for Tag "<f>...</f>", (LoadSampleRange_EndPositionTypeCode Field)
+            ReadAndDisplayTag("g", rowStartTag, rowEndTag, conFieldLSREPV, "0", tb)     ' <1.060.2> Search for Tag "<g>...</g>", (LoadSampleRange_EndPositionValue Field)
+            ReadAndDisplayTag("h", rowStartTag, rowEndTag, conFieldASCHV, "127", tb)    ' <1.060.2> Search for Tag "<h>...</h>", (AttackSelCriteria_HighestVelocity Field)
+            ReadAndDisplayTag("i", rowStartTag, rowEndTag, conFieldASCMTS, "0", tb)     ' <1.060.2> Search for Tag "<i>...</i>", (AttackSelCriteria_MinTimeSincePrevPipeCloseMs Field)
+            ReadAndDisplayTag("j", rowStartTag, rowEndTag, conFieldASCHCC, "127", tb)   ' <1.060.2> Search for Tag "<j>...</j>", (AttackSelCriteria_HighestCtsCtrlValue Field)
+            ReadAndDisplayTag("k", rowStartTag, rowEndTag, conFieldSAA, "Y", tb)        ' <1.060.2> Search for Tag "<k>...</k>", (ScaleAmplitudeAutomatically Field)
+            ReadAndDisplayTag("l", rowStartTag, rowEndTag, conFieldDBA, "N", tb)        ' <1.060.2> Search for Tag "<l>...</l>", (DontBypassAmplitudeScalingIfUserDisablesMultipleReleases Field)
+            ReadAndDisplayTag("m", rowStartTag, rowEndTag, conFieldPAA, "Y", tb)        ' <1.060.2> Search for Tag "<m>...</m>", (PhaseAlignAutomatically Field)
+            ReadAndDisplayTag("n", rowStartTag, rowEndTag, conFieldRCL, "45", tb)       ' <1.060.2> Search for Tag "<n>...</n>", (ReleaseCrossfadeLengthMS Field)
+            ReadAndDisplayTag("p", rowStartTag, rowEndTag, conFieldRSCHV, "127", tb)    ' <1.060.2> Search for Tag "<p>...</p>", (ReleaseSelCriteria_HighestVelocity Field)
+            ReadAndDisplayTag("q", rowStartTag, rowEndTag, conFieldRSCLKR, "9999", tb)  ' <1.060.2> Search for Tag "<q>...</q>", (ReleaseSelCriteria_LatestKeyReleaseTimeMs Field)
+            ReadAndDisplayTag("r", rowStartTag, rowEndTag, conFieldRSCHCC, "127", tb)   ' <1.060.2> Search for Tag "<r>...</r>", (ReleaseSelCriteria_HighestCtsCtrlValue Field)
+            ReadAndDisplayTag("s", rowStartTag, rowEndTag, conFieldRSCPTR, "", tb)      ' <1.060.2> Search for Tag "<s>...</s>", (ReleaseSelCriteria_PreferThisRelForAttackID Field)
         End If
 
         ' Tremulant Waveform; see if this section exists
@@ -2185,24 +2200,24 @@ Module SharedCode
         If retStatus = -2 Then                                      ' <1.060.2> Nothing found, there were errors in ODF
             Return
         End If
-        If retStatus > -2 Then                                      ' <1.060.2> Though not everything was located, the Section was, so output its record
-            LB.Items.Add("Section '" & sec.name &                   ' Append Section's starting position to output, and continue
-                             "' (Starts at " & sec.startPos.ToString(conIntFmt) &
-                             ",  Ends at " & sec.endPos.ToString(conIntFmt) & ")")
+        If retStatus > -2 Then                                      ' <1.060.2> Though not everything was located, the TremulantWaveform Section was, so output its record
+            TraceAddSection(tb, "  ", sec)                          ' <1.060.3> Insert the Section Header, indent by 2
         End If
         If retStatus = -1 Then                                      ' <1.060.2> The search errored while looking for Record, already displayed dialog
             Return                                                  ' <1.060.2> So just return, can't continue with Record processing
         End If
         If retStatus = 0 Then                                       ' <1.060.2> We found the Section, but not the requested Record. Append notice and continue with next Section.
-            LB.Items.Add("  No " & sec.name & " Record located with Key " & conFieldPAF & " (<d>) = '" & sampleID.ToString & "'")
-        Else                                                                            ' <1.060.2> Got the Record, display all present and non-present Fields
-            LB.Items.Add("  Record located via Foreign-Key " & conFieldPAF & " (<d>)")
-            ReadAndDisplayTag("d", rowStartTag, rowEndTag, conFieldPAF, "", LB)         ' <1.060.2> Search for Tag "<d>...</d>", (PitchAndFundamentalWaveformSampleID is foreign key of SampleID)
-            ReadAndDisplayTag("a", rowStartTag, rowEndTag, conFieldTWID, "", LB)        ' <1.060.2> Search for Tag "<a>...</a>", (TremulantWaveformID Field)
-            ReadAndDisplayTag("c", rowStartTag, rowEndTag, conFieldTID, "", LB)         ' <1.060.2> Search for Tag "<c>...</c>", (TremulantID Field)
-            ReadAndDisplayTag("e", rowStartTag, rowEndTag, conFieldTHW, "", LB)         ' <1.060.2> Search for Tag "<e>...</e>", (ThirdHarmonicWaveformSampleID Field)
-            ReadAndDisplayTag("f", rowStartTag, rowEndTag, conFieldLCL, "10", LB)       ' <1.060.2> Search for Tag "<f>...</f>", (LoopCrossfadeLengthInSecSampleMs Field)
-            ReadAndDisplayTag("g", rowStartTag, rowEndTag, conFieldPOC, "", LB)         ' <1.060.2> Search for Tag "<g>...</g>", (PitchOutputContinuousControlID Field)
+            AppendTxt(tb, fnt_Fields, Color.Red,
+                      "    No " & sec.name & " Record located with Foreign-Key " & conFieldPAF & " (<d>) = '" & sampleID.ToString & "'" & vbCrLf)
+        Else                                                        ' <1.060.2> Got the Record, display all present and non-present Fields
+            AppendTxt(tb, fnt_Fields, Color.Black,
+                      "  Record located via Foreign-Key " & conFieldPAF & " (<d>)")
+            ReadAndDisplayTag("d", rowStartTag, rowEndTag, conFieldPAF, "", tb)         ' <1.060.2> Search for Tag "<d>...</d>", (PitchAndFundamentalWaveformSampleID is foreign key of SampleID)
+            ReadAndDisplayTag("a", rowStartTag, rowEndTag, conFieldTWID, "", tb)        ' <1.060.2> Search for Tag "<a>...</a>", (TremulantWaveformID Field)
+            ReadAndDisplayTag("c", rowStartTag, rowEndTag, conFieldTID, "", tb)         ' <1.060.2> Search for Tag "<c>...</c>", (TremulantID Field)
+            ReadAndDisplayTag("e", rowStartTag, rowEndTag, conFieldTHW, "", tb)         ' <1.060.2> Search for Tag "<e>...</e>", (ThirdHarmonicWaveformSampleID Field)
+            ReadAndDisplayTag("f", rowStartTag, rowEndTag, conFieldLCL, "10", tb)       ' <1.060.2> Search for Tag "<f>...</f>", (LoopCrossfadeLengthInSecSampleMs Field)
+            ReadAndDisplayTag("g", rowStartTag, rowEndTag, conFieldPOC, "", tb)         ' <1.060.2> Search for Tag "<g>...</g>", (PitchOutputContinuousControlID Field)
         End If
 
         sec.name = ""                                               ' <1.060.2> New Section - this time we're searching an alternate Foreign-key
@@ -2216,27 +2231,28 @@ Module SharedCode
             Return
         End If
         If retStatus > -2 Then                                      ' <1.060.2> Though not everything was located, the Section was, so output its record
-            LB.Items.Add("Section '" & sec.name &                   ' Append Section's starting position to output, and continue
-                             "' (Starts at " & sec.startPos.ToString(conIntFmt) &
-                             ",  Ends at " & sec.endPos.ToString(conIntFmt) & ")")
+            TraceAddSection(tb, "  ", sec)                          ' <1.060.3> Insert the Section Header, indent by 2
         End If
         If retStatus = -1 Then                                      ' <1.060.2> The search errored while looking for Record, already displayed dialog
             Return                                                  ' <1.060.2> So just return, can't continue with Record processing
         End If
         If retStatus = 0 Then                                       ' <1.060.2> We found the Section, but not the requested Record. Append notice and continue with next Section.
-            LB.Items.Add("  No " & sec.name & " Record located with Key " & conFieldTHW & " (<e>) = '" & sampleID.ToString & "'")
-        Else                                                                            ' <1.060.2> Got the Record, display all present and non-present Fields
-            LB.Items.Add("  Record located via Foreign-Key " & conFieldTHW & " (<e>)")
-            ReadAndDisplayTag("e", rowStartTag, rowEndTag, conFieldTHW, "", LB)         ' <1.060.2> Search for Tag "<e>...</e>", (ThirdHarmonicWaveformSampleID is foreign key of SampleID)
-            ReadAndDisplayTag("d", rowStartTag, rowEndTag, conFieldPAF, "", LB)         ' <1.060.2> Search for Tag "<d>...</d>", (PitchAndFundamentalWaveformSampleID Field)
-            ReadAndDisplayTag("a", rowStartTag, rowEndTag, conFieldTWID, "", LB)        ' <1.060.2> Search for Tag "<a>...</a>", (TremulantWaveformID Field)
-            ReadAndDisplayTag("c", rowStartTag, rowEndTag, conFieldTID, "", LB)         ' <1.060.2> Search for Tag "<c>...</c>", (TremulantID Field)
-            ReadAndDisplayTag("f", rowStartTag, rowEndTag, conFieldLCL, "10", LB)       ' <1.060.2> Search for Tag "<f>...</f>", (LoopCrossfadeLengthInSecSampleMs Field)
-            ReadAndDisplayTag("g", rowStartTag, rowEndTag, conFieldPOC, "", LB)         ' <1.060.2> Search for Tag "<g>...</g>", (PitchOutputContinuousControlID Field)
+            AppendTxt(tb, fnt_Fields, Color.Red,
+                      "    No " & sec.name & " Record located with Foreign-Key " & conFieldTHW & " (<e>) = '" & sampleID.ToString & "'" & vbCrLf)
+        Else                                                        ' <1.060.2> Got the Record, display all present and non-present Fields
+            AppendTxt(tb, fnt_Fields, Color.Black,
+                      "    Record located via Foreign-Key " & conFieldTHW & " (<e>)" & vbCrLf)
+            ReadAndDisplayTag("e", rowStartTag, rowEndTag, conFieldTHW, "", tb)         ' <1.060.2> Search for Tag "<e>...</e>", (ThirdHarmonicWaveformSampleID is foreign key of SampleID)
+            ReadAndDisplayTag("d", rowStartTag, rowEndTag, conFieldPAF, "", tb)         ' <1.060.2> Search for Tag "<d>...</d>", (PitchAndFundamentalWaveformSampleID Field)
+            ReadAndDisplayTag("a", rowStartTag, rowEndTag, conFieldTWID, "", tb)        ' <1.060.2> Search for Tag "<a>...</a>", (TremulantWaveformID Field)
+            ReadAndDisplayTag("c", rowStartTag, rowEndTag, conFieldTID, "", tb)         ' <1.060.2> Search for Tag "<c>...</c>", (TremulantID Field)
+            ReadAndDisplayTag("f", rowStartTag, rowEndTag, conFieldLCL, "10", tb)       ' <1.060.2> Search for Tag "<f>...</f>", (LoopCrossfadeLengthInSecSampleMs Field)
+            ReadAndDisplayTag("g", rowStartTag, rowEndTag, conFieldPOC, "", tb)         ' <1.060.2> Search for Tag "<g>...</g>", (PitchOutputContinuousControlID Field)
         End If
 
         If reqInstID = "" Then
-            LB.Items.Add("Sample does not have a Priamry-Key Value for InstallationPackageID.")
+            AppendTxt(tb, fnt_Fields, Color.Red,
+                      "  Sample does not have a Primary-Key Value for InstallationPackageID." & vbCrLf)
             Return
         End If
         sec.name = ""                                               ' <1.060.2> New Section
@@ -2250,24 +2266,58 @@ Module SharedCode
             Return
         End If
         If retStatus > -2 Then                                      ' <1.060.2> Though not everything was located, the Section was, so output its record
-            LB.Items.Add("Section '" & sec.name &                   ' Append Section's starting position to output, and continue
-                             "' (Starts at " & sec.startPos.ToString(conIntFmt) &
-                             ",  Ends at " & sec.endPos.ToString(conIntFmt) & ")")
+            TraceAddSection(tb, "  ", sec)                          ' <1.060.3> Insert the Section Header, indent by 2
         End If
         If retStatus = -1 Then                                      ' <1.060.2> The search errored while looking for Record, already displayed dialog
             Return                                                  ' <1.060.2> So just return, can't continue with Record processing
         End If
         If retStatus = 0 Then                                       ' <1.060.2> We found the Section, but not the requested Record. Append notice and continue with next Section.
-            LB.Items.Add("  No " & sec.name & " Record located with Key " & conFieldInPkID & " (<a>) = '" & reqInstID & "'")
+            AppendTxt(tb, fnt_Fields, Color.Red,
+                      "    No " & sec.name & " Record located with Key " & conFieldInPkId & " (<a>) = '" & reqInstID & "'" & vbCrLf)
         Else                                                                            ' <1.060.2> Got the Record, display all present and non-present Fields
-            LB.Items.Add("  Record located via Primary-Key " & conFieldInPkId & " (<a>)")
-            ReadAndDisplayTag("a", rowStartTag, rowEndTag, conFieldInPkID, "", LB)      ' <1.060.2> Search for Tag "<a>...</a>", (InstallationPackageID, PK of this Section, FK from Sample)
-            ReadAndDisplayTag("b", rowStartTag, rowEndTag, conFieldName, "", LB)        ' <1.060.2> Search for Tag "<b>...</b>", (Name Field)
-            ReadAndDisplayTag("c", rowStartTag, rowEndTag, conFieldSName, "", LB)       ' <1.060.2> Search for Tag "<c>...</c>", (ShortName Field)
-            ReadAndDisplayTag("d", rowStartTag, rowEndTag, conFieldPSID, "0", LB)       ' <1.060.2> Search for Tag "<d>...</d>", (PackageSupplierID Field)
-            ReadAndDisplayTag("e", rowStartTag, rowEndTag, conFieldSupName, "", LB)     ' <1.060.2> Search for Tag "<e>...</e>", (SupplierName Field)
-            ReadAndDisplayTag("f", rowStartTag, rowEndTag, conFieldMPV, "1", LB)        ' <1.060.2> Search for Tag "<f>...</f>", (MinimumPackageVersion Field)
+            AppendTxt(tb, fnt_Fields, Color.Black,
+                      "    Record located via Primary-Key " & conFieldInPkId & " (<a>)" & vbCrLf)
+            ReadAndDisplayTag("a", rowStartTag, rowEndTag, conFieldInPkId, "", tb)      ' <1.060.2> Search for Tag "<a>...</a>", (InstallationPackageID, PK of this Section, FK from Sample)
+            ReadAndDisplayTag("b", rowStartTag, rowEndTag, conFieldName, "", tb)        ' <1.060.2> Search for Tag "<b>...</b>", (Name Field)
+            ReadAndDisplayTag("c", rowStartTag, rowEndTag, conFieldSName, "", tb)       ' <1.060.2> Search for Tag "<c>...</c>", (ShortName Field)
+            ReadAndDisplayTag("d", rowStartTag, rowEndTag, conFieldPSID, "0", tb)       ' <1.060.2> Search for Tag "<d>...</d>", (PackageSupplierID Field)
+            ReadAndDisplayTag("e", rowStartTag, rowEndTag, conFieldSupName, "", tb)     ' <1.060.2> Search for Tag "<e>...</e>", (SupplierName Field)
+            ReadAndDisplayTag("f", rowStartTag, rowEndTag, conFieldMPV, "1", tb)        ' <1.060.2> Search for Tag "<f>...</f>", (MinimumPackageVersion Field)
         End If
+
+    End Sub
+    Private Sub TraceAddSection(oBox As RTBPrint,                   ' Direct output to this enhanced RTB
+            prefix As String,                                       ' Prepend output with this string, "" for Sample, otherwise has blanks to force indent
+            sec As Str_Section)                                     ' Structure containing Section data: Name, StartPos, EndPos are needed here
+
+        ' Purpose:      Append a Section Header to the output of a Sample Trace, prefacing with the [prefix]
+        '               string, which sets the indent.
+        ' Process:		TBD
+        ' Called By:    TraceSample()
+        ' Side Effects: None
+        ' Notes:        <None>
+        ' Updates:		<1.060.3> New code. Abstracted repeated code in TraceSample, placed it here.
+
+        Const lclProcName As String = "TraceAddSection"             ' Function's name for message handling
+
+        Dim sLine As Integer                                        ' Section Starting Line #
+        Dim eLine As Integer                                        ' Section Ending Line #
+        Dim hdrColor As Color                                       ' Color, based on Section Type: Sample is Blue, others Dark Green
+
+        If prefix = "" Then                                         ' Decode color based on prefix: no prefix is for Sample Section -> Blue
+            hdrColor = Color.Blue
+        Else                                                        ' All other Sections are indented by [prefix], and colored Dark Green
+            hdrColor = Color.DarkGreen
+        End If
+
+        sLine = MAIN.Rtb_ODF.GetLineFromCharIndex(sec.startPos) + 1
+        eLine = MAIN.Rtb_ODF.GetLineFromCharIndex(sec.endPos) + 1   ' Translate the Start/End positions to Line Numbers, +1 to convert from zero-based internal numbering
+
+        AppendTxt(oBox, fnt_Section, hdrColor,
+                  prefix & "Section '" & sec.name &                 ' Append to output the Name and Line-Range of the Section defined by [sec]
+                  "' (Starts at Line " & sLine.ToString(conIntFmt) &
+                  ",  ends at " & eLine.ToString(conIntFmt) & ")" & vbCrLf)
+        Return
 
     End Sub
     Friend Function LocateRecRowByKey(secName As String,                ' Name of Section containing Record we want
@@ -2333,5 +2383,28 @@ Module SharedCode
         Return 1                                                        ' Found Section, Key, and Record boundaries, we're good
 
     End Function
+    Friend Sub AppendTxt(oBox As RTBPrint,              ' Append text to this Control
+           txtFont As Font,                             ' Set it to this font
+           txtColor As Color,                           ' And this color
+           txtVal As String)                            ' Text to add
+
+        ' Purpose:      Append the text to any enhanced RTB control, setting it to the
+        '               desired font and color; leave positioned after appended text.
+        ' Process:      Position at end, select, set atributes, append text, deselect
+        ' Called By:    Follow_Load(); TraceSample()
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.3> First implemented for printing Sample Trace
+
+        Const lclProcName As String = "AppendTxt"       ' Routine's name for message handling
+
+        oBox.Select(oBox.Text.Length, 0)                ' Select last position, will append here
+        oBox.SelectionFont = txtFont                    ' Set the font
+        oBox.SelectionColor = txtColor                  ' Set the Color
+        oBox.AppendText(txtVal)                         ' Append the text with these values
+        oBox.DeselectAll()                              ' Deselect in prep for next action
+        Return
+
+    End Sub
 
 End Module
