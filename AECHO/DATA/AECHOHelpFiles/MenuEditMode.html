@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>AECHO Edit Mode Menu</title>
+  </head>
+  <body>
+    <h2>AECHO V2 Help - Menu &gt; <font face="Helvetica, Arial,
+        sans-serif"><u>E</u>dit Mode</font><br>
+    </h2>
+    <ul>
+    </ul>
+    <a
+href="file:///C:/Users/Bob%20Hehmann/source/repos/GIT-for-AECHO/AECHO/bin/Debug/net5.0-windows/DATA/AECHOHelpFiles/AECHOMain.htm"
+      moz-do-not-send="true">&lt;Return to Help's Home Page&gt;</a><br>
+    <br>
+    The <font size="-1" face="Helvetica, Arial, sans-serif"><b><u>E</u></b><b>dit
+
+
+        Mode</b></font> top-level menu item contains three sub-menu
+    choices:<br>
+    <ul>
+      <li><font size="-1" face="Helvetica, Arial, sans-serif"><b>ODF
+            Editing </b><b><u>E</u></b><b>nabled</b><br>
+        </font> </li>
+      <font size="-1" face="Helvetica, Arial, sans-serif"> </font>
+      <li><font size="-1" face="Helvetica, Arial, sans-serif"><b>ODF
+            Editing </b><b><u>D</u></b><b>isabled</b></font></li>
+      <font size="-1" face="Helvetica, Arial, sans-serif"> </font>
+      <li><font size="-1" face="Helvetica, Arial, sans-serif"><b><u>L</u></b><b>ist
+
+
+            Sections</b></font></li>
+    </ul>
+    The <font size="-1" face="Helvetica, Arial, sans-serif"><b><u>E</u></b><b>dit
+
+
+        Mode</b></font> menu item and its three sub-menu choices are
+    only enabled while an ODF is loaded. These items are each assigned
+    "Alt"-key accelerators, but do not implement "shortcuts". <br>
+    <br>
+    When an ODF is first opened and loaded into AECHO's <a
+      moz-do-not-send="true" href="AreaODF.html"><font face="Helvetica,
+        Arial, sans-serif"><b><font size="-1">ODF Display Area</font></b></font></a>,
+    the ODF display is made read-only. The user may freely navigate in
+    this area, may select blocks of text with the mouse, and may Copy
+    (Ctrl-C) these highlighted selections, to be pasted elsewhere.
+    However, typing or over-typing text&nbsp; into this area, Cutting
+    (Ctrl-X), Pasting (Ctrl-V), or deleting text is blocked. When in
+    read-only mode, the sub-menu item <font size="-1" face="Helvetica,
+      Arial, sans-serif"><b>ODF Editing <u>D</u>isabled</b></font> is
+    checked and disabled from selection: its counterpart, <font
+      size="-1" face="Helvetica, Arial, sans-serif"><b>ODF Editing <u>E</u>nabled</b></font>
+    is unchecked, but enabled for selection. When read-only, the&nbsp;<span
+      style="background-color: #EEEEEE"> <font size="-1"
+        face="Helvetica, Arial, sans-serif"><b><u>E</u>dit Mode</b></font></span>
+    menu item appears with a normal Menu-Bar light-gray background.<br>
+    <br>
+    Clicking <font size="-1" face="Helvetica, Arial, sans-serif"><b>ODF
+        Editing <u>E</u>nabled</b></font> toggles the state, permitting
+    the user to freely edit the contents of the ODF Display Area.
+    Cutting, pasting, deleting text, and adding/changing text may now be
+    performed. The <font size="-1" face="Helvetica, Arial, sans-serif"><b>ODF
+        Editing <u>E</u>nabled</b></font> choice is checked to show
+    that it is in-force, but is disabled from further selection, while
+    its counterpart <font size="-1" face="Helvetica, Arial, sans-serif"><b>ODF
+        Editing <u>D</u>isabled</b></font> is unchecked but enabled for
+    selection. When transitioning from read-only to editable, AECHO
+    displays a warning message-box, and colors the <font size="-1"
+      face="Helvetica, Arial, sans-serif"><b><span
+          style="background-color: #FF0000"><u>E</u>dit Mode</span></b></font>
+    menu item with a red background to remind the user that they can now
+    edit the ODF.<br>
+    <br>
+    <dl>
+      <dt> <b><u><a name="List"></a><font size="-1" face="Helvetica,
+              Arial, sans-serif">L</font></u><font size="-1"
+            face="Helvetica, Arial, sans-serif">ist Sections</font></b></dt>
+      <dd>Scans the entire ODF, identifying the boundaries of each
+        Section it encounters. The results are presented in the <a
+          moz-do-not-send="true" href="AreaDescriptiveText.html"><font
+            face="Helvetica, Arial, sans-serif"><b><font size="-1">Descriptive
+                Text Area</font></b></font></a>, and may be viewed or
+        printed (<b>menu &gt; </b><font size="-1" face="Helvetica,
+          Arial, sans-serif"><b><u>F</u></b></font><b><font size="-1"
+            face="Helvetica, Arial, sans-serif">ile</font> &gt; </b><a
+          moz-do-not-send="true" href="MenuFile.html#Print"><font
+            size="-1" face="Helvetica, Arial, sans-serif"><b><u>P</u></b><b>rint
+
+
+
+
+
+
+
+
+              Descriptive Text...</b></font></a>). The content in this
+        area may also be selected and copied using standard mouse and
+        keyboard techniques, and can be pasted elsewhere, including into
+        other text-aware programs. The resulting list includes:
+        SectionID; Section Starting Line; Section Ending Line; Section
+        Starting Character Position; Section Ending Character Position;
+        Section Name. When printed, a header is generated that includes
+        the fully-qualified path and name of the ODF file; the date and
+        time; and column headers. The onscreen presentation is
+        scrollable.<br>
+        <br>
+        Example:</dd>
+      <dd><br>
+      </dd>
+      <dd>
+        <table width="10%" cellspacing="0" cellpadding="2" border="0">
+          <tbody>
+            <tr>
+              <td valign="top">
+                <blockquote><img moz-do-not-send="true"
+                    src="Images/ListSecExample.JPG" alt="List Sections"
+                    width="761" border="1" height="425"><br>
+                </blockquote>
+              </td>
+            </tr>
+            <tr align="center">
+              <td valign="top">Descriptive Text Area after <b>menu &gt;
+                </b><font size="-1" face="Helvetica, Arial, sans-serif"><b><u>E</u></b></font><b><font
+                    size="-1" face="Helvetica, Arial, sans-serif">dit
+                    Mode</font> &gt; </b><font size="-1"
+                  face="Helvetica, Arial, sans-serif"><b><u>L</u></b><b>ist
+
+                    Sections</b></font></td>
+            </tr>
+          </tbody>
+        </table>
+      </dd>
+    </dl>
+    <ul>
+    </ul>
+  </body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>AECHO Search Area</title>
+  </head>
+  <body>
+    <h2>AECHO V2 Help - Search Area<br>
+    </h2>
+    <ul>
+    </ul>
+    <a
+href="file:///C:/Users/Bob%20Hehmann/source/repos/GIT-for-AECHO/AECHO/bin/Debug/net5.0-windows/DATA/AECHOHelpFiles/AECHOMain.htm"
+      moz-do-not-send="true">&lt;Return to Help's Home Page&gt;</a><br>
+    <br>
+    The Search Area allows the user to locate a text string located
+    anywhere in the ODF Display Area. It provides controls to search
+    forward from the beginning of an ODF (<font face="Helvetica, Arial,
+      sans-serif"><b><font size="-1">Find First</font></b></font>
+    button), search forward from the present location (<font
+      face="Helvetica, Arial, sans-serif"><b><font size="-1">Find Next
+          &gt;</font></b></font> button), and search backwards from the
+    present location (<font face="Helvetica, Arial, sans-serif"><b><font
+          size="-1">&lt; Find Prev</font></b></font> button).<br>
+    <br>
+    Text searches are case-insensitive e.g., searching for the string
+    "objectlist" will also match "ObjectList".<br>
+    <br>
+    Searches are bounded by the beginning and the end of the ODF: a
+    forward search will not wrap-around to the beginning of the ODF if
+    it has not found its target by the time it reaches the ODF's end; a
+    backwards search will always end at the beginning of the ODF.<br>
+    <br>
+    Successfully located text is left highlighted in the <a
+      moz-do-not-send="true" href="AreaODF.html"><font face="Helvetica,
+        Arial, sans-serif"><b><font size="-1">ODF Display Area</font></b></font></a>.
+    The Cursor/Caret is positioned immediately following the final
+    character of the located string.<br>
+    <dl>
+      <dt><font face="Helvetica, Arial, sans-serif"><b><font size="-1">Find
+
+              First</font></b></font></dt>
+      <dd>This button begins its search from just before the first
+        character of the <font size="-1" face="Helvetica, Arial,
+          sans-serif"><b>ODF Display Area</b></font>.</dd>
+      <dt><br>
+      </dt>
+      <dt><font face="Helvetica, Arial, sans-serif"><b><font size="-1">Find
+
+              Next &gt;</font></b></font></dt>
+      <dd>Find Next's operation depends on the most recent search. If a
+        successful search was just completed, and the user has not moved
+        the cursor, either directly or indirectly, <font
+          face="Helvetica, Arial, sans-serif"><b><font size="-1">Find
+              Next &gt;</font></b></font> begins its search from one
+        character after the last successful Find's first character in
+        the located text. For example, assume the text to be searched
+        contains the string "XXXX". Issuing a <font face="Helvetica,
+          Arial, sans-serif"><b><font size="-1">Find First</font></b></font>
+        for "XX" will select the first two characters of the four: "<font
+          size="+1"><b><u>XX</u></b></font>XX". Following that with an
+        immediate <font face="Helvetica, Arial, sans-serif"><b><font
+              size="-1">Find Next &gt;</font></b></font> will position
+        on the middle pair: "X<font size="+1"><b><u>XX</u></b></font>X".
+        Another <font face="Helvetica, Arial, sans-serif"><b><font
+              size="-1">Find Next &gt;</font></b></font> will then move
+        to the last pair: "XX<font size="+1"><u><b>XX</b></u></font>".
+        Another <font size="-1" face="Helvetica, Arial, sans-serif"><b>Find
+            Next &gt;</b></font> will then move on. However, if the
+        Cursor/Caret has been moved at any point, a subsequent <font
+          face="Helvetica, Arial, sans-serif"><b><font size="-1">Find
+              Next &gt;</font></b></font> begins its search from the
+        Cursor/Caret's new position.</dd>
+      <dt><br>
+      </dt>
+      <dt><font size="-1"><b><font face="Helvetica, Arial, sans-serif">&lt;
+
+              Find Prev</font></b></font></dt>
+      <dd>This button's operation is similar to Find Next's, depending
+        on whether there has been any Cursor/Caret movement away from
+        the position of the most recent successful Find operation. If
+        the Cursor/Caret has been moved, <font face="Helvetica, Arial,
+          sans-serif"><b><font size="-1">&lt; Find Prev</font></b></font>
+        will begin its backward search from the Cursor/Caret. However,
+        if the position has not been changed, it will begin its search
+        one character to the left of the right-edge of the last
+        successful search. Similar to the <font face="Helvetica, Arial,
+          sans-serif"><b><font size="-1">Find Next &gt;</font></b></font>
+        example, if the starting position were after the "XXXX", <font
+          size="-1" face="Helvetica, Arial, sans-serif"><b>&lt; Find
+            Prev</b></font> would locate the last two Xs, then the
+        middle two, then the first two, then it would move on.</dd>
+    </dl>
+    <font face="Helvetica, Arial, sans-serif"><b><font size="-1">Find
+          Next &gt;</font></b></font> and <font face="Helvetica, Arial,
+      sans-serif"><b><font size="-1">&lt; Find Prev</font></b></font> do
+    not depend upon having first issued a <font face="Helvetica, Arial,
+      sans-serif"><b><font size="-1">Find First</font></b></font>: any
+    of these three searches may be used any time there is an ODF loaded.<br>
+    <br>
+    <table width="10%" cellspacing="0" cellpadding="2" border="0"
+      align="center">
+      <tbody>
+        <tr>
+          <td valign="top"><img moz-do-not-send="true"
+              src="Images/SearchArea.JPG" alt="Search Area" width="1242"
+              border="1" height="61"><br>
+          </td>
+        </tr>
+        <tr align="center">
+          <td valign="top">Search Area<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    The following three images show the <font face="Helvetica, Arial,
+      sans-serif"><b><font size="-1">Find Next &gt;</font></b></font>
+    "XXX" example in action: a <font face="Helvetica, Arial,
+      sans-serif"><b><font size="-1">Find First</font></b></font> for
+    "XX", followed immediately by two successive <font face="Helvetica,
+      Arial, sans-serif"><b><font size="-1">Find Next &gt;</font></b></font>:<br>
+    <br>
+    <table width="80%" cellspacing="0" cellpadding="2" border="0"
+      align="center">
+      <tbody>
+        <tr>
+          <td valign="top" align="center"><img moz-do-not-send="true"
+              src="Images/FindDemo1.JPG" alt="Find First &quot;XX&quot;"
+              width="303" border="1" height="249"><br>
+          </td>
+          <td width="30" valign="top"><br>
+          </td>
+          <td valign="top" align="center"><img moz-do-not-send="true"
+              src="Images/FindDemo2.JPG" alt="First Find Next
+              &quot;XX&quot;" width="285" border="1" height="248"><br>
+          </td>
+          <td width="30" valign="top"><br>
+          </td>
+          <td valign="top" align="center"><img moz-do-not-send="true"
+              src="Images/FindDemo3.JPG" alt="Second Find Next
+              &quot;XX&quot;" width="278" border="1" height="245"><br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top" align="center"><font face="Helvetica, Arial,
+              sans-serif"><b><font size="-1">Find First</font></b></font>
+            "XX"<br>
+          </td>
+          <td width="30" valign="top"><br>
+          </td>
+          <td valign="top" align="center">First <font size="-1"
+              face="Helvetica, Arial, sans-serif"><b>Find Next &gt;</b></font>
+            "XX"<br>
+          </td>
+          <td valign="top"><br>
+          </td>
+          <td valign="top" align="center">Second <font face="Helvetica,
+              Arial, sans-serif"><b><font size="-1">Find Next &gt;</font></b></font>
+            "XX<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <ul>
+    </ul>
+  </body>
+</html>

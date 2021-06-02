@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>AECHO Editing and ODF</title>
+  </head>
+  <body>
+    <h2>AECHO V2 Help - Editing an ODF<br>
+    </h2>
+    <ul>
+    </ul>
+    <a
+href="file:///C:/Users/Bob%20Hehmann/source/repos/GIT-for-AECHO/AECHO/bin/Debug/net5.0-windows/DATA/AECHOHelpFiles/AECHOMain.htm"
+      moz-do-not-send="true">&lt;Return to Help's Home Page&gt;</a><br>
+    &nbsp; <br>
+    When first loaded, the <a moz-do-not-send="true"
+      href="AreaODF.html"><font face="Helvetica, Arial, sans-serif"><b><font
+            size="-1">ODF Display Area </font></b></font></a>is
+    read-only: its content can be displayed, searched, selected, and
+    copied, but not altered. To make this area alterable, the user must
+    first select the <b>menu &gt; <font size="-1" face="Helvetica,
+        Arial, sans-serif">Edit Mode</font> &gt; <a
+        moz-do-not-send="true" href="MenuEditMode.html"><font size="-1"
+          face="Helvetica, Arial, sans-serif">ODF Editing Enabled</font></a></b>
+    from the <a moz-do-not-send="true" href="MenuBar.html">Menu-Bar</a>.
+    AECHO will issue an informational message that the text is now
+    editable, change the background color of the <font face="Helvetica,
+      Arial, sans-serif"><b><font size="-1">Edit Mode</font></b></font>
+    menu from grey to red.<br>
+    <br>
+    With editing enabled, the used may freely alter text just as with
+    most common text editors: new text may be typed or pasted in; text
+    may be deleted using the Backspace or Delete keys. Ctrl+X can be
+    used to Cut (with a copy to the clipboard) selected text.<br>
+    <br>
+    AECHO maintains an "unsaved modified text" indicator: it is visible
+    on the <a moz-do-not-send="true" href="StatusBar.html"><b>Status-Bar</b></a>
+    as a colored box. The display is colored orange when there is no
+    ODF; green when the current text is unmodified since it was loaded
+    or last saved; red if there have been modifications made, but not
+    yet saved. If the user requests an action that would dispose of
+    unsaved modifications, such as exiting AECHO, closing the current
+    ODF, or loading a new ODF, then the program will offer to save the
+    users modified ODF.<br>
+    <br>
+    When editable, the user may revert the ODF back to read-only by
+    selecting <b>menu &gt; <font size="-1" face="Helvetica, Arial,
+        sans-serif">Edit Mode</font> &gt; <a moz-do-not-send="true"
+        href="MenuEditMode.html"><font size="-1" face="Helvetica, Arial,
+          sans-serif">ODF Editing Disabled</font></a></b>.<br>
+    <br>
+    If satisfied with the changes made, the user may select <b>menu
+      &gt; <font size="-1" face="Helvetica, Arial, sans-serif">File</font>
+      &gt; <a moz-do-not-send="true" href="MenuFile.html"><font
+          size="-1" face="Helvetica, Arial, sans-serif">Save As...</font></a></b>
+    to save the contents of the <font face="Helvetica, Arial,
+      sans-serif"><b><font size="-1">ODF Display Area</font></b></font>
+    back to a file. The system will default to the same directory from
+    which the source ODF was loaded, but the user can select any
+    accessible directory desired. Note that it is recommended to save to
+    a new file name, so as not to overwrite a critical file. You may
+    choose to overwrite an existing ODF file: AECHO will warn, but allow
+    the operation if the user chooses to proceed.<br>
+    <br>
+    Note that at this time, AECHO does not perform validation on the
+    modified ODF, neither for XML syntax nor for adherence to
+    Hauptwerk's specifications for an ODF.<br>
+    <br>
+  </body>
+</html>

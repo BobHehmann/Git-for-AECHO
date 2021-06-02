@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>AECHO Sections / Rows / Tags</title>
+  </head>
+  <body>
+    <h2>AECHO V2 Help - Sections / Rows / Tags (aka Tables / Records /
+      Fields)<br>
+    </h2>
+    <ul>
+    </ul>
+    <a
+href="file:///C:/Users/Bob%20Hehmann/source/repos/GIT-for-AECHO/AECHO/bin/Debug/net5.0-windows/DATA/AECHOHelpFiles/AECHOMain.htm"
+      moz-do-not-send="true">&lt;Return to Help's Home Page&gt;</a><br>
+    <br>
+    Hauptwerk <acronym>ODF</acronym>s are XML Documents, mostly
+    organized to directly correspond with the common database concepts
+    of Tables, Records, and Fields. This part of the Help Text uses
+    these common database terms to demonstrate how an ODF is composed,
+    and how AECHO interprets that composition.<br>
+    <br>
+    Abstractly, an ODF is organized somewhat like this:<br>
+    <blockquote><code>XML-Header</code><code>&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; (Identifies this as XML)<br>
+      </code><code>ODF</code><code>-Header &nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; (A "Database" for an Instrument)<br>
+      </code><code>&nbsp;&nbsp;&nbsp; Section-1</code><code>&nbsp;&nbsp;&nbsp;
+
+        &nbsp;&nbsp;&nbsp;&nbsp; (A "Table" in that "Database"<br>
+      </code><code>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Row-1</code><code>&nbsp;&nbsp;&nbsp;
+
+        &nbsp; &nbsp;&nbsp; (A "Record" in that "Table")<br>
+      </code><code>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp; Tag-a</code><code> &nbsp; &nbsp; (A "Field"
+        in that "Record")<br>
+      </code><code>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp; Tag-b</code><code>&nbsp;&nbsp;&nbsp;&nbsp;
+        (Another "Field" in the same "Record")<br>
+      </code><code>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Row-2</code><code>&nbsp;&nbsp;&nbsp;
+
+        &nbsp; &nbsp;&nbsp; (Same structure as other "Records" in this
+        "Table")<br>
+      </code><code>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp; Tag-a</code><code><br>
+      </code><code>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp; Tag-b</code><code><br>
+      </code><code>&nbsp;&nbsp;&nbsp; Section-2</code><code>&nbsp;&nbsp;&nbsp;
+
+        &nbsp;&nbsp;&nbsp;&nbsp; (A different "Table", with no
+        "Records")<br>
+      </code><code>&nbsp;&nbsp;&nbsp; Section-3</code><code>&nbsp;&nbsp;&nbsp;
+
+        &nbsp;&nbsp;&nbsp;&nbsp; (Another "Table")<br>
+      </code><code>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Row-1</code><code>&nbsp;&nbsp;&nbsp;
+
+        &nbsp; &nbsp;&nbsp; (Its first "Record")<br>
+      </code><code>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp; Tag-c</code><code> &nbsp; &nbsp; ("Fields" of
+        the "Records" of this "Table")<br>
+      </code><code>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp; Tag-d<br>
+      </code></blockquote>
+    <code></code>Each of these abstractions is implemented using
+    standardized XML constructs recognized by AECHO. At all times, AECHO
+    recognizes the type of construct the Cursor/Caret is located in
+    (even if that Row has not been selected), and displays this on the
+    bottom-left corner of its main form, in the <a
+      moz-do-not-send="true" href="StatusBar.html"><font size="-1"
+        face="Helvetica, Arial, sans-serif"><b>Status-Bar</b></font></a>.
+    AECHO distinguished between the "_General" Section and the other 43
+    Sections, as "_General" has a somewhat different presentation at the
+    Row/Tag (Record/Field) level than the other Sections: the remaining
+    43 Sections follow the abstract structure outlined above.<br>
+    <br>
+    In XML, each of the Elements shown above is bounded by a Start-Tag
+    and its corresponding End-Tag (see <a moz-do-not-send="true"
+      href="XMLIntro.html">XML - a Brief intro...</a> for more
+    information) that define the extent of that Element's Content. The
+    Content may include data values, Child Elements, or both. A somewhat
+    more detailed abstraction might look like this:<br>
+    <blockquote><code>&lt;Section-1&gt;<br>
+        &nbsp;&nbsp;&nbsp; &lt;Row-1&gt;<br>
+        &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;Tag-a&gt;Tag-a's
+        content...&lt;/Tag-a&gt;<br>
+        &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;Tag-b&gt;Tag-b's
+        content........&lt;/Tag-b&gt;<br>
+        &nbsp;&nbsp;&nbsp; &lt;/Row-1&gt;<br>
+        &lt;/Section-1&gt;<br>
+      </code></blockquote>
+    <br>
+    <table width="100%" cellspacing="0" cellpadding="2" border="1">
+      <tbody>
+        <tr>
+          <th width="160" valign="top">Construct<br>
+          </th>
+          <th width="100" valign="top">Row Type<br>
+          </th>
+          <th width="180" valign="top">Start-Tag XML<br>
+          </th>
+          <th width="100" valign="top">Row Type<br>
+          </th>
+          <th width="120" valign="top">End-Tag XML<br>
+          </th>
+          <th valign="top">Description<br>
+          </th>
+        </tr>
+        <tr>
+          <td width="160" valign="top"><b>XML Header</b><b><br>
+            </b></td>
+          <td width="100" valign="top">XML Header<br>
+          </td>
+          <td width="180" valign="top"><code>&lt;?xml version="1.0"
+              encoding="UTF-8"?&gt;</code><code><br>
+            </code></td>
+          <td width="100" valign="top">None<br>
+          </td>
+          <td width="120" valign="top">None<br>
+          </td>
+          <td valign="top">Always the first row in an ODF. Defines the
+            version of XML used ("1.0"), and the character encoding
+            ("UTF-8"). AECHO does not parse the XML per standards, but
+            does fully support UTF-8 encoding of data content.<br>
+          </td>
+        </tr>
+        <tr>
+          <td width="160" valign="top"><b>ODF Header</b><b><br>
+            </b></td>
+          <td width="100" valign="top">ODF Start-Tag<br>
+          </td>
+          <td width="180" valign="top"><code>&lt;Hauptwerk
+              FileFormat="Organ" FileFormatVersion=...&gt;</code><code><br>
+            </code></td>
+          <td width="100" valign="top">ODF End-Tag<br>
+          </td>
+          <td width="120" valign="top"><code>&lt;/Hauptwerk&gt;</code><code><br>
+            </code></td>
+          <td valign="top">Bounds the ODF's content, identifies the
+            Format and Version of the ODF's content. AECHO is presently
+            decoding FileFormatVersion "6.00000".<br>
+          </td>
+        </tr>
+        <tr>
+          <td width="160" valign="top"><b>Section</b><b><br>
+            </b></td>
+          <td width="100" valign="top">Sec Start-Tag<br>
+          </td>
+          <td width="180" valign="top"><code>&lt;ObjectList
+              ObjectType="SecName"&gt;</code><code><br>
+            </code></td>
+          <td width="100" valign="top">Sec End-Tag<br>
+          </td>
+          <td width="120" valign="top"><code>&lt;/ObjectList&gt;</code><code><br>
+            </code></td>
+          <td valign="top">Bounds a Section's content. Sections are
+            presently encoded in a standardized order, and are present
+            even when they are empty.<br>
+          </td>
+        </tr>
+        <tr>
+          <td width="160" valign="top"><b>_General Section Data</b><b><br>
+            </b></td>
+          <td width="100" valign="top">Gen Sec Data<br>
+          </td>
+          <td width="180" valign="top"><code>&lt;AnyLongTag&gt;</code><code><br>
+            </code></td>
+          <td width="100" valign="top">Gen Sec Data<br>
+          </td>
+          <td width="120" valign="top"><code>&lt;/AnyLongTag&gt;</code><code><br>
+            </code></td>
+          <td valign="top">Content from the _General Section is
+            presented, but not interpreted by AECHO: it is already in
+            expanded form.<br>
+          </td>
+        </tr>
+        <tr>
+          <td width="160" valign="top"><b>Row</b><b><br>
+            </b></td>
+          <td width="100" valign="top">Record<br>
+          </td>
+          <td width="180" valign="top"><code>&lt;o&gt;</code><code><br>
+            </code></td>
+          <td width="100" valign="top">Record<br>
+          </td>
+          <td width="120" valign="top"><code>&lt;/o&gt;</code><code><br>
+            </code></td>
+          <td valign="top">This markup bounds a Section's individual
+            "Records", aka "Rows". May be comprised of multiple Lines in
+            the file/onscreen.<br>
+          </td>
+        </tr>
+        <tr>
+          <td width="160" valign="top"><b>Tag</b><b><br>
+            </b></td>
+          <td width="100" valign="top">Record<br>
+          </td>
+          <td width="180" valign="top"><code>&lt;a&gt;...&lt;z&gt;,
+              &lt;a1&gt;...&lt;z1&gt;</code><code><br>
+            </code></td>
+          <td width="100" valign="top">Record<br>
+          </td>
+          <td width="120" valign="top"><code>&lt;/a&gt;...&lt;/z1&gt;</code><code><br>
+            </code></td>
+          <td valign="top">Single letter, or letter plus digit "1",
+            bounds the content of a "Field".<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <code></code>In an ODF, the XML Header, ODF Header and Trailer,
+    Section Headers and Trailers, and _General Section Data are all
+    placed on dedicated single text-lines, ending with a line-break
+    character. This is not a requirement of XML, but is presently a
+    formatting convention of Hauptwerk. When selecting content by
+    double-clicking in the ODF Display Area, AECHO treats this type of
+    content as a single Row, comprised of a single Line.<br>
+    <br>
+    Record content of Sections other than _General may span multiple
+    lines i.e. the starting '<code>&lt;o&gt;</code>' and terminating '<code>&lt;/o&gt;</code>'
+    markup may be on different lines of text. AECHO defines this type of
+    Row as all Lines containing the entire span of '<code>&lt;o&gt;...&lt;/o&gt;</code>',
+    however many that takes. Each individual Field within a Record is
+    contained within a single Line i.e. a line-break never occurs
+    between the Field's Start and End-Tags. However, line-breaks are
+    allowed and often used between one Field's End-Tag and the next
+    Field's Start-Tag, thereby resulting in a Row that spans multiple
+    Lines. Lastly, within any single Record in a Compressed-ODF, only
+    Fields containing non-default values are present: when HW reads a
+    record, it internally supplies its defined default values for Fields
+    that are officially part of a Section's Record definition, but not
+    present in the ODF. AECHO presents the complete definition of a
+    Record within the current Section, including the defaults HW will
+    apply to absent Fields.<br>
+    <br>
+    Hauptwerk convention is that all Rows start on their own Line, and
+    end on their own Line - no Line contains any content of more than a
+    single Row. This is only convention, and is not required by XML.<br>
+    <ul>
+    </ul>
+  </body>
+</html>

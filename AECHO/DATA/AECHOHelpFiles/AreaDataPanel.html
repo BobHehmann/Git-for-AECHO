@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>AECHO Data Panel Area</title>
+  </head>
+  <body>
+    <h2>AECHO V2 Help - Data Panel Area<br>
+    </h2>
+    <ul>
+    </ul>
+    <a
+href="file:///C:/Users/Bob%20Hehmann/source/repos/GIT-for-AECHO/AECHO/bin/Debug/net5.0-windows/DATA/AECHOHelpFiles/AECHOMain.htm"
+      moz-do-not-send="true">&lt;Return to Help's Home Page&gt;</a><br>
+    <br>
+    The <font face="Helvetica, Arial, sans-serif"><b><font size="-1">Data
+
+          Panel Area</font></b></font> displays position information for
+    the current ODF and any selection. There are eight primary position
+    fields, which are also hyperlinks to their locations: clicking on
+    one of these colored fields will move the cursor to that location,
+    without selecting a Row nor changing the Section - similar to a
+    single mouse-click on the position displayed in the field. If a
+    Record-Row is currently selected, this area displays the number of
+    Fields/Tags found in that Record. Lastly, the four <font
+      face="Helvetica, Arial, sans-serif"><b><font size="-1">Marker</font></b></font>
+    buttons are located in this area, allowing bookmarks to be set and
+    used.<br>
+    <br>
+    <dl>
+      <dt><font size="-1" face="Helvetica, Arial, sans-serif"><b>Section
+            Start &amp; End</b></font></dt>
+      <dd>Identifie<font size="+1"><b>s</b></font> the character
+        positions of the start and the end of the current Section. Start
+        is defined as the first character of the first Line of the
+        Section, the "<font size="+1" color="#3366ff"><b>&lt;</b></font>"
+        bracket that opens the Section's Start-Tag. End is defined as
+        immediately following the closing "<font size="+1"
+          color="#3333ff"><b>&gt;</b></font>" bracket of the Section's
+        End-Tag. Clicking on <font size="-1" face="Helvetica, Arial,
+          sans-serif"><b>Section Start</b></font> positions the
+        Cursor/Caret at the beginning of the Line containing the
+        Section's Title i.e., its Start-Tag. Clicking on <font
+          face="Helvetica, Arial, sans-serif"><b><font size="-1">Section
+              End</font></b></font> positions to the end of the Line
+        with the Section's End-Tag.</dd>
+      <dt><br>
+      </dt>
+      <dt><font face="Helvetica, Arial, sans-serif"><b><font size="-1">Line
+
+              Number</font></b></font></dt>
+      <dd>The number of the Line where the Cursor/Caret is currently
+        positioned. This value is one-based i.e., the first line in the
+        ODF is <font size="-1" face="Helvetica, Arial, sans-serif"><b>Line
+
+            Numbe</b></font>r 1. As Lines are never soft-wrapped in the
+        <a moz-do-not-send="true" href="AreaODF.html"><font
+            face="Helvetica, Arial, sans-serif"><b><font size="-1">ODF
+                Display Area</font></b></font></a>, the numbers
+        displayed by AECHO will generally correspond with those assigned
+        by many common text editors, such as Notepad++. Clicking this
+        field will position to the beginning of the Line.</dd>
+      <dt><br>
+      </dt>
+      <dt><font face="Helvetica, Arial, sans-serif"><b><font size="-1">Caret
+
+              Position</font></b></font></dt>
+      <dd>The character position of the Cursor/Caret's present location.
+        This value is zero-based i.e., when placed in front of the first
+        character of the ODF, its value will be 0. The invisible
+        line-break character at the end of each line is included in the
+        count. Character positions are always based on the simple-text:
+        they do not include any hidden Rich-Text formatting. Similar to
+        <font face="Helvetica, Arial, sans-serif"><b><font size="-1">Line
+
+              Number</font></b></font>, this field will closely
+        correspond to the positions reported back by common text
+        editors. Clicking on this field will restore the visibility of
+        the Cursor, without moving it: the Cursor/Caret is usually
+        hidden when the <font face="Helvetica, Arial, sans-serif"><b><font
+              size="-1">ODF Display Area</font></b></font> loses focus,
+        so this lets the user restore it without risking moving the
+        position.</dd>
+      <dt><br>
+      </dt>
+      <dt><font face="Helvetica, Arial, sans-serif"><b><font size="-1">Line
+
+              Start &amp; End</font></b></font></dt>
+      <dd>The character positions of the start and the end of the
+        current Line. Clicking on one of these fields will position to
+        the start or end of the Line.</dd>
+      <dt><br>
+      </dt>
+      <dt><font face="Helvetica, Arial, sans-serif"><b><font size="-1">Row
+
+              Start &amp; End</font></b></font></dt>
+      <dd>The character positions of the start and the end of the
+        current Row. Record-Rows may be comprised of more than one Line.
+        All other Row types are found on a single Line, in which case
+        the values displayed here will match those of their respective <font
+          face="Helvetica, Arial, sans-serif"><b><font size="-1">Line
+              Start</font></b></font> &amp; <font face="Helvetica,
+          Arial, sans-serif"><b><font size="-1">Line End</font></b></font>
+        counterparts. Clicking on one of these fields will position the
+        Cursor/Caret to either the beginning of the first Line of the
+        Row, or to the end of the last Line of the Row.</dd>
+      <dt><br>
+      </dt>
+      <dt><font face="Helvetica, Arial, sans-serif"><b><font size="-1">Number
+
+              of Tags</font></b></font></dt>
+      <dd>When a Record-Row is selected, and the <a
+          moz-do-not-send="true" href="AreaTagsPanel.html"><font
+            size="-1" face="Helvetica, Arial, sans-serif"><b>Tags Panel
+              Area</b></font></a> is filled in, this field displays the
+        number of Fields/Tags found in the Record and displayed in the <font
+          face="Helvetica, Arial, sans-serif"><b><font size="-1">Tags
+              Panel Area</font></b></font>. The outer-bounding
+        '&lt;o&gt;...&lt;/o&gt;' Tags that delimit the Record are not in
+        the count, only the Child Elements of the Record are counted.
+        This field is not clickable.</dd>
+      <dt><br>
+      </dt>
+      <dt><font face="Helvetica, Arial, sans-serif"><b><font size="-1">Marker
+
+              Buttons</font></b></font></dt>
+      <dd>The four <font face="Helvetica, Arial, sans-serif"><b><font
+              size="-1">Marker</font></b></font> buttons are found in
+        this area. They allow the user to set up to four bookmarks,
+        which are pointers to the starting positions of bookmarked
+        Lines. These buttons, once set, can be used to reposition the <b><font
+            size="-1" face="Helvetica, Arial, sans-serif">ODF Display
+            Area</font></b> and the Cursor/Caret position to the
+        selected bookmark. See <a moz-do-not-send="true"
+          href="UsingMarkers.html">Using Markers</a> for a complete
+        description of their use.</dd>
+      <dt><br>
+      </dt>
+      <dt><font face="Helvetica, Arial, sans-serif"><b><font size="-1">Led
+
+              Indicator</font></b></font></dt>
+      <dd>The small colored box found at the upper-right corner of this
+        area provides a simple report on the status of scanning &amp;
+        listing the Sections, which can take some time for a very large
+        ODF. This control is colored orange when there is no ODF loaded;
+        green when an ODF is loaded but AECHO is not scanning; red when
+        a scan is in progress. It is not a clickable control.</dd>
+    </dl>
+    <p>Example: In the following example, a single Record-Row, three
+      Lines long, was selected. In each case, the only difference is
+      that the Cursor/Caret is successively positioned to the first
+      character of the first of the three Lines, then the second, and
+      lastly the third. Notice how the data changes: in the first
+      example, the <font face="Helvetica, Arial, sans-serif"><b><font
+            size="-1">Line Start</font></b></font> is the same as the <font
+        face="Helvetica, Arial, sans-serif"><b><font size="-1">Row Start</font></b></font>,
+      and the Caret is located there; in the second, the <font
+        face="Helvetica, Arial, sans-serif"><b><font size="-1">Line
+            Number</font></b></font> is advanced by one, the <font
+        size="-1" face="Helvetica, Arial, sans-serif"><b>Line Start/End</b></font>
+      is wholly between the outer Row boundaries, and the Caret is
+      located at that Line's beginning; lastly, the <font
+        face="Helvetica, Arial, sans-serif"><b><font size="-1">Line End</font></b></font>
+      is the same as the <font face="Helvetica, Arial, sans-serif"><b><font
+            size="-1">Row End</font></b></font>, the <font
+        face="Helvetica, Arial, sans-serif"><b><font size="-1">Line
+            Number</font></b></font> is one greater again, and the Caret
+      is located at the beginning of that Line.<br>
+    </p>
+    <table width="80%" cellspacing="0" cellpadding="2" border="0"
+      align="center">
+      <tbody>
+        <tr>
+          <td valign="top" align="center"><img moz-do-not-send="true"
+              src="Images/DataAreaLine1.JPG" alt="Data Area Line 1 of 3
+              in a Row" width="226" border="1" height="363"><br>
+          </td>
+          <td width="30" valign="top"><br>
+          </td>
+          <td valign="top" align="center"><img moz-do-not-send="true"
+              src="Images/DataAreaLine2.JPG" alt="Data Area Line 2 of 3
+              in a Row" width="224" border="1" height="360"><br>
+          </td>
+          <td width="30" valign="top"><br>
+          </td>
+          <td valign="top" align="center"><img moz-do-not-send="true"
+              src="Images/DataAreaLine3.JPG" alt="Data Area Line 3 of 3
+              in a Row" width="223" border="1" height="360"><br>
+          </td>
+        </tr>
+        <tr>
+          <td valign="top" align="center">Data Panel: a Row, Line 1 of 3<br>
+          </td>
+          <td width="30" valign="top"><br>
+          </td>
+          <td valign="top" align="center">Data Panel: a Row, Line 2 of 3<br>
+          </td>
+          <td width="30" valign="top"><br>
+          </td>
+          <td valign="top" align="center">Data Panel: a Row, Line 2 of 3<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><br>
+    </p>
+    <dl>
+      <dd><br>
+      </dd>
+    </dl>
+  </body>
+</html>

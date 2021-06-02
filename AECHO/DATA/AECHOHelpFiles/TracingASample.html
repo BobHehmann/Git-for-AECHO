@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>AECHO Tracing a Sample</title>
+  </head>
+  <body>
+    <h2>AECHO V2 Help - Tracing a Sample<br>
+    </h2>
+    <ul>
+    </ul>
+    <a
+href="file:///C:/Users/Bob%20Hehmann/source/repos/GIT-for-AECHO/AECHO/bin/Debug/net5.0-windows/DATA/AECHOHelpFiles/AECHOMain.htm"
+      moz-do-not-send="true">&lt;Return to Help's Home Page&gt;</a><br>
+    <br>
+    The Sample Section enumerates all of the sound samples that the
+    instrument has at its disposal. Each Record in this Section contains
+    a minimal amount of data, usually three or four Fields: a SampleID,
+    which is the unique Primary-key that identifies the sample
+    throughout the rest of the ODF; the InstallationPackageID, which
+    identifies of instrument that supplies the sound sample, which may
+    be the ODF's own instrument, or another instrument altogether,
+    allowing sounds to be borrowed; the directory path and filename of
+    the sound sample, relative to the owning instrument's data
+    directory; and less commonly, a tag that identifies License
+    requirements for accessing the sample.<br>
+    <br>
+    Before sounding, HW applies extensive processing to render the
+    actual output waveform to be sent to the internal mixer: attack,
+    decay, tremulants, wind-effects... The information that defines
+    these processes is mostly stored in other ODF Sections, being linked
+    to the samples by shared key values, much like how relationships are
+    modeled in relational databases. Sample Tracing provides a tool to
+    help understand some of these primary relationships, by tracing
+    several of these linkages and presenting related Records. For
+    example, starting with a sample from the Sample Section, Trace will
+    locate linkages to and render related Records for:<br>
+    <ul>
+      <li>Attack (Section Pipe_SoundEngine01_AttackSample)</li>
+      <li> Release (Section Pipe_SoundEngine01_ReleaseSample)</li>
+      <li>Tremulant processing for the Fundamental Pitch (Section
+        TremulantWaveform)</li>
+      <li>Tremulant processing for the Third Harmonic (Section
+        TremulantWaveform)</li>
+      <li>The sample's Source Instrument (RequiredInstallationPackage)</li>
+    </ul>
+    <p>A second difficulty in understanding how sound will be processed
+      based on casual inspection of an ODF is caused by the extensive
+      reliance upon implicit defaults. Several of the Sections named
+      above are comprised of a great many Fields, but often their ODF
+      Records only carry Tags for a small number of Fields: the rest are
+      filled in by implicit default values, which are often significant
+      to the processing. Compressed-ODFs do not contain references to
+      these implicit, default-valued Fields. Tracing fills in these
+      missing details, by presenting every possible Field defined for a
+      particular Section's Records, and showing both explicitly defined
+      Fields whose values are taken directly from the ODF, and implicit
+      default values, supplied by HW internal logic when a given Field
+      does not appear in a Record, or appears but is without a value.<br>
+    </p>
+    <p>There are two ways to access Sample Tracing: through the menu
+      item <a moz-do-not-send="true" href="MenuTools.html#Tracing"><b>menu
+
+
+
+          &gt; </b><font size="-1" face="Helvetica, Arial, sans-serif"><b><u>T</u></b></font><b><font
+            size="-1" face="Helvetica, Arial, sans-serif">ools</font>
+          &gt; </b><font size="-1" face="Helvetica, Arial, sans-serif"><b><u>T</u></b><b>race
+
+
+
+
+            a Sample</b></font></a>; through the <font size="-1"
+        face="Helvetica, Arial, sans-serif"><a moz-do-not-send="true"
+          href="TraceASampleButton.html"><b>Trace Sample</b></a></font>
+      button that is displayed whenever the selected Row/Record is a
+      Sample Record. Both methods invoke the same <b>Sample Trace</b>
+      form. They differ in that when the user invokes Tracing through
+      the menu, the form's input field for <b>Sample ID</b> is
+      initially blank, and the user is responsible for typing or pasting
+      in the desired SampleID, then clicking the Trace form's <font
+        size="-1" face="Helvetica, Arial, sans-serif"><b>Trace</b></font>
+      button to initiate the Trace; when using the main form's <font
+        size="-1" face="Helvetica, Arial, sans-serif"><b>Trace Sample</b></font>
+      button, AECHO copies the SampleID from the current ODF record into
+      the <b>Sample Trace</b> form's input field and initiates the
+      Trace directly - saving keystrokes and reducing the chance
+      entering the wrong SampleID.<br>
+    </p>
+    <p>The following screen snapshot show the impact of Trace. The
+      Sample with SampleID "00497" was originally selected from the ODF.
+      It contains a linkage with a Release Record, which has been
+      subsequently selected, and is shown in the snippet below:<br>
+    </p>
+    <table width="10%" cellspacing="0" cellpadding="2" border="0"
+      align="center">
+      <tbody>
+        <tr>
+          <td valign="top"><img moz-do-not-send="true"
+              src="Images/SampleReleaseSnippet.JPG" alt="ReleaseSample
+              Record in the ODF" width="1476" border="1" height="550"><br>
+          </td>
+        </tr>
+        <tr align="center">
+          <td valign="top">A ReleaseSample Record, Associated with a
+            Sample Record<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <div align="center">
+      <div align="left">This next picture starts with the sample sample,
+        and shows the <b>Sample Trace</b> form that was created when
+        the user clicked the main form's <font size="-1"
+          face="Helvetica, Arial, sans-serif"><b>Trace Sample</b></font>
+        button:<br>
+        <br>
+        <table width="10%" cellspacing="0" cellpadding="2" border="0"
+          align="center">
+          <tbody>
+            <tr>
+              <td valign="top"><img moz-do-not-send="true"
+                  src="Images/TraceSample.JPG" alt="Trace Sample Form"
+                  width="854" border="1" height="608"><br>
+              </td>
+            </tr>
+            <tr align="center">
+              <td valign="top">Sample Trace Form<br>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <br>
+        <br>
+        <div align="center">
+          <div align="left">At the top of the form is the path &amp;
+            filename of the currently loaded ODF, and the Title "<b>Sample
+
+              Trace</b>": these remain permanently displayed, even when
+            the form is cleared. The Blue and Green lines are the
+            Sections, starting with the Sample itself (<font
+              color="#3366ff">Blue</font>), followed by commonly linked
+            Sections (<font color="#009900">Green</font>). Each Section
+            is listed, along with its starting and ending Line Numbers
+            in the ODF. If there are no Records within a Section that
+            are linked with the Sample being Traced, the first indented
+            line under the Section's header states this, in <font
+              color="#cc0000">Red</font>: in the example, there are no
+            related Attack Records. However, if there is a related
+            Record in one of these Sections, then that Record's Fields
+            are listed exhaustively. In this example, there is a related
+            Release Record. The first indented line under Release tells
+            us that the SampleID Field, defined by Tag "&lt;c&gt;", is
+            present in the ODF, with a value of "400497". A few lines
+            lower, it tells us that the Field
+            LoadSampleRange_StartPositionValue, defined by Tag
+            "&lt;e&gt;" is not present, so HW will use the default value
+            of "0". Though scrolled off the example form's window, this
+            sample went on to identify information regarding the two
+            uses of Tremulants, and the source instrument package.
+            Fields that explicitly appear in the ODF are displayed in
+            Black, those that are not, and are therefore operating with
+            default values, an in <font color="#996633">Brown</font>.<br>
+          </div>
+          <div align="left"> <br>
+            At any time, the user can enter another SampleID into the
+            textbox, and initiate another Trace. The results of each
+            subsequent Trace are appended to the bottom of the display,
+            with a blank line separating Traces. Clicking the menu item
+            <b>menu &gt; </b><font size="-1" face="Helvetica, Arial,
+              sans-serif"><b><u>C</u></b><b>lear Traces</b></font> will
+            reset the display area to just its headers, showing the
+            current ODF file that is loaded, and the Title "<b>Sample
+              Trace</b>". The menu item <b>menu &gt; </b><font
+              size="-1" face="Helvetica, Arial, sans-serif"><b><u>P</u></b><b>rint
+
+
+                Traces...</b></font> opens an operating-system standard
+            print-dialog, allowing the user to print the entire contents
+            of this forms content area, retaining all formatting. The
+            menu item <b>menu &gt; </b><font size="-1"
+              face="Helvetica, Arial, sans-serif"><b><u>E</u></b><b>xit</b></font>
+            closes the Sample Trace form, clearing its contents.<br>
+            <br>
+            <br>
+          </div>
+          <br>
+        </div>
+      </div>
+      <br>
+    </div>
+  </body>
+</html>

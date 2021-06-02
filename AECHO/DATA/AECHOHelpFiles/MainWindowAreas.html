@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>AECHO Main Window Areas</title>
+  </head>
+  <body>
+    <h2>AECHO V2 Help - Main Window Areas<br>
+    </h2>
+    <ul>
+    </ul>
+    <a
+href="file:///C:/Users/Bob%20Hehmann/source/repos/GIT-for-AECHO/AECHO/bin/Debug/net5.0-windows/DATA/AECHOHelpFiles/AECHOMain.htm"
+      moz-do-not-send="true">&lt;Return to Help's Home Page&gt;</a><br>
+    <br>
+    AECHO divides it main form into six areas to present and manage most
+    of its information:<br>
+    <dl>
+      <dt><a moz-do-not-send="true" href="AreaODF.html"><b>ODF Display
+            Area</b></a></dt>
+      <dd>This area is a scrollable window into an ODF: opening an ODF
+        file loads its contents entirely into this area, without any
+        reformatting of the text layout. From here, any part of the ODF
+        can be viewed and/or edited. Vertical and Horizontal scroll-bars
+        provide for quick unstructured navigation around the text. Just
+        above the top-left edge of the area, AECHO displays the name of
+        the current Section, when a Row is selected. Along the right top
+        edge are controls to vary the presentation font size, and to
+        move the cursor position by 1, 10, or 100 Lines at a time in
+        either direction.</dd>
+      <dt><br>
+      </dt>
+      <dt><a moz-do-not-send="true" href="AreaXMLRowRecord.html"><b>XML
+            Row/Record Area</b></a></dt>
+      <dd>When a Row is selected within the ODF Display Area (most
+        commonly by double-clicking with the mouse while positioned
+        anywhere inside the Row), the entire text of that Row is copied
+        into this area. Note that some Record-Rows might consist of more
+        than a single Line of text, in which case all of the Lines will
+        be copied intact into this area, which can be scrolled.</dd>
+      <dt><br>
+      </dt>
+      <dt><a moz-do-not-send="true" href="AreaSearch.html"><b>Search
+            Area</b></a></dt>
+      <dd>This area allows the user to enter search text, and initiate a
+        search for the first instance of that text in the ODF, or the
+        next instance (forward search) from the current position, or the
+        previous instance (backwards search) from the current position.</dd>
+      <dt><br>
+      </dt>
+      <dt><a moz-do-not-send="true" href="AreaTagsPanel.html"><b>Tags
+            Panel</b></a></dt>
+      <dd>When a Row is loaded into the XML Row/Record Area, and that
+        Row is of type "Record" (bounded by '&lt;o&gt;...&lt;/o&gt;'
+        Tags), AECHO will present that Row in this Panel, separated into
+        its constituent Fields, and present each of those Fields
+        alongside their Values. If the Record carries a data element
+        pointing to an Image File, AECHO present the <font size="-1"
+          face="Helvetica, Arial, sans-serif"><b>Display Image</b></font>
+        button which will open and display that Image. If the Record is
+        a (sound) Sample, AECHO presents the <font size="-1"
+          face="Helvetica, Arial, sans-serif"><b>Trace Sample</b></font>
+        button to fully expand the Sample and linked Records from
+        several other Sections.</dd>
+      <dt><br>
+      </dt>
+      <dt><a moz-do-not-send="true" href="AreaDescriptiveText.html"><b>Descriptive
+
+
+            Text Area</b></a></dt>
+      <dd>When positioned in an ODF Section (or a non-Section Header or
+        Trailer area), this area displays a definition of the Section's
+        Fields, listing all possible Field Tag in both their abbreviated
+        forms as seen in a Compressed-ODF, and their long forms as seen
+        in a Full-ODF. When the ODF specification defines a default
+        value that HW will assume when the Field is absent from a
+        Compressed-ODF, that value is displayed here.
+        Obsolete/Deprecated Tags are identified, based on the current
+        HW6.x ODF specification. This area is also used to display the
+        List of Sections when an ODF is first loaded (or upon demand),
+        and is a fallback for displaying a shortened version of the Help
+        Text if the HTML Help cannot be displayed. The formatted content
+        of this area can be submitted as a print-job to any printer
+        (physical or virtual) available on the system.</dd>
+      <dt><br>
+      </dt>
+      <dt><a moz-do-not-send="true" href="AreaDataPanel.html"><b>Data
+            Panel</b></a></dt>
+      <dd>The Data Panel presents current position information about the
+        location of the cursor and/or the selected Row within the ODF.
+        The <b><font size="-1" face="Helvetica, Arial, sans-serif">Line
+            Number</font></b>, <b><font size="-1" face="Helvetica,
+            Arial, sans-serif">Caret Position</font></b>, <b><font
+            size="-1" face="Helvetica, Arial, sans-serif">Line Start/End</font></b>,
+        and <b><font size="-1" face="Helvetica, Arial, sans-serif">Row
+            Start/End</font></b> fields are updated when the cursor is
+        moved by a single-click, a double-click, a search, a Menu-Bar <b><font
+            size="-1" face="Helvetica, Arial, sans-serif">Sections</font></b>
+        choice, or by a <b><font size="-1" face="Helvetica, Arial,
+            sans-serif">Next/Prev</font></b><b><font size="-1"
+            face="Helvetica, Arial, sans-serif"> (1 / 10 / 100) Line</font></b>
+        button. Additionally, when a Row is selected (a mouse
+        double-click, Menu-Bar <b><font size="-1" face="Helvetica,
+            Arial, sans-serif">Sections</font></b> choice, or <font
+          size="-1" face="Helvetica, Arial, sans-serif"><b>Next/Prev (1
+            / 10 / 100) Line</b></font> button), then the <b><font
+            size="-1" face="Helvetica, Arial, sans-serif">Section
+            Start/End</font></b> and <b><font size="-1"
+            face="Helvetica, Arial, sans-serif">Number of Tags</font></b>
+        fields are also updated. The eight colored position fields are
+        all active hotlinks back to the ODF - clicking on one of them
+        will position the cursor to that point. This panel also displays
+        the four <font size="-1" face="Helvetica, Arial, sans-serif"><b>Marker</b></font>
+        buttons that create and position to bookmarks within an ODF.</dd>
+    </dl>
+    <dl>
+      <dt>Example:</dt>
+      <dd>The screenshot below is clickable, each area is linked to a
+        more detailed description of its use.</dd>
+      <dt><br>
+      </dt>
+    </dl>
+    <table width="10%" cellspacing="0" cellpadding="2" border="0"
+      align="center">
+      <tbody>
+        <tr>
+          <td valign="top"><img moz-do-not-send="true"
+              src="Images/MainWindowAreas.JPG" alt="Main Window Area"
+              usemap="#AreaMap" width="1486" border="1" height="893"><br>
+          </td>
+        </tr>
+        <tr align="center">
+          <td valign="top">Main Window Area, with Hyperlinks to their
+            Detailed Descriptions<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <dl>
+    </dl>
+    &nbsp;<map name="AreaMap">
+      <area shape="rect" coords="15, 90, 1240, 310" alt="ODF Display
+        Area" href="AreaODF.html">
+      <area shape="rect" coords="15, 340, 1240, 385" alt="XML Row/Record
+        Area" href="AreaXMLRowRecord.html">
+      <area shape="rect" coords="15, 395, 1240, 440" alt="Search Area"
+        href="AreaSearch.html">
+      <area shape="rect" coords="15, 480, 712, 860" alt="Tags Panel"
+        href="AreaTagsPanel.html">
+      <area shape="rect" coords="722, 480, 1470, 860" alt="Descriptive
+        Text Area" href="AreaDescriptiveText.html">
+      <area shape="rect" coords="1255, 60, 1470, 412" alt="Data Panel"
+        href="AreaDataPanel.html">
+    </map>
+    <ul>
+    </ul>
+  </body>
+</html>

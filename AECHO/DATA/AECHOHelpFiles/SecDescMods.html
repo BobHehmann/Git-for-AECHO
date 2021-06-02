@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>AECHO Modifying Section Descriptions</title>
+  </head>
+  <body>
+    <h2>AECHO V2 Help - Making Custom Mods to Section Descriptions<br>
+    </h2>
+    <ul>
+    </ul>
+    <a
+href="file:///C:/Users/Bob%20Hehmann/source/repos/GIT-for-AECHO/AECHO/bin/Debug/net5.0-windows/DATA/AECHOHelpFiles/AECHOMain.htm"
+      moz-do-not-send="true">&lt;Return to Help's Home Page&gt;</a><br>
+    <br>
+    AECHO installs an extensive set of descriptive text for the 44
+    standard ODF Sections, plus other non-Section content areas: this
+    text reflects the ODF specification current as of Hauptwerk V6.x,
+    documenting all known Fields for all Sections, both their short and
+    long-form Field-Tags, default values, and obsolete Tags. This
+    content may be modified by the user i.e. custom notes may be made
+    and saved.<br>
+    <br>
+    Note that care must be taken if modifying this content: presently,
+    AECHO makes no attempt to identify and protect custom modifications,
+    and a subsequent installation, re-installation, or update to AECHO
+    will overwrite any user mods, without warning. A future release of
+    AECHO may help protect user content.<br>
+    <br>
+    AECHO stores its Section descriptions in discrete RTF files, one for
+    each Section. The files are named the same as their related Section
+    i.e., the descriptive text file for the Section TextInstance is
+    "TextInstance.rtf". The location of these files depends on the type
+    of AECHO installation:<br>
+    <ol>
+      <li>Non-installed AECHO: AECHO was not installed by the system,
+        but was simply extracted from a compressed distribution file. In
+        this installation, AECHO's descriptive files are in the
+        directory "\DATA\", located in the same directory/folder as
+        AECHO's executable. For example, if the executable is
+        "C:\Somewhere\AECHO\AECHO.exe", then the descriptive files will
+        be in "C:\Somewhere\AECHO\DATA\". Saved user mods are written
+        back to these data files, overwriting their original content,
+        which are in turn subject to being overwritten if AECHO is
+        redeployed into the same directory.<br>
+        <br>
+      </li>
+      <li>Installed AECHO, "Just Me" mode: this is the default
+        installation type when AECHO is installed by running its
+        setup.exe or AECHOInstaller.msi installer program. In this
+        version of an installation, there is a single copy of the data
+        files, located in the installing user's Roaming AppData
+        directory. This location varies somewhat by operating system
+        version. For Windows10, it is<br>
+        <br>
+        "C:\Users\Username\AppData\Roaming\AECHO\DATA\".<br>
+        <br>
+        When AECHO is uninstalled, the sub-directory \AECHO\ and all its
+        content is deleted, which would also delete any user-made
+        modification, if precautions outside of AECHO have not been
+        taken. A re-installation of AECHO will overwrite the directory,
+        also deleting any user mods as it refreshes the data files.<br>
+        <br>
+      </li>
+      <li>Installed AECHO, "Everyone" mode: this is an option when
+        installing AECHO from its setup.exe or AECHOInstaller.msi
+        program. In this type of installation, every user gets their own
+        private copy of the data. The system stores a baseline copy in a
+        hidden system area, and immediately installs an instance of that
+        data in the installing-user's Roaming AppData directory, in the
+        same place as a "Just Me" installation. Any modifications made
+        by the installing user are to this local copy, not affecting
+        other users, or the baseline. For other users, the first time
+        they run AECHO, the system will install a personal copy of the
+        data, taken from the baseline, into that user's Roaming AppData
+        directory. Any changes they make to the data will only be
+        written to their private copy. If a new instance of AECHO is
+        installed on the system, it will: update the baseline data to
+        its refreshed version; overwrite the installing user's personal
+        copy of the data immediately; overwrite each non-installing
+        user's data when they first run the newly installed version of
+        AECHO.</li>
+    </ol>
+    <p>If a user wishes to make changes to a descriptive file, they can
+      easily do so regardless of the type of AECHO installation. There
+      are two buttons on the AECHO main form to assist in this:<br>
+    </p>
+    <ol>
+      <li><font face="Helvetica, Arial, sans-serif"><b><font size="-1">Set
+
+              Desc. Font</font></b></font> - this button sets all text
+        in the currently displayed <a moz-do-not-send="true"
+          href="AreaDescriptiveText.html"><font face="Helvetica, Arial,
+            sans-serif"><b><font size="-1">Descriptive Text Area</font></b></font></a>
+        to AECHO's standard font-face (Verdana) and size (10 points.)
+        All other formatting is preserved, such as coloration and
+        text-styling. This command is useful if importing content from
+        another source and it doesn't match existing text.<br>
+        <br>
+      </li>
+      <li><font face="Helvetica, Arial, sans-serif"><b><font size="-1">Save
+
+              Desc.</font></b></font> - this button saves the current
+        contents of the <font face="Helvetica, Arial, sans-serif"><b><font
+              size="-1">Descriptive Text Area</font></b></font> back to
+        its source data file, overwriting the older content. Until
+        saved, all changes are provisional, and may be easily (or
+        accidentally!) discarded, as seen below.<br>
+        <br>
+        <table width="10%" cellspacing="0" cellpadding="2" border="0"
+          align="center">
+          <tbody>
+            <tr>
+              <td valign="top"><img moz-do-not-send="true"
+                  src="Images/DescTextEditButtons.JPG" alt="Edit Buttons
+                  for Descriptive Text" width="761" border="1"
+                  height="609"><br>
+              </td>
+            </tr>
+            <tr align="center">
+              <td valign="top"><font face="Helvetica, Arial, sans-serif"><b><font
+                      size="-1">Descriptive Test Area</font></b></font>
+                - Editing Buttons<br>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <br>
+      </li>
+    </ol>
+    <p>AECHO overwrites the contents of the <font face="Helvetica,
+        Arial, sans-serif"><b><font size="-1">Descriptive Text Area</font></b></font>
+      when navigating in a way that updates the current Section e.g.
+      double-clicking in the <a moz-do-not-send="true"
+        href="AreaODF.html"><font size="-1" face="Helvetica, Arial,
+          sans-serif"><b>ODF Display Area</b></font></a> or using a <a
+        moz-do-not-send="true" href="MenuBar.html"><font
+          face="Helvetica, Arial, sans-serif"><b><font size="-1">Menu-Bar</font></b></font></a>
+      <a moz-do-not-send="true" href="MenuSections.html"><font
+          face="Helvetica, Arial, sans-serif"><b><font size="-1">Section</font></b></font></a>
+      navigation choice, and that Section's content is not already on
+      display. If the current Section changes for any reason, then the
+      text content is always taken anew from the underlying Section data
+      file. Usually, when staying in the same Section, the content is
+      not refreshed, as it will already be on display. But not always,
+      as the user may have issued a <a moz-do-not-send="true"
+        href="MenuEditMode.html#List"><font face="Helvetica, Arial,
+          sans-serif"><b><font size="-1">List Sections</font></b></font></a>
+      command, causing different information to take over the <font
+        face="Helvetica, Arial, sans-serif"><b><font size="-1">Descriptive
+            Text Area</font></b></font>, without having changed the
+      current Section. The next ODF double-click in the same Section
+      will cause AECHO to refresh the descriptive text, as it knows that
+      the correct content is not on display.<br>
+    </p>
+    <p>If a user wishes to discard all changes made to a Section
+      Description, but not yet saved, simply positioning to another
+      Section will serve. Note that AECHO provides no warning that it is
+      discarding unsaved changes.<br>
+    </p>
+    <p>At this time, there is no "undo" command. Modifications may be
+      removed entirely (see the prior comment), or manually.<br>
+    </p>
+    <p>The procedure to change a Section's descriptive text is:<br>
+    </p>
+    <ol>
+      <li>Navigate to the desired Section by either double-clicking on
+        its content, or choosing it from the <font face="Helvetica,
+          Arial, sans-serif"><b><font size="-1">Menu-Bar</font></b></font>.
+        This loads the current description into the <font
+          face="Helvetica, Arial, sans-serif"><b><font size="-1">Descriptive
+              Text Area</font></b></font>.<br>
+        <br>
+      </li>
+      <li>(Optional) Backup the current content by selecting the entire
+        area, Ctrl+C to copy the formatted content, and then paste it
+        into any RTF-aware program and save it from there into a file
+        for safe-keeping.<br>
+        <br>
+      </li>
+      <li>Make desired alterations to the content, begin careful not to
+        change Sections until after you have saved your new content. New
+        content can be directly typed into the <font face="Helvetica,
+          Arial, sans-serif"><b><font size="-1">Descriptive Text Area</font></b></font>,
+        or pasted in from other sources, such as prepared text
+        maintained in an external, RTF-aware text editor.<br>
+        <br>
+      </li>
+      <li>If the content is now what you want, commit it back to its
+        underlying file by clicking on the <font face="Helvetica,
+          Arial, sans-serif"><b><font size="-1">Save Desc.</font></b></font>
+        button; if not, you can discard it by simply navigating to a
+        different Section.<br>
+      </li>
+    </ol>
+  </body>
+</html>

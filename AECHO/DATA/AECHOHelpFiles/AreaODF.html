@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>AECHO ODF Display Area</title>
+  </head>
+  <body>
+    <h2>AECHO V2 Help - ODF Display Area<br>
+    </h2>
+    <ul>
+    </ul>
+    <a
+href="file:///C:/Users/Bob%20Hehmann/source/repos/GIT-for-AECHO/AECHO/bin/Debug/net5.0-windows/DATA/AECHOHelpFiles/AECHOMain.htm"
+      moz-do-not-send="true">&lt;Return to Help's Home Page&gt;</a><br>
+    <br>
+    The ODF Display Area is AECHO's operational hub: it is here that ODF
+    content is displayed in its entirety, can be edited, and
+    Rows/Records can be selected for analysis, presenting their
+    individual Fields and those Field's values.<br>
+    <br>
+    An ODF XML File is simply a text file, containing no formatting
+    information beyond the use of white-space and line-breaks: it does
+    not have any particular font, nor any of the attributes associated
+    with a font, such as size, typeface, color, or emphasis - all such
+    presentation details are left to a text editor. AECHO displays all
+    of the body-text of an ODF in a single font, 10-points in size,
+    normal weight, colored black. Section Start-Tags (Titles) are given
+    special emphasis, by increasing their font-size by 1 point, coloring
+    them blue, and setting their weight to Bold. All white-space and
+    line-breaks are presented exactly as they are in the file: AECHO
+    does not introduce soft line-breaks in the ODF Display Area, nor
+    does it introduce indentation based on the XML structural content.<br>
+    <br>
+    Using the <a moz-do-not-send="true" href="ControlODFFontSize.html"><font
+        face="Helvetica, Arial, sans-serif"><b><font size="-1">ODF Font
+            Size</font></b></font></a> control, the user can set the
+    body text's font-size to any value ranging from 7-points to
+    20-points (Section Titles will display at 8-point to 21-points.)<br>
+    <br>
+    When saving an ODF back out as a file, it is written as simple text,
+    without any formatting information. AECHO reads and writes files
+    assuming UTF-8 encoding, which is required by the Hauptwerk ODF XML
+    specification: this allows the easy inclusion of special-characters
+    into text strings, such as language-specific accent marks. The user
+    can simply paste-in desired special characters, copied from the text
+    editor of their choice.<br>
+    <br>
+    The ODF Display Area is normally read-only: text may be freely
+    selected and copied using standard mouse and keyboard operations,
+    but cannot be pasted, deleted, or altered in any other way. However,
+    the user can enable editing by selecting <b>menu &gt;<font
+        size="-1" face="Helvetica, Arial, sans-serif"> </font></b><font
+      size="-1" face="Helvetica, Arial, sans-serif"><b><u>E</u></b></font><b><font
+        size="-1" face="Helvetica, Arial, sans-serif">dit Mode</font>
+      &gt;&nbsp;<font size="-1" face="Helvetica, Arial, sans-serif"> </font></b><font
+      face="Helvetica, Arial, sans-serif"><b><font size="-1"><a
+            moz-do-not-send="true" href="MenuEditMode.html">ODF Editing
+          </a><a moz-do-not-send="true" href="MenuEditMode.html">Enabled</a></font></b></font>
+    from the Menu-Bar, after which all the standard operating system
+    functions for changing text become available, such as pasting,
+    deleting, typing, and over-typing text.<br>
+    <br>
+    The ODF Display Area presents both vertical and horizontal
+    scroll-bars, as needed. If some lines of text within the ODF are
+    longer that the available width of the area at the current font-size
+    setting, the horizontal scroll-bar is displayed, regardless of
+    whether or not any of the long lines are currently onscreen. AECHO
+    never word-wraps long text lines in this display area.<br>
+    <br>
+    Single-clicking at a spot in the ODF positions the visible
+    Cursor/Caret to that point, updating the position information found
+    in the <a moz-do-not-send="true" href="AreaDataPanel.html"><font
+        size="-1" face="Helvetica, Arial, sans-serif"><b>Data Panel Area</b></font></a>.
+    Selecting text will do the same, with the Cursor/Caret position
+    determined by the direction of the selection: if from left-to-right,
+    the Cursor/Caret will be considered to be just to the right of the
+    selected text; if from right-to-left, just to the left of the
+    selected text. Note that these operations do not select nor analyze
+    the Row/Record, nor do they update the Section position or the
+    Section description, even if the new Cursor/Caret position is now in
+    a different Section than before. Any position in the ODF may be
+    safely single-clicked.<br>
+    <br>
+    Double-clicking at a spot does all of the above, plus it selects the
+    entire Row (1 or more Lines, depending on the content), copies the
+    selected Row to the <a moz-do-not-send="true"
+      href="AreaXMLRowRecord.html"><font face="Helvetica, Arial,
+        sans-serif"><b><font size="-1">XML Row/Record Area</font></b></font></a>,
+    updates the current Section name and position, and loads the
+    matching Section description into the <a moz-do-not-send="true"
+      href="AreaDescriptiveText.html"><font size="-1" face="Helvetica,
+        Arial, sans-serif"><b>Descriptive Text Area</b></font></a>. If
+    the Row is of type "Record" (bounded by '&lt;o&gt;...&lt;/o&gt;'
+    Tags), is is broken down into its constituent Fields onto the <a
+      moz-do-not-send="true" href="AreaTagsPanel.html"><font size="-1"
+        face="Helvetica, Arial, sans-serif"><b>Tags Panel</b></font></a>,
+    and the values of those Fields are displayed alongside the
+    short-names of the Tags. Any position in the ODF may be safely
+    double-clicked.<br>
+    <br>
+    The current position can be advanced or retarded by 1, 10, or 100
+    Lines at a time using any of the <a moz-do-not-send="true"
+      href="ButtonsNextPrevLine.html"><font size="-1" face="Helvetica,
+        Arial, sans-serif"><b>Next Ln</b></font>, <font size="-1"
+        face="Helvetica, Arial, sans-serif"><b>Prev Ln</b></font>, <font
+        face="Helvetica, Arial, sans-serif"><b><font size="-1">&gt; 10 L</font></b></font>,
+      <font face="Helvetica, Arial, sans-serif"><b><font size="-1">&lt;
+            10 L</font></b></font>, <font size="-1" face="Helvetica,
+        Arial, sans-serif"><b>&gt; 100 L</b></font>, or <font
+        face="Helvetica, Arial, sans-serif"><b><font size="-1">&lt; 100
+            L</font></b></font></a> buttons. These buttons select the
+    new Line/Row, just like a double-click, so Section and descriptive
+    information will be appropriately updated. These six controls
+    position the Cursor/Caret at the beginning of the new Line. If the
+    Row has multiple Lines, the <font size="-1" face="Helvetica, Arial,
+      sans-serif"><b>Next Ln</b></font> and <b><font size="-1"
+        face="Helvetica, Arial, sans-serif">Prev Ln</font></b> buttons
+    will step through the Row one Line at a time: the entire Row will
+    remain selected as you step through it, but the current Line
+    Cursor/Caret positioning information will be visibly updated. These
+    positioning buttons are bounded by the beginning and the end of the
+    ODF - they do not advance past those boundaries, do not wrap-around.<br>
+    <br>
+    <table width="10%" cellspacing="0" cellpadding="2" border="0"
+      align="center">
+      <tbody>
+        <tr>
+          <td valign="top"><img moz-do-not-send="true"
+              src="Images/ODFDisplayArea.JPG" alt="ODF Display Area"
+              width="1250" border="1" height="266"><br>
+          </td>
+        </tr>
+        <tr align="center">
+          <td valign="top">ODF Display Area<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

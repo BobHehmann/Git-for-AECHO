@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>AECHO Using Markers to bookmark ODF locations</title>
+  </head>
+  <body>
+    <h2>AECHO V2 Help - Using Markers to bookmark ODF locations<br>
+    </h2>
+    <ul>
+    </ul>
+    <a
+href="file:///C:/Users/Bob%20Hehmann/source/repos/GIT-for-AECHO/AECHO/bin/Debug/net5.0-windows/DATA/AECHOHelpFiles/AECHOMain.htm"
+      moz-do-not-send="true">&lt;Return to Help's Home Page&gt;</a><br>
+    <br>
+    AECHO provides four <b>Marker </b>buttons, which are used to
+    bookmark locations within a loaded ODF. These bookmarks remain in
+    place until individually changed, until reset as a group (<b>menu
+      &gt; </b><b><u>T</u></b><b>ools &gt; </b><b>C</b><b>lear Markers</b>),
+
+
+    or until the ODF is closed: Markers are not retained once an ODF has
+    been closed or AECHO has terminated. These four buttons are only
+    enabled while an ODF is loaded. They are located at the bottom of
+    the Data Panel, just beneath the Section, Line, and Row data.<br>
+    <br>
+    Markers that are not set display their original text ("<b>Marker
+      1/2/3/4</b>") as seen here. Left-clicking on an unset <b>Marker </b>has
+
+
+    no effect.<br>
+    <br>
+    <div align="center"><img moz-do-not-send="true"
+        src="Images/ClearedMarkers.JPG" alt="Cleared Markers"
+        width="229" border="1" align="top" height="102"><br>
+      <br>
+    </div>
+    <b>Markers </b>are set by right-clicking once on the button,
+    thereby assigning it the line number where the Cursor/Caret is
+    presently located: this is also the same value as displayed in the
+    Data Panel's <b>Line Number</b> field at the moment of the
+    right-click. When set, the <b>Marker </b>displays the bookmarked
+    line number on the button's face, against a pale-blue background.
+    Left-clicking on a set <b>Marker </b>will position the
+    Cursor/Caret to the beginning of the bookmarked line, using single
+    mouse-click semantics: the <b>Caret Position</b>, <b>Line Number</b>,
+    <b>Line Start</b>, <b>Line End</b>, <b>Row Start</b>, and <b>Row
+      End</b> fields are updated, but the Section is not updated, no
+    text is selected, and the contents of the XML Row/Record Area and
+    Tags Panel remain unchanged. In the following example, on the left
+    picture, <b>Marker 1</b> has been set to Line 58, and <b>Marker 4</b>
+    to Line 269: setting <b>Marker 4</b> was the last operation
+    performed, and the Data Panel still shows "269" as the current <b>Line
+
+      Number</b>. The right-side picture shows the state after
+    left-clicking on <b>Marker 1 ("58")</b>, thereby repositioning the
+    Cursor/Caret: note the updates to the Caret, Line, and Row
+    information, while the Section data remains unchanged, even though
+    the new position is located in a different Section of the ODF.<br>
+    <br>
+    <table width="50%" cellspacing="2" cellpadding="2" border="0"
+      align="center">
+      <tbody>
+        <tr>
+          <td valign="top" align="left"><img moz-do-not-send="true"
+              src="Images/SetMarkers.JPG" alt="SEt Markers" width="227"
+              border="1" height="361"></td>
+          <td valign="top" align="right"><img moz-do-not-send="true"
+              src="Images/SetMarkersLeftClick58.JPG" alt="Set Markers,
+              after left-clicking on 58" width="225" border="1"
+              height="361"></td>
+        </tr>
+        <tr>
+          <td valign="top">After Setting <b>Marker 4</b> to Line 269</td>
+          <td valign="top" align="right">After left-clicking <b>Marker
+              1 ("58")</b></td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

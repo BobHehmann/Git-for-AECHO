@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>AECHO XML Intro</title>
+  </head>
+  <body>
+    <h2>AECHO V2 Help - XML in AECHO, an Intro<br>
+    </h2>
+    <ul>
+    </ul>
+    <a
+href="file:///C:/Users/Bob%20Hehmann/source/repos/GIT-for-AECHO/AECHO/bin/Debug/net5.0-windows/DATA/AECHOHelpFiles/AECHOMain.htm"
+      moz-do-not-send="true">&lt;Return to Help's Home Page&gt;</a><br>
+    <br>
+    XML (short for eXtensible Markup Language&gt; is a technology
+    standard for encoding structured data as simple text, in a way that
+    is universal, transportable, and technology independent. XML files
+    are readable and editable by any common text-editing application,
+    and are usable by any text-aware application. The representation of
+    structure is an important element of XML - it provides a mechanism
+    to simply express many ways of organizing and structuring data,
+    including expressions that meaningfully translate back-and-forth
+    between XML and modern databases. Hauptwerk ODFs are XML documents
+    that follow a set of standards defined by HW that closely correlate
+    with database concepts such as Tables, Records, and Fields.<br>
+    <br>
+    XML broadly places text into two categories: markup and data. Markup
+    controls the identification of data, and gives it context and
+    structure. Data is the raw informational content. Generally, in
+    parts of an XML document that are not Data, extra white-space
+    (blanks and tabs) and line-breaks placed between elements do not
+    affect the interpretation. These extra characters may be used
+    liberally to increase human readability. However, inside of Data, or
+    within "quoted text" strings in Markup, white-space does matter, as
+    it becomes a significant part of the Data or of the text-string.<br>
+    <br>
+    In the definitions below, single-quotes (') identify elements used
+    in XML, the quotes separating them from their descriptive text.
+    However, these single-quotes do not appear in actual XML - only the
+    text between the quotes. In contrast, double-quotes (") are commonly
+    used to delimit string-literals in XML, and when seen below, would
+    carry forward exactly as seen into the real XML text.<br>
+    <dl>
+      <dt><b>Tag</b>:&nbsp;&nbsp;&nbsp; <br>
+      </dt>
+      <dd> A markup string starting with '&lt;', and ending with '&gt;'.
+        There are several types of Tags that are used in XML.<br>
+        Example: '<code>&lt;ImaTag&gt;</code>'</dd>
+      <dt><br>
+      </dt>
+      <dt><b>Start-Tag</b>:</dt>
+      <dd>The opening tag of an Element e.g., '<code>&lt;Pitch&gt;</code>'.
+        Contains the Element's Name immediately following the opening
+        '&lt;'. Always paired with a a matching End-Tag.</dd>
+      <dt><br>
+      </dt>
+      <dt><b>End-Tag</b>:</dt>
+      <dd>The closing tag of an Element e.g., '<code>&lt;/Pitch&gt;</code>'.
+        Contains the same Name as its paired Start-Tag, preceded by a
+        forward-slash: '/'</dd>
+      <dt><br>
+      </dt>
+      <dt><b>Name/Type</b>:</dt>
+      <dd>The first token between the markup-brackets of a Tag: in the
+        prior two examples, 'Pitch'. Names are case-sensitive. The Name
+        of an Element identifies its Type, which can be associated with
+        rules for acceptable syntax and structure of the Content within
+        an Element of that particular Type. Names do not contain
+        embedded white-space, as that would immediately terminate the
+        Name; however, the underscore character ('_') can be used within
+        a name to emulate a blank for clarity. For example, 'TwoWords'
+        and 'Two_Words' are both valid (but different!) Names, while
+        using 'Two Words' where a Name is required would be interpreted
+        as the Name being 'Two'.<br>
+      </dd>
+      <dt><br>
+      </dt>
+      <dt><b>Element</b>:</dt>
+      <dd>A string consisting of a Start-Tag ('<code>&lt;xyz&gt;</code>'),
+        and ending with a matching End-Tag ('<code>&lt;/xyz&gt;</code>').
+        There may or may not be text between a Start and End-Tag pair.</dd>
+      <dt><br>
+      </dt>
+      <dt><b>Content</b>:</dt>
+      <dd>The text found between an Element's Start and End-Tags; the
+        Content may be null/empty. Content may include one or more
+        nested Elements, in addition to Data text. Such nested Elements
+        are called Child Elements, which are always wholly contained
+        within their Parent Element. There may be one or more sibling
+        Child Elements within their Parent's Content: if so, they appear
+        one after the other, a successor Child's Start-Tag coming after
+        its predecessor's End-Tag. White-space and line-breaks between
+        siblings are acceptable but ignored, and may be freely
+        introduced for clarity.<br>
+        <br>
+        Example: '<code>&lt;o&gt;&lt;a&gt;123&lt;/a&gt;&lt;b&gt;ABC&lt;/b&gt;&lt;/o&gt;</code>'
+        demonstrates a Parent (outer) Element 'o', whose Content
+        consists of two Child Elements, 'a' and 'b'. The Content of
+        Element 'a' is '123'; of 'b' is 'ABC'.<br>
+        <br>
+        Elements may be nested to any depth. Nested Elements must be
+        wholly contained within their Parent's Content, and sibling
+        Elements may never overlap. The rules for correct nesting are
+        the same as seen in most hierarchical lists, such as in
+        word-processors (multi-level lists) and programming languages
+        (nesting of blocks.)<br>
+        <br>
+        Example: '<code>&lt;o&gt;&lt;a&gt;123&lt;/a&gt;&lt;/o&gt;</code>'
+        is OK (wholly nested), but '<code>&lt;o&gt;&lt;a&gt;123&lt;/o&gt;&lt;/a&gt;</code>'
+        is incorrect, as the Parent 'o' cannot end before its Child 'a'
+        ends. Similarly, '<code>&lt;o&gt;&lt;a&gt;123&lt;/a&gt;&lt;b&gt;ABC&lt;/b&gt;&lt;/o&gt;</code>'
+        is syntactically correct, as the siblings 'a' and 'b' do not
+        overlap, whereas '<code>&lt;o&gt;&lt;a&gt;123&lt;b&gt;&lt;/a&gt;ABC&lt;/b&gt;&lt;/o&gt;</code>'
+        is incorrect, as the siblings are overlapped.</dd>
+      <dt><br>
+      </dt>
+      <dt><b>Attribute</b>:</dt>
+      <dd> Optional Name/Value pairs contained in a Start-Tag, following
+        the Element's Name. Attributes are separated from the Element
+        Name and from each other by white-space. Their syntax is '<code>attribute_name="attribute_value"
+        </code>'. A Start-Tag may contain 0, 1, or more Attributes.<br>
+        <br>
+        Example: '<code>&lt;image source="picture.jpg"
+          border="None"&gt;Stuff...&lt;/image&gt;</code>' is an Element
+        named 'image' with two Attributes ('source' and 'border') whose
+        values are respectively 'picture.jpg' and 'None'. The Content of
+        'image' is 'Stuff...'.</dd>
+      <dt><br>
+      </dt>
+      <dt><b>Analogs to Database Concepts</b>:</dt>
+      <dd>The XML constructs used by HW in an ODF have very close
+        correspondence to common database concepts. The outermost
+        Elements define ODF Sections, directly analogous to database
+        Tables. Almost every Section implements a "Record" structure,
+        using 'o' Child Elements ('<code>&lt;o&gt;...&lt;/o&gt;</code>')
+        to correspond one-to-one with database Records inside a Section
+        Table. Inside these 'o' Elements, HW uses other Tag-Names to
+        define the analog of database "Fields" within the Parent Record
+        Element. The various Field Elements within a single Row/Record
+        are sibling Children of the Parent Record Element; and the
+        sibling Row Elements within a Section Element are the Children
+        comprising that Parent Section.<br>
+      </dd>
+    </dl>
+  </body>
+</html>

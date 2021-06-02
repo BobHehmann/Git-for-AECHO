@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>AECHO Copy &amp; Paste</title>
+  </head>
+  <body>
+    <h2>AECHO V2 Help - Copying and Pasting<br>
+    </h2>
+    <ul>
+    </ul>
+    <a
+href="file:///C:/Users/Bob%20Hehmann/source/repos/GIT-for-AECHO/AECHO/bin/Debug/net5.0-windows/DATA/AECHOHelpFiles/AECHOMain.htm"
+      moz-do-not-send="true">&lt;Return to Help's Home Page&gt;</a><br>
+    <br>
+    All four text-aware areas of AECHO's main form allow text selection
+    at all times they contain content, highlighting the selection as it
+    is made. Single, double, and in some case, triple mouse-clicks can
+    all result in the selection of text (see <a moz-do-not-send="true"
+      href="ManagingTheMouse.html">Managing the Mouse</a> for the exact
+    behaviors). Also, all text-aware areas support the standard
+    text-selection technique of "click-and-drag" with the mouse,
+    allowing arbitrary regions of contiguous text to be selected.<br>
+    <br>
+    Once selected, text may be freely copied using the keyboard's Ctrl+C
+    combination, copying the selected text, including any formatting,
+    into the system's clipboard. From there, it may be pasted into any
+    text-aware program that allows text-pasting, following the rules of
+    that program. If the program understands Rich Text Formatting (RTF),
+    the pasted content's formatting will be retained; if not, just the
+    textual content will be pasted.<br>
+    <br>
+    Pasting into most AECHO text-areas is allowed by using the
+    keyboard's Ctrl+V combination, but the rules differ slightly by
+    area. When target-area content is already selected when the paste is
+    issued, that content is deleted and replaced with the clipboard's
+    content. If nothing is presently selected in the target area when
+    pasting, then the clipboard's content is inserted into the target
+    area at the Cursor/Caret's position. This behavior is the same as
+    found in most editing programs.<br>
+    <br>
+    AECHO does not distinguish based on the origin of content to be
+    pasted: it can come from within AECHO, or from any other program on
+    the system. In all cases, a paste operation in AECHO is just taking
+    its content from the system's clipboard, without caring how that
+    content got there. In most cases, even Images can be successfully
+    pasted into AECHO content. <br>
+    <br>
+    <font face="Helvetica, Arial, sans-serif"><b><font size="-1"><a
+            moz-do-not-send="true" href="AreaODF.html">ODF Display Area</a><br>
+        </font></b></font>
+    <ul>
+      <li>Copying of arbitrary contiguous text is allowed; may include
+        formatting; may include any type of RTF content<br>
+      </li>
+      <li>Must have <a moz-do-not-send="true" href="MenuEditMode.html"><font
+            face="Helvetica, Arial, sans-serif"><b><font size="-1">ODF
+                Editing Enabled</font></b></font></a> to pasting to be
+        allowed; otherwise this area is read-only</li>
+      <li>Honors all RTF-compliant formatting, though formatting is not
+        retained in an ODF file when the ODF is saved</li>
+      <li>Honors multi-line pastes</li>
+      <li>Accepts Image Content, but this is not recommended, as
+        embedded images are not permissible in a well-formed ODF</li>
+    </ul>
+    <br>
+    <font face="Helvetica, Arial, sans-serif"><b><font size="-1"><a
+            moz-do-not-send="true" href="AreaXMLRowRecord.html">XML
+            Row/Record Area</a><br>
+        </font></b></font>
+    <ul>
+      <li>Copying of arbitrary contiguous text is allowed; text in this
+        area is not formatted<br>
+      </li>
+      <li>This area is read-only, pasting is not allowed</li>
+    </ul>
+    <br>
+    <font face="Helvetica, Arial, sans-serif"><b><font size="-1"><a
+            moz-do-not-send="true" href="AreaSearch.html">Search Area</a><br>
+        </font></b></font>
+    <ul>
+      <li>Copying of text is allowed; this area is single line; text in
+        this area is not formatted</li>
+      <li>Pasting is always allowed into this area</li>
+      <li>Embedded formatting is stripped, as this area does not support
+        formatted text</li>
+      <li>Only the first line of multi-line content is pasted</li>
+      <li>Images cannot be pasted into this area, it is text-only<br>
+      </li>
+    </ul>
+    <br>
+    <font face="Helvetica, Arial, sans-serif"><b><font size="-1"><a
+            moz-do-not-send="true" href="AreaDescriptiveText.html">Descriptive
+
+            Text Area</a><br>
+        </font></b></font>
+    <ul>
+      <li>Copying of arbitrary contiguous text is allowed; may include
+        formatting; may include any type of RTF content</li>
+      <li>Pasting is always allowed into this area, though content
+        cannot be saved back to the Help Text; alterations to Section
+        descriptions can be saved with all formatting and images intact</li>
+      <li>Honors all RTF-compliant formatting, and formatting is
+        retained when saved</li>
+      <li>Honors multi-line pastes</li>
+      <li>Freely accepts Image Content; images are retained when the
+        area is saved</li>
+    </ul>
+  </body>
+</html>

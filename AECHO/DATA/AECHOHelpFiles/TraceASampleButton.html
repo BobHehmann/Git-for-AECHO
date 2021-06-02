@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>AECHO Trace Sample Button</title>
+  </head>
+  <body>
+    <h2>AECHO V2 Help - Trace Sample Button<br>
+    </h2>
+    <ul>
+    </ul>
+    <a
+href="file:///C:/Users/Bob%20Hehmann/source/repos/GIT-for-AECHO/AECHO/bin/Debug/net5.0-windows/DATA/AECHOHelpFiles/AECHOMain.htm"
+      moz-do-not-send="true">&lt;Return to Help's Home Page&gt;</a><br>
+    <br>
+    When positioned in the Sample Section, AECHO displays the <font
+      size="-1" face="Helvetica, Arial, sans-serif"><b>Trace Sample</b></font>
+    button, which in turn will open the <b>Sample Trace</b> form,
+    automatically performing a Trace on the (sound) Sample currently
+    selected in the ODF. Functionally, this is the same as selecting the
+    menu item <b>menu &gt; </b><font size="-1" face="Helvetica, Arial,
+      sans-serif"><b><u>T</u></b></font><b><font size="-1"
+        face="Helvetica, Arial, sans-serif">ools</font> &gt; </b><font
+      size="-1" face="Helvetica, Arial, sans-serif"><b><u>T</u></b><b>race
+        a Sample</b></font>, manually entering the Sample's ID, then
+    clicking that form's <b><font size="-1" face="Helvetica, Arial,
+        sans-serif">Trace</font> </b>button. When the ODF is not
+    positioned on a Sample Record, the <font size="-1" face="Helvetica,
+      Arial, sans-serif"><b>Trace Sample</b></font> button is hidden.<br>
+    <br>
+    The <b>Sample Trace</b> form expands a Sample Record, listing all
+    its defined Fields, both those present in the ODF and those not
+    present. AECHO show the default values that Hauptwerk will
+    implicitly use for
+    absent Fields. Then Records from other Sections that are "linked" to
+    this particular Sample are searched for, and if found, are displayed
+    in the same expanded format as the Sample. The <b>Sample Trace</b>
+    form can remain open while the main AECHO form is performing other
+    activities, but is closed when AECHO terminates, or when the user
+    closes the loaded ODF, as proper operation of Trace is tied to an
+    ODF. The user can choose to close the form manually, by clicking on
+    the <font face="Helvetica, Arial, sans-serif"><b>X</b></font> in
+    the form's upper-right corner, or selecting the <b>menu &gt; <font
+        size="-1" face="Helvetica, Arial, sans-serif">E</font></b><font
+      size="-1" face="Helvetica, Arial, sans-serif"><b><u>x</u></b><b>it</b></font>
+    choice from Trace's menu-bar.<br>
+    <br>
+    <a moz-do-not-send="true" href="TracingASample.html">Click here to
+      learn more about Sample Tracing.</a><br>
+    <dl>
+      <dt>Example:</dt>
+    </dl>
+    <dl>
+      <dd>In this example, the user has selected the second row in the
+        Sample Section by double-clicking on it, loading it into the XML
+        Row/Record Area, and decomposing its Fields into the Tags Panel.
+        You'll note that the "&lt;a&gt;" Tag carries a value of "400497"
+        - this is the SampleID, the unique primary-key assigned to this
+        Sample Record. At the center-bottom of the Tags Panel, the <font
+          size="-1" face="Helvetica, Arial, sans-serif"><b>Trace Sample</b></font>
+        button was made visible by positioning on a Sample Record.
+        Clicking this button will dispatch the <b>Sample Trace</b>
+        form, passing it the SampleID of "400497", and then
+        automatically initiating Trace on that Sample.</dd>
+    </dl>
+    <table width="10%" cellspacing="0" cellpadding="2" border="0"
+      align="center">
+      <tbody>
+        <tr>
+          <td valign="top"><img moz-do-not-send="true"
+              src="Images/TraceButtonExample.JPG" alt="Trace Button
+              Sample" width="1486" border="1" height="893"><br>
+          </td>
+        </tr>
+        <tr align="center">
+          <td valign="top">Trace Sample Button, when positioned in the
+            Sample Section<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

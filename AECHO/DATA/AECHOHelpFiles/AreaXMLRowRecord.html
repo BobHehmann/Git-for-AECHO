@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>AECHO XML Row/Record Display Area</title>
+  </head>
+  <body>
+    <h2>AECHO V2 Help - XML Row/Record Display Area<br>
+    </h2>
+    <ul>
+    </ul>
+    <a
+href="file:///C:/Users/Bob%20Hehmann/source/repos/GIT-for-AECHO/AECHO/bin/Debug/net5.0-windows/DATA/AECHOHelpFiles/AECHOMain.htm"
+      moz-do-not-send="true">&lt;Return to Help's Home Page&gt;</a><br>
+    <br>
+    When a Line is selected from the <a moz-do-not-send="true"
+      href="AreaODF.html"><font size="-1" face="Helvetica, Arial,
+        sans-serif"><b>ODF Display Area</b></font></a>, AECHO locates
+    the entire Row surrounding that Line, and copies its contents into
+    this display area.<br>
+    <br>
+    Rows may consist of one or more contiguous Lines. When an XML
+    construct is bounded by '&lt;o&gt;...&lt;/o&gt;' Tags, it is
+    considered to be a Record, and its Row is defined as all contiguous
+    Lines starting with the one containing the opening '&lt;o&gt;' Tag,
+    and ending with the Line containing the closing '&lt;/o&gt;' Tag.
+    For all Lines that are not part of a Record, the Row is the same as
+    the Line.<br>
+    <br>
+    This area will present a vertical scroll-bar if the display of the
+    Row requires more than two lines of text. Unlike the ODF Display
+    Area, the XML Row/Record Display Area will word-wrap long lines of
+    text, as it does not have room for a horizontal scroll-bar.<br>
+    <br>
+    This area is read-only, but text may be freely selected and copied
+    from it, suitable for pasting into any text editor.<br>
+    <br>
+    The following image demonstrates the display of a Record-Row
+    consisting of three Lines. As this exceeds the vertical space
+    allowed, the area made its vertical scroll-bar visible, to allow
+    access to any part of the text. The user has selected the Field
+    '&lt;f&gt;12&lt;/f&gt;' using a mouse-drag: this selection can now
+    be Copied with a Ctrl-C, and later pasted into any program that
+    accepts text.<br>
+    <br>
+    <table width="10%" cellspacing="0" cellpadding="2" border="0"
+      align="center">
+      <tbody>
+        <tr>
+          <td valign="top"><img moz-do-not-send="true"
+              src="Images/XMLRowArea.JPG" alt="XML Row/Record Area"
+              width="1246" border="1" height="85"><br>
+          </td>
+        </tr>
+        <tr align="center">
+          <td valign="top">XML Row/Record Display Area<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+  </body>
+</html>
