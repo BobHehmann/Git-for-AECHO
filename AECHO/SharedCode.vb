@@ -286,7 +286,7 @@ Module SharedCode
         ' Purpose:      Place text into a Control's (usually a Label) text, then center it between margins.
         ' Process:		Save the Control's original text, insert the new, and call CenterLbl() to position it.
         '               If CenterLbl() fails, restore the original text, and return failure.
-        ' Called By:    ResetToNoODF(); LoadRTFFile(); ParseSections(); Menu_Help_Click(); DisplayImage()
+        ' Called By:    ResetToNoODF(); LoadRTFFile(); ParseSections(); Menu_Help_Click(); TakeRowAction()
         ' Side Effects: <None>
         ' Notes:        <None>
         ' Updates:		<1.060.2> First implementation
@@ -504,6 +504,7 @@ Module SharedCode
         ' Notes:        <None>
         ' Updates:      <1.060.2> Initial version of this routine.
         '               <1.060.4> Add Line & Char counts to the Status-Bar
+        '               <1.060.5> Remove call to RemoveImage(), made Titles visible here
 
         Const lclProcName As String = "ResetToNoODF"        ' Routine's name for message handling
 
@@ -518,8 +519,7 @@ Module SharedCode
         G_PreviousRTFFile = ""
         G_ImageFile = "" : G_ImageSet = ""
 
-        RemoveImage()                                       ' Set initial Panel sizes (callable once Pnl_Tags initial height/width are initialized); hide PackageID placeholder
-        TagsPanelVisible(False)                                    ' Hide all controls in the PackageID Panel
+        TagsPanelVisible(False)                             ' Hide all controls in the Tags Panel
         ClearMarkers()                                      ' Reset Markers
 
         With MAIN                                           ' Need MAIN reference to access these Controls
@@ -534,10 +534,12 @@ Module SharedCode
             .Rtb_XMLRow.Clear()                             ' Clear Single Row display
             .Rtb_DescText.Clear()                           ' Clear Descriptive Text/Help Text
             .Lbl_TextBoxTitle1.Text = ""                    ' Clear Top Title Field
+            .Lbl_TextBoxTitle1.Visible = True               ' <1.060.5> Make sure it is visible (this use to be in now-deprecated RemoveImage()
             CenterText(conTextBoxTitle_Def,                 ' Set/Restore & Center Descriptive Title Text to its default in the Bottom Title field
                        .Lbl_TextBoxTitle2,
                        .Rtb_DescText.Left,
                        .Rtb_DescText.Right)
+            .Lbl_TextBoxTitle2.Visible = True               ' <1.060.5> Make sure it is visible (this use to be in now-deprecated RemoveImage()
             .Txt_SearchText.Clear()                         ' Clear Search Box Text
             .Lbl_SecStartVal.Text = "NA" : .Lbl_SecStartVal.Enabled = False
             .Lbl_SecEndVal.Text = "NA" : .Lbl_SecEndVal.Enabled = False
@@ -573,39 +575,6 @@ Module SharedCode
         End With
 
         MAIN.Refresh()                                      ' Update screen now, before loading ODF
-
-    End Sub
-    Friend Sub RemoveImage()
-
-        ' Purpose:      Clear an image display, hides the box, resets the Tags Panel to its default size, hides PackageID
-        ' Process:		Set the needed properties, adjust the Panel's size back to normal; position the Control's
-        '               Titles dynamically based on layout & lengths of text, setting the Panel Title to its default, but
-        '               retaining the current Title on-display over the Descriptive Box.
-        ' Called By:    PBox_Click(); Btn_DisplayImage_LostFocus(); ResetToNoODF(); ParseSections()
-        ' Side Effects: Alters properties of Pnl_Tags, PBox, Lbl_PackageID, Panel/Descriptive Text Area's Titles
-        ' Notes:        <None>
-        ' Updates:      <1.06.2> Modified subroutine to process logic common to both PBox_Click() and Btn_DisplayImage_LostFocus().
-        '               Moved from MAIN form to here, qualified Control names with MAIN form. Removed code that re-centered Titles:
-        '               not needed, could cause mis-aligned titles; previous locations are correct.
-
-        Const lclProcName As String = "RemoveImage"     ' <1.060.2> Routine's name for message handling
-
-        With MAIN                                       ' Alters Objects in the MAIN form
-            .PBox.Visible = False                       ' Hide the control displaying the image
-            .PBox.Image = Nothing                       ' Clear the underlying image from the control
-            .PBox.BorderStyle = BorderStyle.None        ' Remove the borders
-            .Lbl_PackageID.Text = ""                    ' <1.060.2> Clear the Package ID field when an Image is not on display
-
-            Dim psize = New Size With {                 ' retrecir le panel; Size the Tags Panel back to its starting size
-            .Height = G_MinPanelHeights,                ' <1.060.2> Reset to control height at startup. In prep for dynamic resizing for forms
-            .Width = G_InitTagPanelWidth                ' <1.060.2> Changed from constant to runtime variable holding initial width at startup
-            }
-            .Pnl_Tags.Size = psize
-
-            .Lbl_ImageTitle.Visible = False             ' <1.060.2> Hide the Image Title
-            .Lbl_TextBoxTitle1.Visible = True           ' <1.060.2> And display the Descriptive Text title
-            .Lbl_TextBoxTitle2.Visible = True           ' <1.060.2> Also make the second Bottom Title Line visible
-        End With
 
     End Sub
     Friend Sub ClearMarkers()
@@ -793,10 +762,10 @@ Module SharedCode
         '               OldGetSectionFromMenu() (deprecated)
         ' Side Effects: < None >
         ' Notes:        <None>
-            ' Updates:      <1.060.2> Relocated from MAIN form. Altered to only return the count, removed updating the onscreen field:
-            '               that is now the caller's responsibility. Simplified logic.
+        ' Updates:      <1.060.2> Relocated from MAIN form. Altered to only return the count, removed updating the onscreen field:
+        '               that is now the caller's responsibility. Simplified logic.
 
-            Const lclProcName As String = "CountTags"           ' <1.060.2> Function name 
+        Const lclProcName As String = "CountTags"           ' <1.060.2> Function name 
 
         Dim count As Integer = 0                            ' Counts number of End-Tag markers found
         Dim curSearchPos As Integer = startPos              ' <1.060.2> Start search from this point, used to "find next"
@@ -874,17 +843,13 @@ Module SharedCode
         '               OldGetSectionFromMenu() (deprecated)
         ' Side Effects: Updates all 24 pairs of Form-fields used to display Element Names & Content; Selects and
         '               Highlights the Row in the Rtb_ODF (ODF) display.
-        ' Notes:        DisplayImage button should only be enabled for rows that have content for a filename.
-        '               Image-related Globals should be cleared if processing in the ImageSet or ImageSetElement
-        '               Sections, to avoid carrying over an older, now incorrect value if the associated Elements
-        '               are not found. Consider re-writing to use an artificial array of Controls for labelTag and
-        '               textTag, and substituing a loop for the 24 explicit call seen below. Bug - can be called before
-        '               necessary data is initialized.
+        ' Notes:        Consider re-writing to use an artificial array of Controls for labelTag and
+        '               textTag, and substituing a loop for the 24 explicit call seen below.
         ' Updates:      <1.060.2> Relocated from MAIN form, added With Main block to reference form Controls. Removed
         '               extraneous intermediate variable assignments for those 24 call to DisplayTagText(). Modifed check
-        '               for showing the "Display Image" Button: the Row has to contain a reference to an Image file. Renamed
-        '               from DisplayObject(). Removed call to make all Tags visible, that is now done by DisplayTagText
-        '               as needed, a Field at a time.
+        '               for showing the "Row Action" Button: the Row has to contain a reference to an Image file or
+        '               a Sample. Renamed from DisplayObject(). Removed call to make all Tags visible, that is now done
+        '               by DisplayTagText as needed, a Field at a time.
 
         Const lclProcName As String = "DisplaySMLRow"       ' <1.060.2> Routine's name for message handling
 
@@ -929,17 +894,17 @@ Module SharedCode
             DisplayTagText(lastIdx, counter, nbtags, .LabelTag24, .tag24)
 
             If G_ImageFile <> "" Then
-                .Btn_DisplayImage.Text = conDisplayImage    ' <1.060.2> Paint the button as "Display Image" for an Image Row
-                .Btn_DisplayImage.Visible = True            ' <1.060.2> Found an Image File Tag in ImageSet or ImageSetElement: enable the Control to display that Image
+                .Btn_RowAction.Text = conDisplayImage       ' <1.060.2> Paint the button as "Display Image" for an Image Row
+                .Btn_RowAction.Visible = True               ' <1.060.2> Found an Image File Tag in ImageSet or ImageSetElement: enable the Control to display that Image
                 If (G_ImageFile.Substring(0, 1) = "/") Or   ' <1.060.2> Trim a leading "/" or "\", if there is one, from the name, so Path.Combine will correctly handle the filename
                     (G_ImageFile.Substring(0, 1) = "\") Then
                     G_ImageFile = Right(G_ImageFile, G_ImageFile.Length - 1)
                 End If
             ElseIf G_SampleID <> "" Then
-                .Btn_DisplayImage.Text = conTraceSample     '<1.060.2> This is a Sample Row, display button appropriately
-                .Btn_DisplayImage.Visible = True
+                .Btn_RowAction.Text = conTraceSample        '<1.060.2> This is a Sample Row, display Trace Sample action
+                .Btn_RowAction.Visible = True
             Else
-                .Btn_DisplayImage.Visible = False           ' Hide the control for non-Image Sections, or for any Rows without an Image file defined in their content.
+                .Btn_RowAction.Visible = False              ' Hide the control for Rows without context actions
             End If
 
         End With
@@ -1273,6 +1238,7 @@ Module SharedCode
         ' Side Effects: Alters the designated Control's properties.
         ' Notes:        <None>
         ' Updates:		New with <1.060.2>.
+        '               <1.060.5> Removed ref to RemoveImage(), moved code to make Title1/2 visible here.
 
         Const lclProcName As String = "EnumerateSectionsSetFont"    ' Routine's name for message handling
 
@@ -1292,7 +1258,6 @@ Module SharedCode
         If resizeTitles AndAlso (Not noODF) Then                    ' Only do this loop if asked, and we have an ODF present
             secNum = 0                                              ' Section counter starts at 0
             If enumSecs Then
-                RemoveImage()                                       ' Set initial Panel sizes (callable once Pnl_Tags initial height/width are initialized); hide PackageID placeholder
                 TagsPanelVisible(False)                             ' Hide all controls in the PackageID Panel
                 ClearMarkers()                                      ' Reset Markers
                 MAIN.Rtb_DescText.Clear()                           ' vider Rtb_DescText; clear the control that displays descriptive/help text
@@ -1308,6 +1273,8 @@ Module SharedCode
                 MAIN.Lbl_TextBoxTitle2.Text = conTextBoxTitle_List
                 MAIN.Rtb_DescText.SelectAll()                       ' Set tab locations to approximate columnar alignment
                 MAIN.Rtb_DescText.SelectionTabs = New Integer() {60, 130, 160, 260, 350, 380, 470}
+                MAIN.Lbl_TextBoxTitle1.Visible = True               ' <1.060.5> Moved here from deprecated call to RemoveImage()
+                MAIN.Lbl_TextBoxTitle2.Visible = True               ' <1.060.5> Moved here from deprecated call to RemoveImage()
                 MAIN.Lbl_TextBoxTitle1.Refresh()
                 MAIN.Lbl_TextBoxTitle2.Refresh()
             End If
@@ -1386,95 +1353,92 @@ Module SharedCode
         End If
 
     End Sub
-    Friend Sub DisplayImage(packagePath As String,          ' <1.060.2> Main directory where all organ packages are located
+    Friend Sub TakeRowAction(packagePath As String,         ' <1.060.2> Main directory where all organ packages are located
                             imageFileName As String,        ' <1.060.2> Image File Name, as parsed from an ODF Row Element (Tag)
                             imageSetID As String,           ' <1.060.2> ImageSet index (PK into ImageSet), non-blank iff source is an ImageSetElement
                             packageID As String,            ' <1.060.2> PackageID, non-blank iff source is an ImageSet
                             minPanelHeight As Integer       ' <1.060.2> Original Panel Height settings, to restore size onscreen           
                             )                               ' AFFICHE L'IMAGE (OU LE MASK)
 
-        ' Purpose:      Retrieve and display an image file.
-        ' Process:		If the source Row is from an ImageSet (a Mask File), then the parser will have already saved the
-        '               PackageID and FileName taken from the Values of the appropriate Tags. Along with the PackagePath,
-        '               these can be assembled into a fully qualified filename. If the source is an ImageSetElement (an
-        '               Image File), then the parser will have extracted the FileName and the ImageSetID, so we have
-        '               to locate the referenced ImageSet based on that ID, and extract the PackageID - and then construct
-        '               the completely qualified filname with full path. The panel is then extended all the way to the
-        '               right to make room for the image display, then the image is loaded and displayed. Titles are
-        '               positioned to remain centered over their content.
-        ' Called By:    Btn_DisplayImage_Click
+        ' Purpose:      Based on the RowAction button's display text, choose an Action to perform: Display an Image;
+        '               Trace a Sample;
+        ' Process:		For a Display Image: if the source Row is from an ImageSet (a Mask File), then the parser will
+        '               already have saved the PackageID & FileName taken from the Values of the appropriate Tags.
+        '               Along with the PackagePath, these can be assembled into a fully qualified filename. If the source
+        '               is an ImageSetElement (an Image File), then the parser will have extracted the FileName and the
+        '               ImageSetID, so locate the referenced ImageSet based on that ID, and extract the PackageID. Then construct
+        '               the completely qualified filname with full path. The image is loaded and displayed in a dedicated form.
+        '               On the ImageDisp form, fill in the filename, the PackageID, and the Image size fields.
+
+        '               If the action to be performed is a Sample Trace, dispatch the Trace form, pass it the SampleID, and
+        '               emulate pushing that form's "Trace Sample" button.
+        ' Called By:    Btn_RowAction_Click
         ' Side Effects: Alters image file globals, panel size, and paints image onscreen.
         ' Notes:        Presently limited to bitmap files (.bmp). Need to also process .png, possibly .jpg; Improve exception handling.
         ' Updates:      <1.060.2> Added unified message handling. Used Path.Combine to build OS independant file paths. Skip the
         '               intermediate Bitmap object, just load Image File directly into the Pbox Control. Added exception handling.
         '               Accept all required info from parameters (or MAIN form itself), eliminate all direct references to globals.
         '               Relocate here from MAIN form.
+        '               <1.060.5> Move Image presentation to its own form, so main-form controls & titles can remain static. Moved
+        '               PBox (image display area), Lbl_ImageTitle (filename), Lbl_PackageID (package); added Image Size display.
+        '               Decide Action using Case statement.
 
-        Const lclProcName As String = "DisplayImage"        ' <1.060.2> Routine's name for message handling
+        Const lclProcName As String = "TakeRowAction"               ' <1.060.2> Routine's name for message handling
 
-        Dim url As String                                   ' Full path\filename
-        Dim pID As String                                   ' <1.060.2> Becomes the PackageID, either from passed parm, or from search of the parent ImageSet Row
+        Dim url As String                                           ' Full path\filename
+        Dim pID As String                                           ' <1.060.2> Becomes the PackageID, either from passed parm, or from search of the parent ImageSet Row
 
-        If MAIN.Btn_DisplayImage.Text = conTraceSample Then ' <1.060.2> Load the TraceSample form, supplying it with the SampleID
-            Trace.Visible = False
-            Trace.Show(MAIN)
-            Trace.Txt_SampleID.Text = G_SampleID           ' <1.060.2> Preload the current SampleID
-            TraceSample(Val(Trace.Txt_SampleID.Text),
-                    Trace.Rtb_Trace)                  ' <1.060.2> Call TraceSample to execute Trace in the Follow form
-            Return
-        End If
+        Select Case MAIN.Btn_RowAction.Text                         ' <1.060.5> Choose a contextual action based on the ActionButtons display text
+            Case conTraceSample                                     ' <1.060.5> It's a Trace Sample command...
+                Trace.Visible = False
+                Trace.Show(MAIN)
+                Trace.Txt_SampleID.Text = G_SampleID                ' <1.060.2> Preload the current SampleID
+                TraceSample(Val(Trace.Txt_SampleID.Text),
+                        Trace.Rtb_Trace)                            ' <1.060.2> Call TraceSample to execute Trace in the Follow form
 
-        If packageID = "" Then                              ' <1.060.2> Search for the PackageID if we don't already have it passed in as a parameter
-            pID = FindImagePackageID(imageSetID)            ' identifie d'abord le package; Populate pID from the ImageSet where ImageSetID = [imageSetID]
-        Else
-            pID = packageID                                 ' <1.060.2> ImageSet Row, so we have the PackageID directly, from the XML, passed in through [packageID]
-        End If
-        If pID = "" Then
-            DispMsg(lclProcName, conMsgExcl,
-                    "Unable to determine a PackageID to locate the Image File: " & imageFileName & vbCrLf &
-                    "imageSetID is: " & imageSetID & vbCrLf &
-                    "packageID is: " & packageID)
-            Return                                          ' <1.060.2> Do nothing, the PackageID could not be located, probably a corrupt ODF
-        End If
+            Case conDisplayImage                                    ' <1.060.5> It's a Display Image command...
+                If packageID = "" Then                              ' <1.060.2> Search for the PackageID if we don't already have it passed in as a parameter
+                    pID = FindImagePackageID(imageSetID)            ' identifie d'abord le package; Populate pID from the ImageSet where ImageSetID = [imageSetID]
+                Else
+                    pID = packageID                                 ' <1.060.2> ImageSet Row, so we have the PackageID directly, from the XML, passed in through [packageID]
+                End If
+                If pID = "" Then
+                    DispMsg(lclProcName, conMsgExcl,
+                            "Unable to determine a PackageID to locate the Image File: " & imageFileName & vbCrLf &
+                            "imageSetID is: " & imageSetID & vbCrLf &
+                            "packageID is: " & packageID)
+                    Return                                          ' <1.060.2> Do nothing, the PackageID could not be located, probably a corrupt ODF
+                End If
 
-        With MAIN                                           ' <1.060.2> Make MAIN form's Controls accessible
-            .Lbl_PackageID.Text = "PackageID = " & pID      ' Update PackageID on the Panel-Header of the MAIN form i.e. internal ID of the organ supplying the Image File
-            url = Path.Combine(packagePath, pID,            ' Build url to be entire path\filename of the image to be displayed
-                               imageFileName)               ' <1.060.2> Changed from concatnating strings to Path.Combine for improved OS independance
+                With ImageDisp                                      ' <1.060.5> Subset of original code, now updates image-related fields on ImageDisp form instead of Main
+                    .Lbl_PackageID.Text = "PackageID = " & pID      ' <1.060.5> Moved PackageID field from main form to ImageDisp form
+                    url = Path.Combine(packagePath, pID,            ' Build url to be entire path\filename of the image to be displayed
+                                       imageFileName)               ' <1.060.2> Changed from concatnating strings to Path.Combine for improved OS independance
+                    .Show()                                         ' <1.060.5> Make for visible (it may already be, that's OK)
+                    .Lbl_ImageTitle.Text = "Image File: " & url     ' <1.060.5> Present full path/filename of the image file
+                    Try                                             ' <1.060.5> Protect against file access problems
+                        .PBox.Image = Image.FromFile(url)           ' <1.060.5> Load the pic, PBox is Auto-sizing
+                        .Lbl_ImageSize.Text = "Image Size: " &      ' <1.060.5> Present the image's width and height 
+                            .PBox.Width & " pixels wide, " &
+                            .PBox.Height & " pixels tall."
 
-            Dim psize = New Size With {                     ' agrandir le panel; Widen the Tags Panel to make more room for the image, covering the RTF descriptive-text portion of the form
-                .Height = minPanelHeight,                   ' <1.060.2> Restore to original height. Preparation for code allowing dynamic resizing for forms.
-                .Width = MAIN.Rtb_DescText.Left +
-                    MAIN.Rtb_DescText.Width -
-                    MAIN.Pnl_Tags.Left
-            }
-            .Pnl_Tags.Size = psize                          ' <1.060.2> Calculate new width to position to right edge to Rtb_DescText, regardless of sizes and positions.
+                    Catch ex As Exception
+                        DispMsg(lclProcName, conMsgExcl,
+                               "Unable to display an Image file." & vbCrLf &
+                               "Requested URL was: " & url & vbCrLf &
+                               "Exception Code Is: " & ex.Message)
+                    End Try
+                End With
 
-            .Lbl_TextBoxTitle1.Visible = False              ' <1.060.2> Hide the Descriptive Text Box's Top Title Line
-            .Lbl_TextBoxTitle2.Visible = False              ' <1.060.2> Also hid the Bottom Title Line
-            CenterText("Image File = " & url,               ' <1.060.2> Add the Image File's Path/Name to the Title
-                       .Lbl_ImageTitle,                     ' <1.060.2> Center the Image Title over the extended Panel frame's Image zone,
-                       .Lbl_TagPanelTitle.Right,
-                       .Pnl_Tags.Right)
-            .Lbl_ImageTitle.Visible = True                  ' <1.060.2>     and display the Title
-
-            Try                                             ' Retrieve the image, use Try to field exception when attempting to open the file
-                .PBox.Image = Image.FromFile(url)           ' Load the image file (url) directly into the display Control.
-                .PBox.BorderStyle = BorderStyle.FixedSingle
-                .PBox.SizeMode = PictureBoxSizeMode.AutoSize
-                .PBox.Visible = True                        ' Display it
-
-            Catch ex As ArgumentException                   ' Couldn't retrieve the requested data - could be missing file, or a non-image file type.
-                DispMsg(lclProcName, conMsgExcl,
-                        "Unable to display an Image file." & vbCrLf &
-                        "Requested URL was: " & url & vbCrLf &
-                        "Exception Code Is: " & ex.Message)
-            End Try
-        End With
+            Case Else                                               ' <1.060.5> Unknown command
+                DispMsg(lclProcName, conMsgCrit,
+                        "Unknown Row Action Button Value: " &
+                        MAIN.Btn_RowAction.Text)
+        End Select
 
     End Sub
-    Friend Function FindImagePackageID(imgSetID As String               ' <1.060.2> PK of ImageSet Row containing the PackageID we want
-                                       ) As String                      ' CHERCHE LE PACKAGEID D'UNE IMAGE D'IMAGE SET ELEMENT (1.060.2> Returns PackageID
+    Friend Function FindImagePackageID(imgSetID As String           ' <1.060.2> PK of ImageSet Row containing the PackageID we want
+                                       ) As String                  ' CHERCHE LE PACKAGEID D'UNE IMAGE D'IMAGE SET ELEMENT (1.060.2> Returns PackageID
 
         ' Purpose:      Return the PackageID from the ImageSet where ImageSetID=[imgSet], as 6 char long field
         '               left-padded with zeros. Returns "" if the ImageSet or PackageID are not found.
@@ -1485,7 +1449,7 @@ Module SharedCode
         '               the End-Tag "</c>", and extract the content between - this is the PackageID we need.
         '               Pad the PackageID with leading zeroes to length 6, this string is now the useful PackageID
         '               subdirectory name.
-        ' Called By:    DisplayImage()
+        ' Called By:    TakeRowAction()
         ' Side Effects: <None>
         ' Notes:        <None>
         ' Updates:      Replaced parsing algorithm to not depend upon assumption that <c> Tags come after the
@@ -1494,20 +1458,20 @@ Module SharedCode
         '               for execution speed. Fetch ImageSet Section location dynamically by calling GotSectionDataByName(),
         '               instead of using deprecated S_Sections array.
 
-        Const lclProcName As String = "FindImagePackageID"              ' <1.060.2> Routine's name for message handling
+        Const lclProcName As String = "FindImagePackageID"          ' <1.060.2> Routine's name for message handling
 
-        Dim tagStartC As Integer                                        ' Opening "<" char of the "c" Element's Start & End Tags ("<c>" & "</c>")
+        Dim tagStartC As Integer                                    ' Opening "<" char of the "c" Element's Start & End Tags ("<c>" & "</c>")
         Dim tagEndC As Integer
-        Dim tagStartRow As Integer                                      ' <1.060.2> Opening "<" char of the "o" Start & End Tags: define the limits of the Row
+        Dim tagStartRow As Integer                                  ' <1.060.2> Opening "<" char of the "o" Start & End Tags: define the limits of the Row
         Dim tagEndRow As Integer
         Dim packageID As String
-        Dim sec As Str_Section                                          ' <1.060.2> IamgeSet Section data, filled in by call to GetSectionDataByName()
+        Dim sec As Str_Section                                      ' <1.060.2> IamgeSet Section data, filled in by call to GetSectionDataByName()
         Dim retStatus As Integer
 
         sec.name = ""                                               ' <1.060.2> Allocate instance of the Section info structure
-        retStatus = LocateRecRowByKey(conImageSet,                    ' <1.060.2> Searching the Sample Section
+        retStatus = LocateRecRowByKey(conImageSet,                  ' <1.060.2> Searching the Sample Section
                                       "a",                          ' <1.060.2> Its Primary Key is an "a" tag (SampleID)
-                                      imgSetID,            ' <1.060.2> This is the Primary Key Value we want to find
+                                      imgSetID,                     ' <1.060.2> This is the Primary Key Value we want to find
                                       sec,                          ' <1.060.2> Return Section data here
                                       tagStartRow,                  ' <1.060.2> Return position of (found) Record's Start-Tag here
                                       tagEndRow)                    ' <1.060.2> Return position of (found) Record's End-Tag here
@@ -1521,31 +1485,31 @@ Module SharedCode
             Return ""
         End If
 
-        With MAIN                                                       ' <1.060.2> To reference the MAIN form
-            tagStartC = .Rtb_ODF.Find(conCStartTag,                     ' <1.060.2> Having located the outer boundaries of the desired Row, find the "<c>" Start Tag
+        With MAIN                                                   ' <1.060.2> To reference the MAIN form
+            tagStartC = .Rtb_ODF.Find(conCStartTag,                 ' <1.060.2> Having located the outer boundaries of the desired Row, find the "<c>" Start Tag
                                       tagStartRow,
                                       tagEndRow,
                                       conQuickNoH)
             If tagStartC < 0 Then
-                DispMsg(lclProcName, conMsgExcl,                        ' <1.060.2> Implies "<c>" Tag (PackageID) is missing in ImageSet Row
+                DispMsg(lclProcName, conMsgExcl,                    ' <1.060.2> Implies "<c>" Tag (PackageID) is missing in ImageSet Row
                         "Unable to locate the PackageID Start-Tag " & conCStartTag & " from ImageSetID: '<a>" & imgSetID & "</a>'" & vbCrLf &
                         "This may be an error in the ODF, or in the AECHO code.")
-                Return ""                                               ' Didn't find the PackageID Start-Tag, return empty-handed...
+                Return ""                                           ' Didn't find the PackageID Start-Tag, return empty-handed...
             End If
 
-            tagEndC = .Rtb_ODF.Find(conCEndTag,                         ' <1.060.2> From the end of the "<c>" Start-Tag, locate the matching "</c>" End-Tag, within the Row
+            tagEndC = .Rtb_ODF.Find(conCEndTag,                     ' <1.060.2> From the end of the "<c>" Start-Tag, locate the matching "</c>" End-Tag, within the Row
                                     tagStartC + conCStartTag.Length,
                                     tagEndRow,
                                     conQuickNoH)
             If tagEndC < 0 Then
-                DispMsg(lclProcName, conMsgExcl,                        ' <1.060.2> Implies "<c>" Tag (PackageID) is missing in ImageSet Row
+                DispMsg(lclProcName, conMsgExcl,                    ' <1.060.2> Implies "<c>" Tag (PackageID) is missing in ImageSet Row
                        "Unable to locate the PackageID End-Tag " & conCEndTag & " from ImageSetID: '<a>" & imgSetID & "</a>'" & vbCrLf &
                        "This may be an error in the ODF, or in the AECHO code.")
-                Return ""                                               ' Didn't find the matching PackageID End-Tag, return empty-handed...
+                Return ""                                           ' Didn't find the matching PackageID End-Tag, return empty-handed...
             End If
 
-            packageID = .Rtb_ODF.Text.Substring(                        ' lire le tag <c> = packageID; Select the text between '<c>' & '</c': this is the PackageID
-                (tagStartC + conCStartTag.Length),                      ' <1.060.2> Pad with leading zeroes to length 6
+            packageID = .Rtb_ODF.Text.Substring(                    ' lire le tag <c> = packageID; Select the text between '<c>' & '</c': this is the PackageID
+                (tagStartC + conCStartTag.Length),                  ' <1.060.2> Pad with leading zeroes to length 6
                 (tagEndC - (tagStartC + conCStartTag.Length))).PadLeft(6, "0")
 
         End With

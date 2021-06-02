@@ -322,7 +322,7 @@
 
     End Sub
 
-        Private Sub ColorSectionTitles(idx As Integer,              ' Index into S_Sections array, entry contains Position Information
+    Private Sub ColorSectionTitles(idx As Integer,              ' Index into S_Sections array, entry contains Position Information
                                     color As Color,             ' Color to apply to Title's font
                                     fontInc As Integer)         ' <1.060.2> Amount to increment Font size over the present normal-text size
 
@@ -404,3 +404,73 @@
         Return returnValue                                          ' Return either -1 -> "no match within range", or index to match
 
     End Function
+
+    Friend Sub RemoveImage()
+
+        ' Purpose:      Clear an image display, hides the box, resets the Tags Panel to its default size, hides PackageID
+        ' Process:		Set the needed properties, adjust the Panel's size back to normal; position the Control's
+        '               Titles dynamically based on layout & lengths of text, setting the Panel Title to its default, but
+        '               retaining the current Title on-display over the Descriptive Box.
+        ' Called By:    PBox_Click(); Btn_DisplayImage_LostFocus(); ResetToNoODF(); ParseSections()
+        ' Side Effects: Alters properties of Pnl_Tags, PBox, Lbl_PackageID, Panel/Descriptive Text Area's Titles
+        ' Notes:        <None>
+        ' Updates:      <1.06.2> Modified subroutine to process logic common to both PBox_Click() and Btn_DisplayImage_LostFocus().
+        '               Moved from MAIN form to here, qualified Control names with MAIN form. Removed code that re-centered Titles:
+        '               not needed, could cause mis-aligned titles; previous locations are correct.
+
+        Const lclProcName As String = "RemoveImage"     ' <1.060.2> Routine's name for message handling
+
+        With MAIN                                       ' Alters Objects in the MAIN form
+            .PBox.Visible = False                       ' Hide the control displaying the image
+            .PBox.Image = Nothing                       ' Clear the underlying image from the control
+            .PBox.BorderStyle = BorderStyle.None        ' Remove the borders
+            .Lbl_PackageID.Text = ""                    ' <1.060.2> Clear the Package ID field when an Image is not on display
+
+            Dim psize = New Size With {                 ' retrecir le panel; Size the Tags Panel back to its starting size
+            .Height = G_MinPanelHeights,                ' <1.060.2> Reset to control height at startup. In prep for dynamic resizing for forms
+            .Width = G_InitTagPanelWidth                ' <1.060.2> Changed from constant to runtime variable holding initial width at startup
+            }
+            .Pnl_Tags.Size = psize
+
+            .Lbl_ImageTitle.Visible = False             ' <1.060.2> Hide the Image Title
+            .Lbl_TextBoxTitle1.Visible = True           ' <1.060.2> And display the Descriptive Text title
+            .Lbl_TextBoxTitle2.Visible = True           ' <1.060.2> Also make the second Bottom Title Line visible
+        End With
+
+    End Sub
+
+    Private Sub PBox_Click(             ' Standard Control event parms...
+            sender As Object,
+            e As EventArgs
+            ) Handles PBox.Click
+
+        ' Purpose:      Clicking on an image display (PBox) clears the image, restores display to normal
+        ' Process:		Call RemoveImage()
+        ' Called By:    PBox Click Event
+        ' Side Effects: <NA>
+        ' Notes:        <None>
+
+        Const lclProcName As String =   ' <1.060.2> Routine's name for message handling
+            "PBox_CLick"
+
+        'RemoveImage()                   ' <1.06.2> Moved logic to new RemoveImage() routine, also called by Btn_DisplayImage_LostFocus()
+
+    End Sub
+
+    Private Sub Btn_DisplayImage_LostFocus(     ' Standard Control event parms...
+            sender As Object,
+            e As EventArgs
+            ) Handles Btn_DisplayImage.LostFocus
+
+        ' Purpose:      Remove the image and revert panel to Row Child-Element display format
+        ' Process:		Call RemoveImage()
+        ' Called By:    Btn_DisplayImage LostFocus Event
+        ' Side Effects: <NA>
+        ' Notes:        <None>
+
+        Const lclProcName As String =           ' <1.060.2> Routine's name for message handling
+            "Btn_DisplayImage_LostFocus"
+
+        'RemoveImage()                           ' <1.060.2> Moved logic to RemoveImage(), same logic as PBox_Click Event
+
+    End Sub

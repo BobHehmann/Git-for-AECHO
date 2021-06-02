@@ -309,11 +309,29 @@
     Details:    Added Title and Value Fields to the Status-Bar, initialization code into ResetToNoODF(). Set initial values in
                 Menu_OpenHauptwerkOrgan_Click. Update from TextChanged Event for Rtb_ODF.
 
-    1)          Added the controls and code.
+    1)  Added the controls and code.
 
-    2)          Published significant updates to the HTML Help Text - almost all baseline pages are up to at least draft form.
+    2)  Published significant updates to the HTML Help Text - almost all baseline pages are up to at least draft form.
 
+1.060.5     June 2, 2021 Bob Hehmann
+    Git:        ImageDisplay
+    Summary:    Replace inline display of Image Files with a dedicated form/window.
+    Details:    Original code overlays image consuming existing screen real-estate. This requires code to extensively resize panels,
+                move Titles, and make other structural alterations to display the image. In preparation to support form-window
+                resizing, want to eliminate this other cause of control size/placement complexity by moving image display to its
+                own form, allowing the primary controls on the Main form to keep a simple relationship with each other.
 
+    1)  Create new form "ImageDisp" to display Image content. Normally hidden, will be loaded and shown by DisplayImage(). Moved
+        Image, Image Filename, and PackageID displays from Main form to ImageDisp form. Added field to display Image's
+        width and height in Pixels. Set form to AutoScroll, to handle the occassional very large Image.
+        
+    2)  Eliminated RemoveImage() routine (not needed), and superfluous Event code from Main.vb.
+
+    3)  Renamed button from "Display Image" to "Row Action", as it now serves the more general function of invoking a contextual
+        action for a Row: Display Image; Trace Sample.... Renamed DisplayImage() as TakeRowAction() to represent its broader
+        purpose.
+
+    4)  Changed TakeRowAction() to use Case statement to decide on semantics of the Action button.
 
 Routines relocated from forms to shared.vb (or new routines created in shared.vb):
 
@@ -329,7 +347,6 @@ Friend Function     GetODFLibPath()                 <Relocated from MAIN form; c
 Friend Function     GetPackagePath()                <Relocated from MAIN form; changed from Sub to Func>
 Friend Sub          TagsPanelVisible()              <Relocated from MAIN form; renamed from ClearTagsPanel()>
 Friend Sub          ResetToNoODF()                  <New, initializes Menus, Variables, and Controls to the "No ODF Loaded" state>
-Friend Sub          RemoveImage()                   <Relocated from MAIN form>
 Friend Sub          ClearMarkers()                  <New, clears Markers and sets their default color>
 Friend Sub          CheckUnloadODF()                <New, check if there is a dirty ODF loaded, offer to SaveAs>
 Friend Function     SaveODFAs()                     <New, moved code from Menu SaveAs, to make reusable>
@@ -359,5 +376,7 @@ Friend Function     LocateRecRowByKey()             <New, modified logic from ol
 Friend Sub          AppendTxt()                     <New, appends text to any enhanced RTB, allowing choice of Font and Color>
 
 
-Private Sub         ColorSectionTitles()            <Deleted, no longer used>
-Friend Sub          GetSectionsInfos()              <Deleted, no longer needed with elimination of ReCompute & S_Sections array>
+Private Sub         ColorSectionTitles()            <Deprecated, no longer used>
+Friend Sub          GetSectionsInfos()              <Deprecated, not needed with elimination of ReCompute & S_Sections array>
+Friend Sub          RemoveImage()                   <Deprecated, not needed with Image Display on its own form>
+

@@ -110,8 +110,7 @@ Partial Class MAIN
         Me.Rtb_XMLRow = New System.Windows.Forms.RichTextBox()
         Me.Btn_SaveDescText = New System.Windows.Forms.Button()
         Me.Pnl_Tags = New System.Windows.Forms.Panel()
-        Me.PBox = New System.Windows.Forms.PictureBox()
-        Me.Btn_DisplayImage = New System.Windows.Forms.Button()
+        Me.Btn_RowAction = New System.Windows.Forms.Button()
         Me.tag24 = New System.Windows.Forms.Label()
         Me.LabelTag24 = New System.Windows.Forms.Label()
         Me.tag23 = New System.Windows.Forms.Label()
@@ -174,7 +173,6 @@ Partial Class MAIN
         Me.Btn_Marker2 = New System.Windows.Forms.Button()
         Me.Btn_Marker3 = New System.Windows.Forms.Button()
         Me.Btn_Marker4 = New System.Windows.Forms.Button()
-        Me.Lbl_PackageID = New System.Windows.Forms.Label()
         Me.Pnl_Data = New System.Windows.Forms.Panel()
         Me.Lbl_LineEndVal = New System.Windows.Forms.Label()
         Me.Lbl_LineStartVal = New System.Windows.Forms.Label()
@@ -208,7 +206,6 @@ Partial Class MAIN
         Me.Menu_Strip.SuspendLayout()
         CType(Me.Num_ODFFontSize, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Pnl_Tags.SuspendLayout()
-        CType(Me.PBox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Pnl_Find.SuspendLayout()
         Me.Pnl_Data.SuspendLayout()
         Me.Status_Strip1.SuspendLayout()
@@ -934,8 +931,7 @@ Partial Class MAIN
         'Pnl_Tags
         '
         Me.Pnl_Tags.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
-        Me.Pnl_Tags.Controls.Add(Me.PBox)
-        Me.Pnl_Tags.Controls.Add(Me.Btn_DisplayImage)
+        Me.Pnl_Tags.Controls.Add(Me.Btn_RowAction)
         Me.Pnl_Tags.Controls.Add(Me.tag24)
         Me.Pnl_Tags.Controls.Add(Me.LabelTag24)
         Me.Pnl_Tags.Controls.Add(Me.tag23)
@@ -990,26 +986,15 @@ Partial Class MAIN
         Me.Pnl_Tags.Size = New System.Drawing.Size(699, 380)
         Me.Pnl_Tags.TabIndex = 71
         '
-        'PBox
+        'Btn_RowAction
         '
-        Me.PBox.AccessibleRole = System.Windows.Forms.AccessibleRole.TitleBar
-        Me.PBox.Location = New System.Drawing.Point(626, 3)
-        Me.PBox.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.PBox.Name = "PBox"
-        Me.PBox.Size = New System.Drawing.Size(65, 73)
-        Me.PBox.TabIndex = 82
-        Me.PBox.TabStop = False
-        Me.PBox.Visible = False
-        '
-        'Btn_DisplayImage
-        '
-        Me.Btn_DisplayImage.Location = New System.Drawing.Point(275, 316)
-        Me.Btn_DisplayImage.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.Btn_DisplayImage.Name = "Btn_DisplayImage"
-        Me.Btn_DisplayImage.Size = New System.Drawing.Size(70, 57)
-        Me.Btn_DisplayImage.TabIndex = 95
-        Me.Btn_DisplayImage.Text = "Display Image"
-        Me.Btn_DisplayImage.UseVisualStyleBackColor = True
+        Me.Btn_RowAction.Location = New System.Drawing.Point(275, 316)
+        Me.Btn_RowAction.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.Btn_RowAction.Name = "Btn_RowAction"
+        Me.Btn_RowAction.Size = New System.Drawing.Size(70, 57)
+        Me.Btn_RowAction.TabIndex = 95
+        Me.Btn_RowAction.Text = "Row Action"
+        Me.Btn_RowAction.UseVisualStyleBackColor = True
         '
         'tag24
         '
@@ -1759,16 +1744,6 @@ Partial Class MAIN
         Me.Btn_Marker4.Text = "Marker4"
         Me.Btn_Marker4.UseVisualStyleBackColor = True
         '
-        'Lbl_PackageID
-        '
-        Me.Lbl_PackageID.AutoSize = True
-        Me.Lbl_PackageID.Location = New System.Drawing.Point(14, 432)
-        Me.Lbl_PackageID.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
-        Me.Lbl_PackageID.Name = "Lbl_PackageID"
-        Me.Lbl_PackageID.Size = New System.Drawing.Size(62, 15)
-        Me.Lbl_PackageID.TabIndex = 84
-        Me.Lbl_PackageID.Text = "PackageID"
-        '
         'Pnl_Data
         '
         Me.Pnl_Data.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
@@ -2114,7 +2089,6 @@ Partial Class MAIN
         Me.Controls.Add(Me.Btn_Next10Lines)
         Me.Controls.Add(Me.Btn_NextLine)
         Me.Controls.Add(Me.Pnl_Data)
-        Me.Controls.Add(Me.Lbl_PackageID)
         Me.Controls.Add(Me.Btn_SetFont)
         Me.Controls.Add(Me.Pnl_Find)
         Me.Controls.Add(Me.Pnl_Tags)
@@ -2137,7 +2111,6 @@ Partial Class MAIN
         CType(Me.Num_ODFFontSize, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Pnl_Tags.ResumeLayout(False)
         Me.Pnl_Tags.PerformLayout()
-        CType(Me.PBox, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Pnl_Find.ResumeLayout(False)
         Me.Pnl_Find.PerformLayout()
         Me.Pnl_Data.ResumeLayout(False)
@@ -2287,11 +2260,9 @@ Partial Class MAIN
     Friend WithEvents Btn_Marker2 As System.Windows.Forms.Button
     Friend WithEvents Btn_Marker3 As System.Windows.Forms.Button
     Friend WithEvents Btn_Marker4 As System.Windows.Forms.Button
-    Friend WithEvents Btn_DisplayImage As System.Windows.Forms.Button
-    Friend WithEvents PBox As System.Windows.Forms.PictureBox
+    Friend WithEvents Btn_RowAction As System.Windows.Forms.Button
     Friend WithEvents Menu_SaveAs As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents Menu_Sep2 As System.Windows.Forms.ToolStripSeparator
-    Friend WithEvents Lbl_PackageID As System.Windows.Forms.Label
     Friend WithEvents Menu_CouplersCode As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents Pnl_Data As System.Windows.Forms.Panel
     Friend WithEvents Btn_NextLine As System.Windows.Forms.Button

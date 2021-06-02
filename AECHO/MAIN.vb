@@ -37,6 +37,10 @@ Public Class MAIN
     '   Git:        Printing
     '   Summary:    Added ODF current Line & Char counts to the Status-Bar. Completed almost all HTML Help.
 
+    '   1.060.5     June 2, 2021 Bob Hehmann
+    '   Git:        ImageDisplay
+    '   Summary:    Display Images in their own form/window, remove resizing of controls to make room for image display.
+
     Dim M_FoundStart As Integer = -1    ' <1.060.2> When a text-search succeeds, this becomes index of start of located text
     Dim M_FoundEnd As Integer = 0       ' <1.060.2> Defines the end of located text; when 0, there is no located text defined.
     Dim M_FirstChar As Integer          ' <1.060.2> Current position in print-stream, between page calls
@@ -165,8 +169,6 @@ Public Class MAIN
                                  True)                          ' <1.060.2> Re-emphasize Titles after setting overall ODF Font size (size change resets all other attributes)
 
     End Sub
-
-    ' PROCEDURES RICH TEXT BOX
     Private Sub Rtb_ODF_MouseDoubleClick(sender As Object,                ' Standard Control event parms...
                                   e As MouseEventArgs
                                   ) Handles Rtb_ODF.MouseDoubleClick
@@ -924,47 +926,30 @@ Public Class MAIN
         End If
 
     End Sub
-    Private Sub Btn_DisplayImage_Click(     ' Standard Control event parms...
+    Private Sub Btn_RowAction_Click(     ' Standard Control event parms...
             sender As Object,
             e As EventArgs
-            ) Handles Btn_DisplayImage.Click
+            ) Handles Btn_RowAction.Click
 
         ' Purpose:      When the current Row includes a Child Element that names an Image File (Mask,
         '               Imgage), attempt to retrieve and display that file.
-        ' Process:		Call DisplayImage() to do the work
+        ' Process:		Call TakeRowAction() to do the work
         ' Called By:    Btn_DisplayImage Click Event
         ' Side Effects: <NA>
         ' Notes:        <None>
-        ' Updates:      <1.060.2> Added all global variable references required by DisplayImage() to the call, so
-        '               DisplayImage() need not directly reference these globals. G_PackagePath was established when
+        ' Updates:      <1.060.2> Added all global variable references required by TakeRowAction() to the call, so
+        '               TakeRowAction() need not directly reference these globals. G_PackagePath was established when
         '               the ODF was loaded; the other vars were set when the Row Parse displayed an ImageSet or
         '               ImageSetElement Row.
 
         Const lclProcName As String =       ' <1.060.2> Routine's name for message handling
-            "Btn_DisplayImage_Click"
+            "Btn_RowAction_Click"
 
-        DisplayImage(G_PackagePath,         ' <1.060.2> Let DisplayImage() do all the work
+        TakeRowAction(G_PackagePath,         ' <1.060.2> Let TakeRowAction() do all the work
                      G_ImageFile,
                      G_ImageSet,
                      G_PackageID,
                      G_MinPanelHeights)
-
-    End Sub
-    Private Sub Btn_DisplayImage_LostFocus(     ' Standard Control event parms...
-            sender As Object,
-            e As EventArgs
-            ) Handles Btn_DisplayImage.LostFocus
-
-        ' Purpose:      Remove the image and revert panel to Row Child-Element display format
-        ' Process:		Call RemoveImage()
-        ' Called By:    Btn_DisplayImage LostFocus Event
-        ' Side Effects: <NA>
-        ' Notes:        <None>
-
-        Const lclProcName As String =           ' <1.060.2> Routine's name for message handling
-            "Btn_DisplayImage_LostFocus"
-
-        RemoveImage()                           ' <1.060.2> Moved logic to RemoveImage(), same logic as PBox_Click Event
 
     End Sub
     Private Sub Btn_NextLine_Click(                             ' Standard Control event parms...
@@ -1025,25 +1010,6 @@ Public Class MAIN
         Catch                                                   ' Catch exceptions here, and ignore
             ' ras
         End Try
-
-    End Sub
-
-    ' IMAGES
-    Private Sub PBox_Click(             ' Standard Control event parms...
-            sender As Object,
-            e As EventArgs
-            ) Handles PBox.Click
-
-        ' Purpose:      Clicking on an image display (PBox) clears the image, restores display to normal
-        ' Process:		Call RemoveImage()
-        ' Called By:    PBox Click Event
-        ' Side Effects: <NA>
-        ' Notes:        <None>
-
-        Const lclProcName As String =   ' <1.060.2> Routine's name for message handling
-            "PBox_CLick"
-
-        RemoveImage()                   ' <1.06.2> Moved logic to new RemoveImage() routine, also called by Btn_DisplayImage_LostFocus()
 
     End Sub
     Private Sub Rtb_ODF_TextChanged(                    ' Standard Control event parms...
