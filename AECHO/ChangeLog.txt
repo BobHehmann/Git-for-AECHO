@@ -268,9 +268,12 @@
         to Record-Row display when in the Sample Section - when the parsed row contains a SampleID, the "Trace Sample" button appears - clicking
         it will open the Trace-Sample form, transfer the SampleID to the form, and invoke Trace.
 
+    40) Established a separate Module (SharedCode.vb) for shared Functions and Subroutines, moving them out of the Main Form's
+        own code. Reduced naming scope of declarations from "Public" to "Friend". (See end of this doc for list of routines.)
+
 1.060.3     March 23, 2021 Bob Hehmann
     Git:        Printing
-    Summary:    Implemented formatted Print function for the Descriptive Text area.
+    Summary:    Implemented formatted Print function for the Descriptive Text area, and the Sample Trace form.
     Details:    Created an enhanced RTB control, inheriting the standard Rich Text Box, augmenting it with methods to pass print-rendering
                 off to the Win32 API, which can correctly render a formatted RTB for printing. Enhancements are coded in a new Class,
                 RTBPrint: code structure courtesy of Martin Mueller 1/18/2008 article for Microsoft. Modified standard print logic to
@@ -306,10 +309,13 @@
     Details:    Added Title and Value Fields to the Status-Bar, initialization code into ResetToNoODF(). Set initial values in
                 Menu_OpenHauptwerkOrgan_Click. Update from TextChanged Event for Rtb_ODF.
 
+    1)          Added the controls and code.
+
+    2)          Published significant updates to the HTML Help Text - almost all baseline pages are up to at least draft form.
 
 
-    7)  Established a separate Module (SharedCode.vb) for shared Functions and Subroutines, moving them out of the Main Form's
-        own code. Reduced naming scope of declarations from "Public" to "Friend". Populated it with:
+
+Routines relocated from forms to shared.vb (or new routines created in shared.vb):
 
 Friend              Constant Declarations / Init    <Relocated from MAIN form>
 Friend              Global Variable Declarations    <Relocated from MAIN form>

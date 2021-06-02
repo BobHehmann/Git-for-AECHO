@@ -31,7 +31,11 @@ Public Class MAIN
 
     '   1.060.3     March 23, 2021 Bob Hehmann
     '   Git:        Printing
-    '   Summary:    More robust printing of Descriptive Text RTB
+    '   Summary:    More robust, formatted printing of Descriptive Text RTB; formatted printing of Sample Traces
+
+    '   1.060.4     June 1, 2021 Bob Hehmann
+    '   Git:        Printing
+    '   Summary:    Added ODF current Line & Char counts to the Status-Bar. Completed almost all HTML Help.
 
     Dim M_FoundStart As Integer = -1    ' <1.060.2> When a text-search succeeds, this becomes index of start of located text
     Dim M_FoundEnd As Integer = 0       ' <1.060.2> Defines the end of located text; when 0, there is no located text defined.
