@@ -299,6 +299,15 @@
         expected. Otherwise the forms keep auto-extending text selections made with a mouse when crossing tag boundaries - can't select between
         '><' on both sides of the same selection: one far side of the drap will also autoselect past the first bracket encountered.
 
+
+1.060.4     June 1, 2021 Bob Hehmann
+    Git:        Printing
+    Summary:    Add the current loaded ODFs Line & Char counts to the Status-Bar
+    Details:    Added Title and Value Fields to the Status-Bar, initialization code into ResetToNoODF(). Set initial values in
+                Menu_OpenHauptwerkOrgan_Click. Update from TextChanged Event for Rtb_ODF.
+
+
+
     7)  Established a separate Module (SharedCode.vb) for shared Functions and Subroutines, moving them out of the Main Form's
         own code. Reduced naming scope of declarations from "Public" to "Friend". Populated it with:
 

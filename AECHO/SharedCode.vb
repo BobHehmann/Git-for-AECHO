@@ -503,6 +503,7 @@ Module SharedCode
         ' Side Effects: Updates various Global Variables, Controls, Fields, and Menus.
         ' Notes:        <None>
         ' Updates:      <1.060.2> Initial version of this routine.
+        '               <1.060.4> Add Line & Char counts to the Status-Bar
 
         Const lclProcName As String = "ResetToNoODF"        ' Routine's name for message handling
 
@@ -538,18 +539,20 @@ Module SharedCode
                        .Rtb_DescText.Left,
                        .Rtb_DescText.Right)
             .Txt_SearchText.Clear()                         ' Clear Search Box Text
-            .Lbl_SecStartVal.Text = "?" : .Lbl_SecStartVal.Enabled = False
-            .Lbl_SecEndVal.Text = "?" : .Lbl_SecEndVal.Enabled = False
-            .Lbl_LineNumVal.Text = "?" : .Lbl_LineNumVal.Enabled = False
-            .Lbl_LineStartVal.Text = "?" : .Lbl_LineStartVal.Enabled = False
-            .Lbl_LineEndVal.Text = "?" : .Lbl_LineEndVal.Enabled = False
-            .Lbl_RowStartVal.Text = "?" : .Lbl_RowStartVal.Enabled = False
-            .Lbl_RowEndVal.Text = "?" : .Lbl_RowEndVal.Enabled = False
-            .Lbl_CursorPosVal.Text = "?" : .Lbl_CursorPosVal.Enabled = False
+            .Lbl_SecStartVal.Text = "NA" : .Lbl_SecStartVal.Enabled = False
+            .Lbl_SecEndVal.Text = "NA" : .Lbl_SecEndVal.Enabled = False
+            .Lbl_LineNumVal.Text = "NA" : .Lbl_LineNumVal.Enabled = False
+            .Lbl_LineStartVal.Text = "NA" : .Lbl_LineStartVal.Enabled = False
+            .Lbl_LineEndVal.Text = "NA" : .Lbl_LineEndVal.Enabled = False
+            .Lbl_RowStartVal.Text = "NA" : .Lbl_RowStartVal.Enabled = False
+            .Lbl_RowEndVal.Text = "NA" : .Lbl_RowEndVal.Enabled = False
+            .Lbl_CursorPosVal.Text = "NA" : .Lbl_CursorPosVal.Enabled = False
             .Lbl_NumTagsVal.Text = "0"
-            .Status_RowTypeVal.Text = "NA"                  ' <1.060.2> Status Bar, initialize Row Type to unknown
+            .Status_RowTypeVal.Text = "<NA>"                ' <1.060.2> Status Bar, initialize Row Type to unknown
             .Status_FileDirtyVal.BackColor = Color.DarkOrange
             .Btn_Led.BackColor = Color.DarkOrange           ' Orange when nothing is happening; Red is ODF-parsing; Green is ODF-loaded and parsed.
+            .Status_LinesVal.Text = "NA"                    ' <1.060.4> Status-Bar Line & Char counts are undefined until ODF is loaded
+            .Status_CharsVal.Text = "NA"
 
             .Menu_File.Enabled = True                       ' Set Menu to default
             .Menu_SaveAs.Enabled = False                    ' Can't save what isn't opened...
@@ -788,12 +791,12 @@ Module SharedCode
         ' Process:      Count the number of End-Tag markers '</' in the range
         ' Called By:    DisplayXMLRow();
         '               OldGetSectionFromMenu() (deprecated)
-        ' Side Effects: <None>
+        ' Side Effects: < None >
         ' Notes:        <None>
-        ' Updates:      <1.060.2> Relocated from MAIN form. Altered to only return the count, removed updating the onscreen field:
-        '               that is now the caller's responsibility. Simplified logic.
+            ' Updates:      <1.060.2> Relocated from MAIN form. Altered to only return the count, removed updating the onscreen field:
+            '               that is now the caller's responsibility. Simplified logic.
 
-        Const lclProcName As String = "CountTags"           ' <1.060.2> Function name 
+            Const lclProcName As String = "CountTags"           ' <1.060.2> Function name 
 
         Dim count As Integer = 0                            ' Counts number of End-Tag markers found
         Dim curSearchPos As Integer = startPos              ' <1.060.2> Start search from this point, used to "find next"
@@ -1779,7 +1782,7 @@ Module SharedCode
         MAIN.Lbl_RowEndVal.Text = rowEnd.ToString(conIntFmt)
         MAIN.Lbl_LineStartVal.Text = lineStart.ToString(conIntFmt)
         MAIN.Lbl_LineEndVal.Text = lineEnd.ToString(conIntFmt)
-        If expandSelectionToRow Then                                    ' <1.060.2> if Flase (single-click and Find/Next/Prev) leave user's selection alone
+        If expandSelectionToRow Then                                    ' <1.060.2> if False (single-click and Find/Next/Prev) leave user's selection alone
             MAIN.Rtb_ODF.Select(rowStart, rowEnd - rowStart)            ' <1.060.2> Select entire row, used for double-click and Next/Prev 1/10/100 Lines
         End If
 
@@ -1954,7 +1957,7 @@ Module SharedCode
         Dim lineStart As Integer            ' Throw-away varaible For Call To MoveToPosition()
         Dim curPos As Integer               ' Cursor Position extracted from text input
 
-        If hotVal = "?" Then                ' If input is "?", just return
+        If hotVal = "NA" Then               ' If input is "NA", just return
             Return
         End If
 

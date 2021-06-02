@@ -384,6 +384,9 @@ Public Class MAIN
                 Color.Gainsboro                                             ' Reset Main Menu text background color
             Menu_Tools.Enabled = True
             Menu_FollowASample.Enabled = True
+            Status_LinesVal.Text = Rtb_ODF.Lines.Count().ToString(conIntFmt)
+            Status_CharsVal.Text = Rtb_ODF.TextLength().ToString(conIntFmt) ' <1.060.4> Display initial length in Lines and Characters
+
             SetODFButtons(True)                                             ' <1.060.2> Enable Controls that required ODF Text e.g. Search, Next/Prev, Markers...
 
             EnumerateSectionsSetFont(Rtb_ODF,                               ' <1.060.2> List all Sections, displaying resulting data in the Descriptive Text Area
@@ -1051,6 +1054,7 @@ Public Class MAIN
         ' Notes:        This event is also triggered by modifications made internally by AECHO, such as
         '               loading a file, or altering text sizes.
         ' Updates:      <1.060.2> Sets the file dirty bit, and updates the Status-Bar
+        '               <1.060.2> Update Status-Bar Line & Char counts if changed while in Edit Mode
 
         Const lclProcName As String =                   ' <1.060.2> Routine's name for message handling
             "Rtb_ODF_TextChanged"
@@ -1058,6 +1062,10 @@ Public Class MAIN
         If G_EditMode Then
             G_ODFModSinceSaved = True
             Status_FileDirtyVal.BackColor = Color.Red   ' <1.060.2> Set File-Dirty indiator on the Status-Bar
+            Status_LinesVal.Text =                      ' <1.060.4> Display initial length in Lines and Characters
+                Rtb_ODF.Lines.Count().ToString(conIntFmt)
+            Status_CharsVal.Text =
+                Rtb_ODF.TextLength().ToString(conIntFmt)
         End If
 
     End Sub
@@ -1127,7 +1135,7 @@ Public Class MAIN
         Dim curPos As Integer
         Dim lineStart As Integer
 
-        If Lbl_LineNumVal.Text = "?" Then   ' If no data, just return
+        If Lbl_LineNumVal.Text = "NA" Then  ' If no data, just return
             Return
         End If
 

@@ -192,6 +192,10 @@ Partial Class MAIN
         Me.Status_RowTypeVal = New System.Windows.Forms.ToolStripStatusLabel()
         Me.Status_FileDirtyTitle = New System.Windows.Forms.ToolStripStatusLabel()
         Me.Status_FileDirtyVal = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.Status_LinesTitle = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.Status_LinesVal = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.Status_CharsTitle = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.Status_CharsVal = New System.Windows.Forms.ToolStripStatusLabel()
         Me.Lbl_XMLRowTitle = New System.Windows.Forms.Label()
         Me.Lbl_FontSize = New System.Windows.Forms.Label()
         Me.Lbl_ODFTitle = New System.Windows.Forms.Label()
@@ -216,6 +220,7 @@ Partial Class MAIN
         Me.Menu_Strip.Location = New System.Drawing.Point(0, 0)
         Me.Menu_Strip.Name = "Menu_Strip"
         Me.Menu_Strip.Padding = New System.Windows.Forms.Padding(7, 2, 0, 2)
+        Me.Menu_Strip.ShowItemToolTips = True
         Me.Menu_Strip.Size = New System.Drawing.Size(1484, 24)
         Me.Menu_Strip.TabIndex = 0
         Me.Menu_Strip.Text = "MenuStrip1"
@@ -294,7 +299,7 @@ Partial Class MAIN
         Me.Menu_Sections1.Size = New System.Drawing.Size(106, 20)
         Me.Menu_Sections1.Text = "Sections (&1) 1-22"
         Me.Menu_Sections1.ToolTipText = "Menu Sub-selections perform direct navigtion to the" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "chosen ODF Section. The Menu" &
-    " Item exposes" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Section 2 - 22: DisplayPage through StopRank."
+    " Item exposes" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Section 1 - 22: _General through StopRank."
         '
         'Menu_General
         '
@@ -654,6 +659,7 @@ Partial Class MAIN
         Me.Menu_Tools.Name = "Menu_Tools"
         Me.Menu_Tools.Size = New System.Drawing.Size(46, 20)
         Me.Menu_Tools.Text = "&Tools"
+        Me.Menu_Tools.ToolTipText = "Clear Marker; Encode/Decode Coupler-Codes;" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Trace Samples"
         '
         'Menu_ClearMarkers
         '
@@ -767,7 +773,7 @@ Partial Class MAIN
         Me.Lbl_SecStartVal.Name = "Lbl_SecStartVal"
         Me.Lbl_SecStartVal.Size = New System.Drawing.Size(112, 22)
         Me.Lbl_SecStartVal.TabIndex = 9
-        Me.Lbl_SecStartVal.Text = "?"
+        Me.Lbl_SecStartVal.Text = "<NA>"
         Me.Lbl_SecStartVal.TextAlign = System.Drawing.ContentAlignment.TopRight
         '
         'Lbl_SecEndVal
@@ -780,7 +786,7 @@ Partial Class MAIN
         Me.Lbl_SecEndVal.Name = "Lbl_SecEndVal"
         Me.Lbl_SecEndVal.Size = New System.Drawing.Size(112, 22)
         Me.Lbl_SecEndVal.TabIndex = 10
-        Me.Lbl_SecEndVal.Text = "?"
+        Me.Lbl_SecEndVal.Text = "<NA>"
         Me.Lbl_SecEndVal.TextAlign = System.Drawing.ContentAlignment.TopRight
         '
         'Lbl_RowStartVal
@@ -793,7 +799,7 @@ Partial Class MAIN
         Me.Lbl_RowStartVal.Name = "Lbl_RowStartVal"
         Me.Lbl_RowStartVal.Size = New System.Drawing.Size(112, 22)
         Me.Lbl_RowStartVal.TabIndex = 11
-        Me.Lbl_RowStartVal.Text = "?"
+        Me.Lbl_RowStartVal.Text = "<NA>"
         Me.Lbl_RowStartVal.TextAlign = System.Drawing.ContentAlignment.TopRight
         '
         'Lbl_CursorPosTitle
@@ -816,7 +822,7 @@ Partial Class MAIN
         Me.Lbl_CursorPosVal.Name = "Lbl_CursorPosVal"
         Me.Lbl_CursorPosVal.Size = New System.Drawing.Size(112, 22)
         Me.Lbl_CursorPosVal.TabIndex = 13
-        Me.Lbl_CursorPosVal.Text = "?"
+        Me.Lbl_CursorPosVal.Text = "<NA>"
         Me.Lbl_CursorPosVal.TextAlign = System.Drawing.ContentAlignment.TopRight
         '
         'Lbl_RowEndTitle
@@ -839,7 +845,7 @@ Partial Class MAIN
         Me.Lbl_RowEndVal.Name = "Lbl_RowEndVal"
         Me.Lbl_RowEndVal.Size = New System.Drawing.Size(112, 22)
         Me.Lbl_RowEndVal.TabIndex = 23
-        Me.Lbl_RowEndVal.Text = "?"
+        Me.Lbl_RowEndVal.Text = "<NA>"
         Me.Lbl_RowEndVal.TextAlign = System.Drawing.ContentAlignment.TopRight
         '
         'Lbl_SectionTitle
@@ -1625,7 +1631,7 @@ Partial Class MAIN
         Me.Lbl_LineNumVal.Name = "Lbl_LineNumVal"
         Me.Lbl_LineNumVal.Size = New System.Drawing.Size(112, 22)
         Me.Lbl_LineNumVal.TabIndex = 73
-        Me.Lbl_LineNumVal.Text = "?"
+        Me.Lbl_LineNumVal.Text = "<NA>"
         Me.Lbl_LineNumVal.TextAlign = System.Drawing.ContentAlignment.TopRight
         '
         'Lbl_FindTitle
@@ -1806,7 +1812,7 @@ Partial Class MAIN
         Me.Lbl_LineEndVal.Name = "Lbl_LineEndVal"
         Me.Lbl_LineEndVal.Size = New System.Drawing.Size(112, 22)
         Me.Lbl_LineEndVal.TabIndex = 86
-        Me.Lbl_LineEndVal.Text = "?"
+        Me.Lbl_LineEndVal.Text = "<NA>"
         Me.Lbl_LineEndVal.TextAlign = System.Drawing.ContentAlignment.TopRight
         '
         'Lbl_LineStartVal
@@ -1819,7 +1825,7 @@ Partial Class MAIN
         Me.Lbl_LineStartVal.Name = "Lbl_LineStartVal"
         Me.Lbl_LineStartVal.Size = New System.Drawing.Size(112, 22)
         Me.Lbl_LineStartVal.TabIndex = 85
-        Me.Lbl_LineStartVal.Text = "?"
+        Me.Lbl_LineStartVal.Text = "<NA>"
         Me.Lbl_LineStartVal.TextAlign = System.Drawing.ContentAlignment.TopRight
         '
         'Lbl_LineEndTitle
@@ -1918,7 +1924,7 @@ Partial Class MAIN
         '
         'Status_Strip1
         '
-        Me.Status_Strip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Status_RowTypeTitle, Me.Status_RowTypeVal, Me.Status_FileDirtyTitle, Me.Status_FileDirtyVal})
+        Me.Status_Strip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Status_RowTypeTitle, Me.Status_RowTypeVal, Me.Status_FileDirtyTitle, Me.Status_FileDirtyVal, Me.Status_LinesTitle, Me.Status_LinesVal, Me.Status_CharsTitle, Me.Status_CharsVal})
         Me.Status_Strip1.Location = New System.Drawing.Point(0, 839)
         Me.Status_Strip1.Name = "Status_Strip1"
         Me.Status_Strip1.ShowItemToolTips = True
@@ -1966,9 +1972,43 @@ Partial Class MAIN
         Me.Status_FileDirtyVal.Name = "Status_FileDirtyVal"
         Me.Status_FileDirtyVal.Size = New System.Drawing.Size(25, 17)
         Me.Status_FileDirtyVal.Text = "      "
-        Me.Status_FileDirtyVal.ToolTipText = "      Indicates if the ODF has been changed, but not saved" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "back to a file." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Oran" &
-    "ge - No ODF loaded." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Green - ODF is unmodified from file version." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Red - ODF has" &
-    " been modified not not saved to a file."
+        Me.Status_FileDirtyVal.ToolTipText = resources.GetString("Status_FileDirtyVal.ToolTipText")
+        '
+        'Status_LinesTitle
+        '
+        Me.Status_LinesTitle.BackColor = System.Drawing.Color.Transparent
+        Me.Status_LinesTitle.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.Status_LinesTitle.Name = "Status_LinesTitle"
+        Me.Status_LinesTitle.Size = New System.Drawing.Size(90, 17)
+        Me.Status_LinesTitle.Text = "    Lines in ODF:"
+        '
+        'Status_LinesVal
+        '
+        Me.Status_LinesVal.AutoSize = False
+        Me.Status_LinesVal.BackColor = System.Drawing.Color.Transparent
+        Me.Status_LinesVal.Name = "Status_LinesVal"
+        Me.Status_LinesVal.Size = New System.Drawing.Size(55, 17)
+        Me.Status_LinesVal.Text = "<NA>"
+        Me.Status_LinesVal.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        Me.Status_LinesVal.ToolTipText = "Number of Lines in a loaded ODF."
+        '
+        'Status_CharsTitle
+        '
+        Me.Status_CharsTitle.BackColor = System.Drawing.Color.Transparent
+        Me.Status_CharsTitle.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.Status_CharsTitle.Name = "Status_CharsTitle"
+        Me.Status_CharsTitle.Size = New System.Drawing.Size(121, 17)
+        Me.Status_CharsTitle.Text = "    Characters in ODF:"
+        '
+        'Status_CharsVal
+        '
+        Me.Status_CharsVal.AutoSize = False
+        Me.Status_CharsVal.BackColor = System.Drawing.Color.Transparent
+        Me.Status_CharsVal.Name = "Status_CharsVal"
+        Me.Status_CharsVal.Size = New System.Drawing.Size(70, 17)
+        Me.Status_CharsVal.Text = "<NA>"
+        Me.Status_CharsVal.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+        Me.Status_CharsVal.ToolTipText = "Number of characters in a loaded ODF."
         '
         'Lbl_XMLRowTitle
         '
@@ -2288,4 +2328,8 @@ Partial Class MAIN
     Friend WithEvents Menu_Sep3 As Windows.Forms.ToolStripSeparator
     Friend WithEvents PrintDialog1 As Windows.Forms.PrintDialog
     Friend WithEvents PrintDocument1 As Printing.PrintDocument
+    Friend WithEvents Status_LinesTitle As Windows.Forms.ToolStripStatusLabel
+    Friend WithEvents Status_LinesVal As Windows.Forms.ToolStripStatusLabel
+    Friend WithEvents Status_CharsTitle As Windows.Forms.ToolStripStatusLabel
+    Friend WithEvents Status_CharsVal As Windows.Forms.ToolStripStatusLabel
 End Class

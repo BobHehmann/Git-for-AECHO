@@ -109,6 +109,13 @@ Attack Sample.</value>
   Sec End-Tag - Section End &lt;/ObjectList&gt;
   Record - &lt;o&gt;...&lt;/o&gt; content within a Section</value>
   </data>
+  <data name="Status_FileDirtyVal.ToolTipText" xml:space="preserve">
+    <value> Indicates if the ODF has been changed, but not saved
+back to a file.
+    Orange - No ODF loaded.
+    Green - ODF is unmodified from file version.
+    Red - ODF has been modified not not saved to a file.</value>
+  </data>
   <metadata name="PrintDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>387, 17</value>
   </metadata>
