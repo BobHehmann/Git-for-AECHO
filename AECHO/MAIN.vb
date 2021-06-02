@@ -36,7 +36,7 @@ Public Class MAIN
     Dim M_FoundStart As Integer = -1    ' <1.060.2> When a text-search succeeds, this becomes index of start of located text
     Dim M_FoundEnd As Integer = 0       ' <1.060.2> Defines the end of located text; when 0, there is no located text defined.
     Dim M_FirstChar As Integer          ' <1.060.2> Current position in print-stream, between page calls
-    Dim Rtb_DText As RTBPrint =         ' <1.060.2> Hidden "enhanced" RTB for formatted printing of the Display Text area
+    Dim Rtb_DText As RTBPrint =         ' <1.060.2> Hidden "enhanced" RTB for formatted printing of the Display Text Area
         New RTBPrint
 
     ' MAIN FORM LOAD
@@ -57,7 +57,8 @@ Public Class MAIN
         '               for dynamically adjustable form-sizing by calculating control positions, centering title-text in code...
         '               In Demo Mode, also hide Title for Control to change ODF Font Size, not just the Control itself. Eliminate
         '               global G_AppPath.
-        '               <1.060.3> Create hidden instance (Rtb_DText) of printing-enhanced RTB, placed behind the Tags panel.
+        '               <1.060.3> Create hidden instance (Rtb_DText) of printing-enhanced RTB, placed behind the Tags panel. Work around
+        '               15 year-old RTB bug re AutoWordSelection.
 
         Const lclProcName As String =                           ' <1.060.2> Routine's name for message handling
             "MAIN_Load"
@@ -76,7 +77,7 @@ Public Class MAIN
             DispMsg(lclProcName, conMsgExcl,
                     "Unable to locate HTML Help Directory:" & vbCrLf &
                     G_HelpFilePath & vbCrLf &
-                    "Will fallback to simplified Help displayed in the Decriptive Text area.")
+                    "Will fallback to simplified Help displayed in the Descriptive Text Area.")
             G_HelpFilePath = ""                                 ' <1.060.2> Help loader will check this: when null, use old-style help
         End If
 
@@ -114,6 +115,9 @@ Public Class MAIN
             .Visible = False                                    ' <1.060.3> Keep it hidden, it is just an internal scratch-pad, not to be seen onscreen
         End With
         Controls.Add(Me.Rtb_DText)                              ' <1.060.3> Create it
+        Rtb_XMLRow.AutoWordSelection = False                    ' <1.060.3> Work-around to RTB bug, where control enables AutoWordSelection upon loading
+        Rtb_ODF.AutoWordSelection = False
+        Rtb_DescText.AutoWordSelection = False
 
         fnt_Fname = New Font(conDescFont,                       ' <1.060.3> Init useful fonts: slightly reduced size, these path/filename strings can be very long
                       conDefODFFontSize - 1,
@@ -153,7 +157,7 @@ Public Class MAIN
         EnumerateSectionsSetFont(Rtb_ODF,                       ' <1.060.2> Moved code to EnumerateSectionsSetFont(), forcing a Title size/emphasis reapplication
                                  Num_ODFFontSize.Value,         ' <1.060.2> Font-Size to use, taken from the Control
                                  G_NoODF,                       ' <1.060.2> Have an ODF, this is False
-                                 False,                         ' <1.060.2> Do not enumerate the Sections in the Descriptive Text area
+                                 False,                         ' <1.060.2> Do not enumerate the Sections in the Descriptive Text Area
                                  True)                          ' <1.060.2> Re-emphasize Titles after setting overall ODF Font size (size change resets all other attributes)
 
     End Sub
@@ -218,7 +222,7 @@ Public Class MAIN
 
         ' Purpose:      Move the curosr to the click-point, and update the Data Panel (Cursor Position, Line Number,
         '               Line Start, Line End, Row Start, and Row End), but do not: change the Section;
-        '               update Section Data; extract Row content; parse Row Tags; nor update Decriptive Text.
+        '               update Section Data; extract Row content; parse Row Tags; nor update Descriptive Text.
         ' Process:      Ignore if there is no ODF loaded. Otherwise, call MoveToPosition to update
         '               to the Cursor position, telling it not to extend/highlight the entire Row.
         ' Side Effects: Update the global G_LineIndex (the current Line).
@@ -252,7 +256,7 @@ Public Class MAIN
 
         ' activé par Btn_SaveDescText_Click
 
-        ' Purpose:      Save the contents of the descriptive-text area back to its original source file. This allows
+        ' Purpose:      Save the contents of the Descriptive-Text Area back to its original source file. This allows
         '               for editing of the text.
         ' Process:		Disallow altering the help-text file. Otherwise, save the text back to the file for the
         '               current Section.
@@ -312,7 +316,7 @@ Public Class MAIN
         ' Updates:      <1.059.0> Modified loading of ODF data to correctly decode UTF8
         '               <1.060.2> Added exception handler, reordered logic to reset things if ODF fails to load, only enabling
         '               after the load completes. Replaced parsing routines, calling EnumerateSectionsSetFont() to both
-        '               list the Sections in the Descriptive Text area, and set the initial Font and Section Title emphasis.
+        '               list the Sections in the Descriptive Text Area, and set the initial Font and Section Title emphasis.
 
         Const lclProcName As String = "Menu_OpenHauptwerkOrgan.Click"       ' <1.060.2> Routine's name for message handling
         Const conDemoMaxODFBytes As Integer = 1024000                       ' <1.060.2> Max allowable ODF file size when in Demo mode
@@ -382,7 +386,7 @@ Public Class MAIN
             Menu_FollowASample.Enabled = True
             SetODFButtons(True)                                             ' <1.060.2> Enable Controls that required ODF Text e.g. Search, Next/Prev, Markers...
 
-            EnumerateSectionsSetFont(Rtb_ODF,                               ' <1.060.2> List all Sections, displaying resulting data in the Descriptive Text area
+            EnumerateSectionsSetFont(Rtb_ODF,                               ' <1.060.2> List all Sections, displaying resulting data in the Descriptive Text Area
                                      Num_ODFFontSize.Value,
                                      G_NoODF,
                                      True,                                  ' <1.060.2> True -> display Section parsing results
@@ -610,7 +614,7 @@ Public Class MAIN
                                  True,                  ' <1.060.2> Enumerate Sections in Display Text Area
                                  True)                  ' <1.060.2> Adjust Title Emphasis
         PositionToSectionByName("DisplayPage",
-                                False)                  ' <1.060.2> Position to the initial Section; False -> Don't display/parse a row, do not alter Descriptive Text area
+                                False)                  ' <1.060.2> Position to the initial Section; False -> Don't display/parse a row, do not alter Descriptive Text Area
 
     End Sub
 
@@ -707,7 +711,7 @@ Public Class MAIN
                     DispMsg("", conMsgInfo,
                         "Unable to locate the top HTML Help File:" & vbCrLf &
                         "Full file path is: " & pathToHelpFile & vbCrLf &
-                        "Will attempt to continue with limited Help displayed in the Descriptive Text area.")
+                        "Will attempt to continue with limited Help displayed in the Descriptive Text Area.")
                     G_HelpFilePath = ""                         ' <1.060.0> Next time, go straight to old-style Help
                 End If
             End If
@@ -715,7 +719,7 @@ Public Class MAIN
             DispMsg(lclProcName, conMsgCrit,
                     "Exception while attempting to locate or load the HTML Help File." & vbCrLf &
                     "Full file path is: " & pathToHelpFile & vbCrLf &
-                    "Will attempt to continue with limited Help displayed in the Descriptive Text area." & vbCrLf &
+                    "Will attempt to continue with limited Help displayed in the Descriptive Text Area." & vbCrLf &
                     "Exception code is: " & ex1.Message)
             G_HelpFilePath = ""                                 ' <1.060.2> Clear this var, so next time we go staright to non-HTML Help
         End Try

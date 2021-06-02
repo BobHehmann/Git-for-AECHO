@@ -68,29 +68,37 @@ Partial Class Trace
         Me.Menu_SampleTrace.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.MenuTSExit, Me.MenuTSClear, Me.MenuTSPrint})
         Me.Menu_SampleTrace.Location = New System.Drawing.Point(0, 0)
         Me.Menu_SampleTrace.Name = "Menu_SampleTrace"
+        Me.Menu_SampleTrace.ShowItemToolTips = True
         Me.Menu_SampleTrace.Size = New System.Drawing.Size(852, 24)
         Me.Menu_SampleTrace.TabIndex = 5
         Me.Menu_SampleTrace.Text = "Sample Trace"
         '
         'MenuTSExit
         '
+        Me.MenuTSExit.AutoToolTip = True
         Me.MenuTSExit.Name = "MenuTSExit"
         Me.MenuTSExit.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.F4), System.Windows.Forms.Keys)
         Me.MenuTSExit.Size = New System.Drawing.Size(38, 20)
         Me.MenuTSExit.Text = "E&xit"
+        Me.MenuTSExit.ToolTipText = "Closes the Sample Trace form, clearing its contents."
         '
         'MenuTSClear
         '
+        Me.MenuTSClear.AutoToolTip = True
         Me.MenuTSClear.Name = "MenuTSClear"
         Me.MenuTSClear.Size = New System.Drawing.Size(81, 20)
         Me.MenuTSClear.Text = "&Clear Traces"
+        Me.MenuTSClear.ToolTipText = "Clears the display area, except for the filename" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "and ""Sample Trace"" headers."
         '
         'MenuTSPrint
         '
+        Me.MenuTSPrint.AutoToolTip = True
         Me.MenuTSPrint.Name = "MenuTSPrint"
         Me.MenuTSPrint.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.P), System.Windows.Forms.Keys)
         Me.MenuTSPrint.Size = New System.Drawing.Size(88, 20)
         Me.MenuTSPrint.Text = "&Print Traces..."
+        Me.MenuTSPrint.ToolTipText = "Opens a Print-Dialog to allow the display" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "area to be printed, withall formatting" &
+    " intact."
         '
         'PrintDialogTrace
         '

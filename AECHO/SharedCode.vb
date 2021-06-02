@@ -579,7 +579,7 @@ Module SharedCode
         '               Titles dynamically based on layout & lengths of text, setting the Panel Title to its default, but
         '               retaining the current Title on-display over the Descriptive Box.
         ' Called By:    PBox_Click(); Btn_DisplayImage_LostFocus(); ResetToNoODF(); ParseSections()
-        ' Side Effects: Alters properties of Pnl_Tags, PBox, Lbl_PackageID, Panel/Descriptive Text area's Titles
+        ' Side Effects: Alters properties of Pnl_Tags, PBox, Lbl_PackageID, Panel/Descriptive Text Area's Titles
         ' Notes:        <None>
         ' Updates:      <1.06.2> Modified subroutine to process logic common to both PBox_Click() and Btn_DisplayImage_LostFocus().
         '               Moved from MAIN form to here, qualified Control names with MAIN form. Removed code that re-centered Titles:
@@ -1254,18 +1254,18 @@ Module SharedCode
     Friend Sub EnumerateSectionsSetFont(srcRTB As RichTextBox,      ' Object to resize (must be an RTB)
                                         newSize As Integer,         ' New font size in points
                                         noODF As Boolean,           ' True -> ODF not yet loaded, ignore Title resizing
-                                        enumSecs As Boolean,        ' True -> List Section Inventory in Descriptive Text area, like old "ReCompute"
+                                        enumSecs As Boolean,        ' True -> List Section Inventory in Descriptive Text Area, like old "ReCompute"
                                         resizeTitles As Boolean)    ' True -> Scan Rtb_ODF for Title Lines, rescale them; False -> Leave ODF Title Lines alone
 
         ' Purpose:      Set the contents of a designated RTB Control to a designated size, forcing the font face and emphasis to
         '               the defaults. Optionally, readjust the emphasis (upsizing/bold) for Section Titles - used when changing the
         '               font size in the Rtb_ODF display. If enumSecs is True, also display the Section position data in the
-        '               Display Text area, as the Section Title are located.
+        '               Display Text Area, as the Section Title are located.
         ' Process:		Regardless of Title handling, first set the entire RTB Control to the standard font at the specified size.
         '               If re-emphasizing Section Titles, sequentially scan the Section Title Start-Tags, and when found,
         '               apply the emphasis. Additionally, if enumerating the Sections, set up the display areas and headers,
-        '               clear the Record-Row, Parsed Tags, and Descriptive area, and isolate the Section's Name and End-Tag
-        '               position, displaying it in the Descriptive Text area as each Section is located.
+        '               clear the Record-Row, Parsed Tags, and Descriptive Area, and isolate the Section's Name and End-Tag
+        '               position, displaying it in the Descriptive Text Area as each Section is located.
         ' Called By:    Num_ODFFontSize_ValueChanged()
         ' Side Effects: Alters the designated Control's properties.
         ' Notes:        <None>
@@ -1296,7 +1296,7 @@ Module SharedCode
                 G_PreviousRTFFile = ""                              ' To enforce re-display of Section Text if menu-clicking on the present Section
                 SetRTBDescButtons(False)                            ' Disable "Set Font" and "Save Description" buttons, no Section content to work with
                 MAIN.Rtb_XMLRow.Clear()                             ' Reset Record-Row display are (<o>...</o> tags)
-                CenterText(conTextBoxTitle_ODFLoad,                 ' Display "Section Locations" Title over Display Text area
+                CenterText(conTextBoxTitle_ODFLoad,                 ' Display "Section Locations" Title over Display Text Area
                     MAIN.Lbl_TextBoxTitle1,                         ' Center text on the Top Title Line
                     MAIN.Rtb_DescText.Left,
                     MAIN.Rtb_DescText.Right)
@@ -2020,14 +2020,14 @@ Module SharedCode
                     AppendTxt(tBox, fnt_Fields, Color.Black,
                               "    " & longTag & " (<" & tag & ">) = '" & tagVal & "'" & vbCrLf)
                 Else                                        ' We have the Tag, but null content, present Default Value
-                    AppendTxt(tBox, fnt_Fields, Color.Brown,
+                    AppendTxt(tBox, fnt_Fields, Color.SaddleBrown,
                               "    " & longTag & " (<" & tag & ">) is present, but has no value. Default Value = '" & defVal & "'" & vbCrLf)
                 End If
                 Return tagVal                               ' Return the Tag's content, can be ""
             End If
         End If
 
-        AppendTxt(tBox, fnt_Fields, Color.Brown,
+        AppendTxt(tBox, fnt_Fields, Color.SaddleBrown,
                   "    No tag " & longTag & " (<" & tag & ">), Default Value = '" & defVal & "'" & vbCrLf)
         Return ""                                           ' All or part of the Tag wasn't found
 

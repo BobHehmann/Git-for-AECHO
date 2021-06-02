@@ -703,6 +703,7 @@ Partial Class MAIN
         'Rtb_ODF
         '
         Me.Rtb_ODF.BackColor = System.Drawing.Color.WhiteSmoke
+        Me.Rtb_ODF.DetectUrls = False
         Me.Rtb_ODF.Font = New System.Drawing.Font("Arial", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
         Me.Rtb_ODF.HideSelection = False
         Me.Rtb_ODF.Location = New System.Drawing.Point(14, 57)
@@ -890,6 +891,7 @@ Partial Class MAIN
         'Rtb_DescText
         '
         Me.Rtb_DescText.AcceptsTab = True
+        Me.Rtb_DescText.DetectUrls = False
         Me.Rtb_DescText.Font = New System.Drawing.Font("Verdana", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
         Me.Rtb_DescText.Location = New System.Drawing.Point(722, 451)
         Me.Rtb_DescText.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
@@ -902,6 +904,7 @@ Partial Class MAIN
         'Rtb_XMLRow
         '
         Me.Rtb_XMLRow.BackColor = System.Drawing.Color.WhiteSmoke
+        Me.Rtb_XMLRow.DetectUrls = False
         Me.Rtb_XMLRow.Font = New System.Drawing.Font("Arial", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
         Me.Rtb_XMLRow.Location = New System.Drawing.Point(14, 307)
         Me.Rtb_XMLRow.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)

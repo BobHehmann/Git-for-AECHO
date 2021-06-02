@@ -292,8 +292,12 @@
         in routines that passed these controls around. Changed .Item.Add method to .AppendText, and appended Cr/Lf to ends of lines. Added blank
         line at end of a Trace, for visual separation. Added a menu bar to the Trace form, with Exit (close form), Clear Traces (reset the 
         Trace display area to blank), and Print Traces... (formatted printing of the Trace display area.) Color coded the output, and improved
-        indentation
+        indentation.
 
+    6)  Worked around ancient RTF bug, where an RTB enables AutoWordSelection when the form is first loaded, even though this property is disabled
+        in the Designer. Disabled this for the all visible RTBs with code the the forms' Load Events, so text selection in XML strings works as
+        expected. Otherwise the forms keep auto-extending text selections made with a mouse when crossing tag boundaries - can't select between
+        '><' on both sides of the same selection: one far side of the drap will also autoselect past the first bracket encountered.
 
     7)  Established a separate Module (SharedCode.vb) for shared Functions and Subroutines, moving them out of the Main Form's
         own code. Reduced naming scope of declarations from "Public" to "Friend". Populated it with:

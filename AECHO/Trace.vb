@@ -59,6 +59,7 @@ Public Class Trace
             .Visible = True
         End With
         Controls.Add(Me.Rtb_Trace)                      ' Create the display box
+        Rtb_Trace.AutoWordSelection = False             ' Work-around for old RTB bug, RTB self-enable this property, over-riding Designer setting.
 
         AppendTxt(Rtb_Trace,                            ' Add the filename and title headers to the display
                    fnt_Fname,                           ' A reduced size to accomodate long strings
