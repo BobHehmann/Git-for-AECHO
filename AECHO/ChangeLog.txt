@@ -333,7 +333,35 @@
 
     4)  Changed TakeRowAction() to use Case statement to decide on semantics of the Action button.
 
-Routines relocated from forms to shared.vb (or new routines created in shared.vb):
+1.060.6     June 2, 2021 Bob Hehmann
+    Git:    PositionsAsLines
+    Summary:    Modify the Data Panel's Section Start/End and Row Start/End fields to display both Line and Char values.
+    Details:    In present ODF's, Section Start/End Tags always index to dedicated Lines; Rows always are comprised of
+                continguous dedicated Lines. Neither construct shares a Line with another. Changing the displays to present
+                Line positions makes them easier to interpret. Positioning will be to character position, to first char in
+                Start-Lines, last char on Line for End-Lines.
+
+    1)  Resort the order of the fields in the Data Panel, from Sec S/E, Line#, Caret, Line S/E, Row S/E to Caret, Line#,
+        Line S/E, Row S/E, Sec S/E. Initialize their .Tag properties to "NA". The .Tags now hold the (hidden)
+        character position, while the display will show a composit value: this is to remove need to parse the presentation
+        value of the control.
+
+    2)  Modified presentation in Sec S/E & Row S/E from pure character to Line / Char: "1,234 / 190,333". Reduced
+        font size from 10 to 9 points, slightly lengthened fields to accomodate extra data when ODFs are very large.
+
+    3)  Removed border-box from around Number-of-Tags field. Fixed error in calculating this value when not in a Row-Record
+        (was often displaying "-1").
+
+    4)  Tweaked font-faces, sizes, weights, color, bold, background, and positioning in the Tag Panel Area to improve clarity.
+        Used Verdana 11-Bold for Tags, Arial 9.75 for Values, Black, same Gainsboro-Grey background as Panel.
+
+    5)  Modified Markers to present Line Numbers on their face when set, but to bookamrk the actual character position: left-
+        clicking on a set Marker will return the Cursor/Caret to the exact bookmarked position. Note - Markers remember the
+        absolute position, so if editing moves text, a Marker may drift from its original textual postion i.e., if a Marker
+        is set to character 100, then 50 chars are added at position 10, then the Marker will still be positioned to
+        index 100, now 50 characters before the original textual area.
+
+Routines relocated from various forms over to SharedCode.vb (or new routines created in SharedCode.vb):
 
 Friend              Constant Declarations / Init    <Relocated from MAIN form>
 Friend              Global Variable Declarations    <Relocated from MAIN form>

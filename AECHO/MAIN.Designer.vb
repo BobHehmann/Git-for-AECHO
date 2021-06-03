@@ -733,27 +733,27 @@ Partial Class MAIN
         'Lbl_SecStartTitle
         '
         Me.Lbl_SecStartTitle.AutoSize = True
-        Me.Lbl_SecStartTitle.Location = New System.Drawing.Point(7, 36)
+        Me.Lbl_SecStartTitle.Location = New System.Drawing.Point(7, 210)
         Me.Lbl_SecStartTitle.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Lbl_SecStartTitle.Name = "Lbl_SecStartTitle"
-        Me.Lbl_SecStartTitle.Size = New System.Drawing.Size(73, 15)
+        Me.Lbl_SecStartTitle.Size = New System.Drawing.Size(52, 15)
         Me.Lbl_SecStartTitle.TabIndex = 6
-        Me.Lbl_SecStartTitle.Text = "Section Start"
+        Me.Lbl_SecStartTitle.Text = "Sec Start"
         '
         'Lbl_SecEndTitle
         '
         Me.Lbl_SecEndTitle.AutoSize = True
-        Me.Lbl_SecEndTitle.Location = New System.Drawing.Point(7, 65)
+        Me.Lbl_SecEndTitle.Location = New System.Drawing.Point(7, 239)
         Me.Lbl_SecEndTitle.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Lbl_SecEndTitle.Name = "Lbl_SecEndTitle"
-        Me.Lbl_SecEndTitle.Size = New System.Drawing.Size(69, 15)
+        Me.Lbl_SecEndTitle.Size = New System.Drawing.Size(48, 15)
         Me.Lbl_SecEndTitle.TabIndex = 7
-        Me.Lbl_SecEndTitle.Text = "Section End"
+        Me.Lbl_SecEndTitle.Text = "Sec End"
         '
         'Lbl_RowStartTitle
         '
         Me.Lbl_RowStartTitle.AutoSize = True
-        Me.Lbl_RowStartTitle.Location = New System.Drawing.Point(7, 210)
+        Me.Lbl_RowStartTitle.Location = New System.Drawing.Point(7, 152)
         Me.Lbl_RowStartTitle.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Lbl_RowStartTitle.Name = "Lbl_RowStartTitle"
         Me.Lbl_RowStartTitle.Size = New System.Drawing.Size(57, 15)
@@ -764,68 +764,68 @@ Partial Class MAIN
         '
         Me.Lbl_SecStartVal.BackColor = System.Drawing.Color.PaleTurquoise
         Me.Lbl_SecStartVal.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.Lbl_SecStartVal.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.Lbl_SecStartVal.Location = New System.Drawing.Point(97, 32)
+        Me.Lbl_SecStartVal.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
+        Me.Lbl_SecStartVal.Location = New System.Drawing.Point(67, 206)
         Me.Lbl_SecStartVal.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Lbl_SecStartVal.Name = "Lbl_SecStartVal"
-        Me.Lbl_SecStartVal.Size = New System.Drawing.Size(112, 22)
+        Me.Lbl_SecStartVal.Size = New System.Drawing.Size(142, 22)
         Me.Lbl_SecStartVal.TabIndex = 9
         Me.Lbl_SecStartVal.Text = "<NA>"
-        Me.Lbl_SecStartVal.TextAlign = System.Drawing.ContentAlignment.TopRight
+        Me.Lbl_SecStartVal.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'Lbl_SecEndVal
         '
         Me.Lbl_SecEndVal.BackColor = System.Drawing.Color.PaleTurquoise
         Me.Lbl_SecEndVal.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.Lbl_SecEndVal.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.Lbl_SecEndVal.Location = New System.Drawing.Point(97, 61)
+        Me.Lbl_SecEndVal.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
+        Me.Lbl_SecEndVal.Location = New System.Drawing.Point(67, 235)
         Me.Lbl_SecEndVal.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Lbl_SecEndVal.Name = "Lbl_SecEndVal"
-        Me.Lbl_SecEndVal.Size = New System.Drawing.Size(112, 22)
+        Me.Lbl_SecEndVal.Size = New System.Drawing.Size(142, 22)
         Me.Lbl_SecEndVal.TabIndex = 10
         Me.Lbl_SecEndVal.Text = "<NA>"
-        Me.Lbl_SecEndVal.TextAlign = System.Drawing.ContentAlignment.TopRight
+        Me.Lbl_SecEndVal.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'Lbl_RowStartVal
         '
         Me.Lbl_RowStartVal.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(128, Byte), Integer))
         Me.Lbl_RowStartVal.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.Lbl_RowStartVal.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.Lbl_RowStartVal.Location = New System.Drawing.Point(97, 206)
+        Me.Lbl_RowStartVal.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
+        Me.Lbl_RowStartVal.Location = New System.Drawing.Point(67, 148)
         Me.Lbl_RowStartVal.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Lbl_RowStartVal.Name = "Lbl_RowStartVal"
-        Me.Lbl_RowStartVal.Size = New System.Drawing.Size(112, 22)
+        Me.Lbl_RowStartVal.Size = New System.Drawing.Size(142, 22)
         Me.Lbl_RowStartVal.TabIndex = 11
         Me.Lbl_RowStartVal.Text = "<NA>"
-        Me.Lbl_RowStartVal.TextAlign = System.Drawing.ContentAlignment.TopRight
+        Me.Lbl_RowStartVal.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'Lbl_CursorPosTitle
         '
         Me.Lbl_CursorPosTitle.AutoSize = True
-        Me.Lbl_CursorPosTitle.Location = New System.Drawing.Point(7, 123)
+        Me.Lbl_CursorPosTitle.Location = New System.Drawing.Point(7, 36)
         Me.Lbl_CursorPosTitle.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Lbl_CursorPosTitle.Name = "Lbl_CursorPosTitle"
-        Me.Lbl_CursorPosTitle.Size = New System.Drawing.Size(81, 15)
+        Me.Lbl_CursorPosTitle.Size = New System.Drawing.Size(57, 15)
         Me.Lbl_CursorPosTitle.TabIndex = 12
-        Me.Lbl_CursorPosTitle.Text = "Caret Position"
+        Me.Lbl_CursorPosTitle.Text = "Caret Pos"
         '
         'Lbl_CursorPosVal
         '
         Me.Lbl_CursorPosVal.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer))
         Me.Lbl_CursorPosVal.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.Lbl_CursorPosVal.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.Lbl_CursorPosVal.Location = New System.Drawing.Point(97, 119)
+        Me.Lbl_CursorPosVal.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
+        Me.Lbl_CursorPosVal.Location = New System.Drawing.Point(67, 32)
         Me.Lbl_CursorPosVal.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Lbl_CursorPosVal.Name = "Lbl_CursorPosVal"
-        Me.Lbl_CursorPosVal.Size = New System.Drawing.Size(112, 22)
+        Me.Lbl_CursorPosVal.Size = New System.Drawing.Size(142, 22)
         Me.Lbl_CursorPosVal.TabIndex = 13
         Me.Lbl_CursorPosVal.Text = "<NA>"
-        Me.Lbl_CursorPosVal.TextAlign = System.Drawing.ContentAlignment.TopRight
+        Me.Lbl_CursorPosVal.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'Lbl_RowEndTitle
         '
         Me.Lbl_RowEndTitle.AutoSize = True
-        Me.Lbl_RowEndTitle.Location = New System.Drawing.Point(7, 239)
+        Me.Lbl_RowEndTitle.Location = New System.Drawing.Point(7, 181)
         Me.Lbl_RowEndTitle.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Lbl_RowEndTitle.Name = "Lbl_RowEndTitle"
         Me.Lbl_RowEndTitle.Size = New System.Drawing.Size(53, 15)
@@ -836,14 +836,14 @@ Partial Class MAIN
         '
         Me.Lbl_RowEndVal.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(128, Byte), Integer))
         Me.Lbl_RowEndVal.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.Lbl_RowEndVal.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.Lbl_RowEndVal.Location = New System.Drawing.Point(97, 235)
+        Me.Lbl_RowEndVal.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
+        Me.Lbl_RowEndVal.Location = New System.Drawing.Point(67, 177)
         Me.Lbl_RowEndVal.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Lbl_RowEndVal.Name = "Lbl_RowEndVal"
-        Me.Lbl_RowEndVal.Size = New System.Drawing.Size(112, 22)
+        Me.Lbl_RowEndVal.Size = New System.Drawing.Size(142, 22)
         Me.Lbl_RowEndVal.TabIndex = 23
         Me.Lbl_RowEndVal.Text = "<NA>"
-        Me.Lbl_RowEndVal.TextAlign = System.Drawing.ContentAlignment.TopRight
+        Me.Lbl_RowEndVal.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'Lbl_SectionTitle
         '
@@ -881,13 +881,12 @@ Partial Class MAIN
         'Lbl_NumTagsVal
         '
         Me.Lbl_NumTagsVal.AutoSize = True
-        Me.Lbl_NumTagsVal.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.Lbl_NumTagsVal.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
         Me.Lbl_NumTagsVal.ForeColor = System.Drawing.Color.Red
         Me.Lbl_NumTagsVal.Location = New System.Drawing.Point(97, 267)
         Me.Lbl_NumTagsVal.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Lbl_NumTagsVal.Name = "Lbl_NumTagsVal"
-        Me.Lbl_NumTagsVal.Size = New System.Drawing.Size(19, 19)
+        Me.Lbl_NumTagsVal.Size = New System.Drawing.Size(17, 17)
         Me.Lbl_NumTagsVal.TabIndex = 31
         Me.Lbl_NumTagsVal.Text = "0"
         '
@@ -999,625 +998,649 @@ Partial Class MAIN
         'tag24
         '
         Me.tag24.AutoSize = True
-        Me.tag24.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag24.BackColor = System.Drawing.Color.Gainsboro
         Me.tag24.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag24.Location = New System.Drawing.Point(399, 352)
+        Me.tag24.Location = New System.Drawing.Point(398, 355)
         Me.tag24.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag24.Name = "tag24"
         Me.tag24.Size = New System.Drawing.Size(41, 16)
         Me.tag24.TabIndex = 94
         Me.tag24.Text = "Tag24"
+        Me.tag24.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'LabelTag24
         '
         Me.LabelTag24.AutoSize = True
-        Me.LabelTag24.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag24.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag24.ForeColor = System.Drawing.Color.White
-        Me.LabelTag24.Location = New System.Drawing.Point(357, 352)
+        Me.LabelTag24.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag24.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag24.ForeColor = System.Drawing.Color.Black
+        Me.LabelTag24.Location = New System.Drawing.Point(356, 351)
         Me.LabelTag24.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag24.Name = "LabelTag24"
-        Me.LabelTag24.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag24.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag24.TabIndex = 93
         Me.LabelTag24.Text = "X"
         '
         'tag23
         '
         Me.tag23.AutoSize = True
-        Me.tag23.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag23.BackColor = System.Drawing.Color.Gainsboro
         Me.tag23.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag23.Location = New System.Drawing.Point(399, 321)
+        Me.tag23.Location = New System.Drawing.Point(398, 325)
         Me.tag23.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag23.Name = "tag23"
         Me.tag23.Size = New System.Drawing.Size(41, 16)
         Me.tag23.TabIndex = 92
         Me.tag23.Text = "Tag23"
+        Me.tag23.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'LabelTag23
         '
         Me.LabelTag23.AutoSize = True
-        Me.LabelTag23.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag23.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag23.ForeColor = System.Drawing.Color.White
-        Me.LabelTag23.Location = New System.Drawing.Point(357, 321)
+        Me.LabelTag23.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag23.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag23.ForeColor = System.Drawing.Color.Black
+        Me.LabelTag23.Location = New System.Drawing.Point(356, 321)
         Me.LabelTag23.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag23.Name = "LabelTag23"
-        Me.LabelTag23.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag23.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag23.TabIndex = 91
         Me.LabelTag23.Text = "X"
         '
         'tag22
         '
         Me.tag22.AutoSize = True
-        Me.tag22.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag22.BackColor = System.Drawing.Color.Gainsboro
         Me.tag22.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag22.Location = New System.Drawing.Point(399, 291)
+        Me.tag22.Location = New System.Drawing.Point(398, 295)
         Me.tag22.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag22.Name = "tag22"
         Me.tag22.Size = New System.Drawing.Size(41, 16)
         Me.tag22.TabIndex = 90
         Me.tag22.Text = "Tag22"
+        Me.tag22.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'LabelTag22
         '
         Me.LabelTag22.AutoSize = True
-        Me.LabelTag22.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag22.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag22.ForeColor = System.Drawing.Color.White
-        Me.LabelTag22.Location = New System.Drawing.Point(357, 291)
+        Me.LabelTag22.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag22.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag22.ForeColor = System.Drawing.Color.Black
+        Me.LabelTag22.Location = New System.Drawing.Point(356, 291)
         Me.LabelTag22.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag22.Name = "LabelTag22"
-        Me.LabelTag22.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag22.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag22.TabIndex = 89
         Me.LabelTag22.Text = "X"
         '
         'tag21
         '
         Me.tag21.AutoSize = True
-        Me.tag21.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag21.BackColor = System.Drawing.Color.Gainsboro
         Me.tag21.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag21.Location = New System.Drawing.Point(399, 260)
+        Me.tag21.Location = New System.Drawing.Point(398, 265)
         Me.tag21.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag21.Name = "tag21"
         Me.tag21.Size = New System.Drawing.Size(41, 16)
         Me.tag21.TabIndex = 88
         Me.tag21.Text = "Tag21"
+        Me.tag21.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'LabelTag21
         '
         Me.LabelTag21.AutoSize = True
-        Me.LabelTag21.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag21.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag21.ForeColor = System.Drawing.Color.White
-        Me.LabelTag21.Location = New System.Drawing.Point(357, 260)
+        Me.LabelTag21.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag21.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag21.ForeColor = System.Drawing.Color.Black
+        Me.LabelTag21.Location = New System.Drawing.Point(356, 261)
         Me.LabelTag21.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag21.Name = "LabelTag21"
-        Me.LabelTag21.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag21.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag21.TabIndex = 87
         Me.LabelTag21.Text = "X"
         '
         'tag20
         '
         Me.tag20.AutoSize = True
-        Me.tag20.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag20.BackColor = System.Drawing.Color.Gainsboro
         Me.tag20.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag20.Location = New System.Drawing.Point(399, 227)
+        Me.tag20.Location = New System.Drawing.Point(398, 235)
         Me.tag20.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag20.Name = "tag20"
         Me.tag20.Size = New System.Drawing.Size(41, 16)
         Me.tag20.TabIndex = 86
         Me.tag20.Text = "Tag20"
+        Me.tag20.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'LabelTag20
         '
         Me.LabelTag20.AutoSize = True
-        Me.LabelTag20.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag20.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag20.ForeColor = System.Drawing.Color.White
-        Me.LabelTag20.Location = New System.Drawing.Point(357, 227)
+        Me.LabelTag20.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag20.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag20.ForeColor = System.Drawing.Color.Black
+        Me.LabelTag20.Location = New System.Drawing.Point(356, 231)
         Me.LabelTag20.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag20.Name = "LabelTag20"
-        Me.LabelTag20.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag20.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag20.TabIndex = 85
         Me.LabelTag20.Text = "X"
         '
         'tag19
         '
         Me.tag19.AutoSize = True
-        Me.tag19.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag19.BackColor = System.Drawing.Color.Gainsboro
         Me.tag19.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag19.Location = New System.Drawing.Point(399, 196)
+        Me.tag19.Location = New System.Drawing.Point(398, 205)
         Me.tag19.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag19.Name = "tag19"
         Me.tag19.Size = New System.Drawing.Size(41, 16)
         Me.tag19.TabIndex = 84
         Me.tag19.Text = "Tag19"
+        Me.tag19.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'LabelTag19
         '
         Me.LabelTag19.AutoSize = True
-        Me.LabelTag19.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag19.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag19.ForeColor = System.Drawing.Color.White
-        Me.LabelTag19.Location = New System.Drawing.Point(357, 196)
+        Me.LabelTag19.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag19.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag19.ForeColor = System.Drawing.Color.Black
+        Me.LabelTag19.Location = New System.Drawing.Point(356, 201)
         Me.LabelTag19.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag19.Name = "LabelTag19"
-        Me.LabelTag19.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag19.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag19.TabIndex = 83
         Me.LabelTag19.Text = "X"
         '
         'tag18
         '
         Me.tag18.AutoSize = True
-        Me.tag18.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag18.BackColor = System.Drawing.Color.Gainsboro
         Me.tag18.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag18.Location = New System.Drawing.Point(399, 166)
+        Me.tag18.Location = New System.Drawing.Point(398, 175)
         Me.tag18.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag18.Name = "tag18"
         Me.tag18.Size = New System.Drawing.Size(41, 16)
         Me.tag18.TabIndex = 82
         Me.tag18.Text = "Tag18"
+        Me.tag18.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'LabelTag18
         '
         Me.LabelTag18.AutoSize = True
-        Me.LabelTag18.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag18.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag18.ForeColor = System.Drawing.Color.White
-        Me.LabelTag18.Location = New System.Drawing.Point(357, 166)
+        Me.LabelTag18.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag18.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag18.ForeColor = System.Drawing.Color.Black
+        Me.LabelTag18.Location = New System.Drawing.Point(356, 171)
         Me.LabelTag18.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag18.Name = "LabelTag18"
-        Me.LabelTag18.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag18.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag18.TabIndex = 81
         Me.LabelTag18.Text = "X"
         '
         'tag17
         '
         Me.tag17.AutoSize = True
-        Me.tag17.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag17.BackColor = System.Drawing.Color.Gainsboro
         Me.tag17.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag17.Location = New System.Drawing.Point(399, 135)
+        Me.tag17.Location = New System.Drawing.Point(398, 145)
         Me.tag17.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag17.Name = "tag17"
         Me.tag17.Size = New System.Drawing.Size(41, 16)
         Me.tag17.TabIndex = 80
         Me.tag17.Text = "Tag17"
+        Me.tag17.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'LabelTag17
         '
         Me.LabelTag17.AutoSize = True
-        Me.LabelTag17.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag17.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag17.ForeColor = System.Drawing.Color.White
-        Me.LabelTag17.Location = New System.Drawing.Point(357, 135)
+        Me.LabelTag17.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag17.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag17.ForeColor = System.Drawing.Color.Black
+        Me.LabelTag17.Location = New System.Drawing.Point(356, 141)
         Me.LabelTag17.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag17.Name = "LabelTag17"
-        Me.LabelTag17.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag17.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag17.TabIndex = 79
         Me.LabelTag17.Text = "X"
         '
         'tag16
         '
         Me.tag16.AutoSize = True
-        Me.tag16.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag16.BackColor = System.Drawing.Color.Gainsboro
         Me.tag16.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag16.Location = New System.Drawing.Point(399, 104)
+        Me.tag16.Location = New System.Drawing.Point(398, 115)
         Me.tag16.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag16.Name = "tag16"
         Me.tag16.Size = New System.Drawing.Size(41, 16)
         Me.tag16.TabIndex = 78
         Me.tag16.Text = "Tag16"
+        Me.tag16.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'LabelTag16
         '
         Me.LabelTag16.AutoSize = True
-        Me.LabelTag16.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag16.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag16.ForeColor = System.Drawing.Color.White
-        Me.LabelTag16.Location = New System.Drawing.Point(357, 104)
+        Me.LabelTag16.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag16.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag16.ForeColor = System.Drawing.Color.Black
+        Me.LabelTag16.Location = New System.Drawing.Point(356, 111)
         Me.LabelTag16.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag16.Name = "LabelTag16"
-        Me.LabelTag16.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag16.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag16.TabIndex = 77
         Me.LabelTag16.Text = "X"
         '
         'tag15
         '
         Me.tag15.AutoSize = True
-        Me.tag15.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag15.BackColor = System.Drawing.Color.Gainsboro
         Me.tag15.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag15.Location = New System.Drawing.Point(399, 73)
+        Me.tag15.Location = New System.Drawing.Point(398, 85)
         Me.tag15.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag15.Name = "tag15"
         Me.tag15.Size = New System.Drawing.Size(41, 16)
         Me.tag15.TabIndex = 76
         Me.tag15.Text = "Tag15"
+        Me.tag15.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'tag14
         '
         Me.tag14.AutoSize = True
-        Me.tag14.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag14.BackColor = System.Drawing.Color.Gainsboro
         Me.tag14.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag14.Location = New System.Drawing.Point(399, 42)
+        Me.tag14.Location = New System.Drawing.Point(398, 55)
         Me.tag14.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag14.Name = "tag14"
         Me.tag14.Size = New System.Drawing.Size(41, 16)
         Me.tag14.TabIndex = 75
         Me.tag14.Text = "Tag14"
+        Me.tag14.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'LabelTag15
         '
         Me.LabelTag15.AutoSize = True
-        Me.LabelTag15.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag15.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag15.ForeColor = System.Drawing.Color.White
-        Me.LabelTag15.Location = New System.Drawing.Point(357, 73)
+        Me.LabelTag15.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag15.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag15.ForeColor = System.Drawing.Color.Black
+        Me.LabelTag15.Location = New System.Drawing.Point(356, 81)
         Me.LabelTag15.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag15.Name = "LabelTag15"
-        Me.LabelTag15.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag15.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag15.TabIndex = 74
         Me.LabelTag15.Text = "X"
         '
         'LabelTag14
         '
         Me.LabelTag14.AutoSize = True
-        Me.LabelTag14.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag14.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag14.ForeColor = System.Drawing.Color.White
-        Me.LabelTag14.Location = New System.Drawing.Point(357, 42)
+        Me.LabelTag14.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag14.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag14.ForeColor = System.Drawing.Color.Black
+        Me.LabelTag14.Location = New System.Drawing.Point(356, 51)
         Me.LabelTag14.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag14.Name = "LabelTag14"
-        Me.LabelTag14.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag14.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag14.TabIndex = 73
         Me.LabelTag14.Text = "X"
         '
         'tag13
         '
         Me.tag13.AutoSize = True
-        Me.tag13.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag13.BackColor = System.Drawing.Color.Gainsboro
         Me.tag13.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag13.Location = New System.Drawing.Point(399, 10)
+        Me.tag13.Location = New System.Drawing.Point(398, 25)
         Me.tag13.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag13.Name = "tag13"
         Me.tag13.Size = New System.Drawing.Size(41, 16)
         Me.tag13.TabIndex = 72
         Me.tag13.Text = "Tag13"
+        Me.tag13.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'LabelTag13
         '
         Me.LabelTag13.AutoSize = True
-        Me.LabelTag13.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag13.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag13.ForeColor = System.Drawing.Color.White
-        Me.LabelTag13.Location = New System.Drawing.Point(357, 10)
+        Me.LabelTag13.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag13.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag13.ForeColor = System.Drawing.Color.Black
+        Me.LabelTag13.Location = New System.Drawing.Point(356, 21)
         Me.LabelTag13.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag13.Name = "LabelTag13"
-        Me.LabelTag13.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag13.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag13.TabIndex = 71
         Me.LabelTag13.Text = "X"
         '
         'tag12
         '
         Me.tag12.AutoSize = True
-        Me.tag12.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag12.BackColor = System.Drawing.Color.Gainsboro
         Me.tag12.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag12.Location = New System.Drawing.Point(62, 352)
+        Me.tag12.Location = New System.Drawing.Point(62, 355)
         Me.tag12.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag12.Name = "tag12"
         Me.tag12.Size = New System.Drawing.Size(41, 16)
         Me.tag12.TabIndex = 67
         Me.tag12.Text = "Tag12"
+        Me.tag12.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'LabelTag12
         '
         Me.LabelTag12.AutoSize = True
-        Me.LabelTag12.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag12.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag12.ForeColor = System.Drawing.Color.White
-        Me.LabelTag12.Location = New System.Drawing.Point(20, 352)
+        Me.LabelTag12.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag12.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag12.ForeColor = System.Drawing.Color.Black
+        Me.LabelTag12.Location = New System.Drawing.Point(20, 351)
         Me.LabelTag12.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag12.Name = "LabelTag12"
-        Me.LabelTag12.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag12.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag12.TabIndex = 66
         Me.LabelTag12.Text = "X"
         '
         'tag11
         '
         Me.tag11.AutoSize = True
-        Me.tag11.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag11.BackColor = System.Drawing.Color.Gainsboro
         Me.tag11.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag11.Location = New System.Drawing.Point(62, 321)
+        Me.tag11.Location = New System.Drawing.Point(62, 325)
         Me.tag11.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag11.Name = "tag11"
         Me.tag11.Size = New System.Drawing.Size(40, 16)
         Me.tag11.TabIndex = 65
         Me.tag11.Text = "Tag11"
+        Me.tag11.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'LabelTag11
         '
         Me.LabelTag11.AutoSize = True
-        Me.LabelTag11.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag11.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag11.ForeColor = System.Drawing.Color.White
+        Me.LabelTag11.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag11.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag11.ForeColor = System.Drawing.Color.Black
         Me.LabelTag11.Location = New System.Drawing.Point(20, 321)
         Me.LabelTag11.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag11.Name = "LabelTag11"
-        Me.LabelTag11.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag11.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag11.TabIndex = 64
         Me.LabelTag11.Text = "X"
         '
         'tag10
         '
         Me.tag10.AutoSize = True
-        Me.tag10.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag10.BackColor = System.Drawing.Color.Gainsboro
         Me.tag10.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag10.Location = New System.Drawing.Point(62, 291)
+        Me.tag10.Location = New System.Drawing.Point(62, 295)
         Me.tag10.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag10.Name = "tag10"
         Me.tag10.Size = New System.Drawing.Size(41, 16)
         Me.tag10.TabIndex = 63
         Me.tag10.Text = "Tag10"
+        Me.tag10.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'LabelTag10
         '
         Me.LabelTag10.AutoSize = True
-        Me.LabelTag10.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag10.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag10.ForeColor = System.Drawing.Color.White
+        Me.LabelTag10.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag10.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag10.ForeColor = System.Drawing.Color.Black
         Me.LabelTag10.Location = New System.Drawing.Point(20, 291)
         Me.LabelTag10.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag10.Name = "LabelTag10"
-        Me.LabelTag10.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag10.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag10.TabIndex = 62
         Me.LabelTag10.Text = "X"
         '
         'tag9
         '
         Me.tag9.AutoSize = True
-        Me.tag9.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag9.BackColor = System.Drawing.Color.Gainsboro
         Me.tag9.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag9.Location = New System.Drawing.Point(62, 261)
+        Me.tag9.Location = New System.Drawing.Point(62, 265)
         Me.tag9.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag9.Name = "tag9"
         Me.tag9.Size = New System.Drawing.Size(41, 16)
         Me.tag9.TabIndex = 61
         Me.tag9.Text = "Tag09"
+        Me.tag9.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'LabelTag9
         '
         Me.LabelTag9.AutoSize = True
-        Me.LabelTag9.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag9.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag9.ForeColor = System.Drawing.Color.White
+        Me.LabelTag9.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag9.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag9.ForeColor = System.Drawing.Color.Black
         Me.LabelTag9.Location = New System.Drawing.Point(20, 261)
         Me.LabelTag9.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag9.Name = "LabelTag9"
-        Me.LabelTag9.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag9.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag9.TabIndex = 60
         Me.LabelTag9.Text = "X"
         '
         'tag8
         '
         Me.tag8.AutoSize = True
-        Me.tag8.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag8.BackColor = System.Drawing.Color.Gainsboro
         Me.tag8.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag8.Location = New System.Drawing.Point(62, 230)
+        Me.tag8.Location = New System.Drawing.Point(62, 235)
         Me.tag8.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag8.Name = "tag8"
         Me.tag8.Size = New System.Drawing.Size(41, 16)
         Me.tag8.TabIndex = 59
         Me.tag8.Text = "Tag08"
+        Me.tag8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'LabelTag8
         '
         Me.LabelTag8.AutoSize = True
-        Me.LabelTag8.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag8.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag8.ForeColor = System.Drawing.Color.White
-        Me.LabelTag8.Location = New System.Drawing.Point(20, 230)
+        Me.LabelTag8.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag8.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag8.ForeColor = System.Drawing.Color.Black
+        Me.LabelTag8.Location = New System.Drawing.Point(20, 231)
         Me.LabelTag8.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag8.Name = "LabelTag8"
-        Me.LabelTag8.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag8.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag8.TabIndex = 58
         Me.LabelTag8.Text = "X"
         '
         'tag7
         '
         Me.tag7.AutoSize = True
-        Me.tag7.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag7.BackColor = System.Drawing.Color.Gainsboro
         Me.tag7.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag7.Location = New System.Drawing.Point(62, 198)
+        Me.tag7.Location = New System.Drawing.Point(62, 205)
         Me.tag7.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag7.Name = "tag7"
         Me.tag7.Size = New System.Drawing.Size(41, 16)
         Me.tag7.TabIndex = 57
         Me.tag7.Text = "Tag07"
+        Me.tag7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'LabelTag7
         '
         Me.LabelTag7.AutoSize = True
-        Me.LabelTag7.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag7.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag7.ForeColor = System.Drawing.Color.White
-        Me.LabelTag7.Location = New System.Drawing.Point(20, 198)
+        Me.LabelTag7.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag7.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag7.ForeColor = System.Drawing.Color.Black
+        Me.LabelTag7.Location = New System.Drawing.Point(20, 201)
         Me.LabelTag7.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag7.Name = "LabelTag7"
-        Me.LabelTag7.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag7.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag7.TabIndex = 56
         Me.LabelTag7.Text = "X"
         '
         'tag6
         '
         Me.tag6.AutoSize = True
-        Me.tag6.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag6.BackColor = System.Drawing.Color.Gainsboro
         Me.tag6.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag6.Location = New System.Drawing.Point(62, 167)
+        Me.tag6.Location = New System.Drawing.Point(62, 175)
         Me.tag6.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag6.Name = "tag6"
         Me.tag6.Size = New System.Drawing.Size(41, 16)
         Me.tag6.TabIndex = 55
         Me.tag6.Text = "Tag06"
+        Me.tag6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'tag5
         '
         Me.tag5.AutoSize = True
-        Me.tag5.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag5.BackColor = System.Drawing.Color.Gainsboro
         Me.tag5.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag5.Location = New System.Drawing.Point(62, 136)
+        Me.tag5.Location = New System.Drawing.Point(62, 145)
         Me.tag5.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag5.Name = "tag5"
         Me.tag5.Size = New System.Drawing.Size(41, 16)
         Me.tag5.TabIndex = 54
         Me.tag5.Text = "Tag05"
+        Me.tag5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'LabelTag6
         '
         Me.LabelTag6.AutoSize = True
-        Me.LabelTag6.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag6.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag6.ForeColor = System.Drawing.Color.White
-        Me.LabelTag6.Location = New System.Drawing.Point(20, 167)
+        Me.LabelTag6.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag6.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag6.ForeColor = System.Drawing.Color.Black
+        Me.LabelTag6.Location = New System.Drawing.Point(20, 171)
         Me.LabelTag6.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag6.Name = "LabelTag6"
-        Me.LabelTag6.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag6.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag6.TabIndex = 53
         Me.LabelTag6.Text = "X"
         '
         'LabelTag5
         '
         Me.LabelTag5.AutoSize = True
-        Me.LabelTag5.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag5.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag5.ForeColor = System.Drawing.Color.White
-        Me.LabelTag5.Location = New System.Drawing.Point(20, 136)
+        Me.LabelTag5.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag5.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag5.ForeColor = System.Drawing.Color.Black
+        Me.LabelTag5.Location = New System.Drawing.Point(20, 141)
         Me.LabelTag5.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag5.Name = "LabelTag5"
-        Me.LabelTag5.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag5.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag5.TabIndex = 52
         Me.LabelTag5.Text = "X"
         '
         'tag4
         '
         Me.tag4.AutoSize = True
-        Me.tag4.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag4.BackColor = System.Drawing.Color.Gainsboro
         Me.tag4.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag4.Location = New System.Drawing.Point(62, 105)
+        Me.tag4.Location = New System.Drawing.Point(62, 115)
         Me.tag4.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag4.Name = "tag4"
         Me.tag4.Size = New System.Drawing.Size(41, 16)
         Me.tag4.TabIndex = 51
         Me.tag4.Text = "Tag04"
+        Me.tag4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'LabelTag4
         '
         Me.LabelTag4.AutoSize = True
-        Me.LabelTag4.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag4.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag4.ForeColor = System.Drawing.Color.White
-        Me.LabelTag4.Location = New System.Drawing.Point(20, 105)
+        Me.LabelTag4.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag4.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag4.ForeColor = System.Drawing.Color.Black
+        Me.LabelTag4.Location = New System.Drawing.Point(20, 111)
         Me.LabelTag4.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag4.Name = "LabelTag4"
-        Me.LabelTag4.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag4.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag4.TabIndex = 50
         Me.LabelTag4.Text = "X"
         '
         'tag3
         '
         Me.tag3.AutoSize = True
-        Me.tag3.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag3.BackColor = System.Drawing.Color.Gainsboro
         Me.tag3.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag3.Location = New System.Drawing.Point(62, 74)
+        Me.tag3.Location = New System.Drawing.Point(62, 85)
         Me.tag3.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag3.Name = "tag3"
         Me.tag3.Size = New System.Drawing.Size(41, 16)
         Me.tag3.TabIndex = 49
         Me.tag3.Text = "Tag03"
+        Me.tag3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'LabelTag3
         '
         Me.LabelTag3.AutoSize = True
-        Me.LabelTag3.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag3.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag3.ForeColor = System.Drawing.Color.White
-        Me.LabelTag3.Location = New System.Drawing.Point(20, 74)
+        Me.LabelTag3.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag3.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag3.ForeColor = System.Drawing.Color.Black
+        Me.LabelTag3.Location = New System.Drawing.Point(20, 81)
         Me.LabelTag3.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag3.Name = "LabelTag3"
-        Me.LabelTag3.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag3.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag3.TabIndex = 48
         Me.LabelTag3.Text = "X"
         '
         'tag2
         '
         Me.tag2.AutoSize = True
-        Me.tag2.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag2.BackColor = System.Drawing.Color.Gainsboro
         Me.tag2.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag2.Location = New System.Drawing.Point(62, 43)
+        Me.tag2.Location = New System.Drawing.Point(62, 55)
         Me.tag2.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag2.Name = "tag2"
         Me.tag2.Size = New System.Drawing.Size(41, 16)
         Me.tag2.TabIndex = 47
         Me.tag2.Text = "Tag02"
+        Me.tag2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'LabelTag2
         '
         Me.LabelTag2.AutoSize = True
-        Me.LabelTag2.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag2.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag2.ForeColor = System.Drawing.Color.White
-        Me.LabelTag2.Location = New System.Drawing.Point(20, 43)
+        Me.LabelTag2.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag2.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag2.ForeColor = System.Drawing.Color.Black
+        Me.LabelTag2.Location = New System.Drawing.Point(20, 51)
         Me.LabelTag2.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag2.Name = "LabelTag2"
-        Me.LabelTag2.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag2.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag2.TabIndex = 46
         Me.LabelTag2.Text = "X"
         '
         'tag1
         '
         Me.tag1.AutoSize = True
-        Me.tag1.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.tag1.BackColor = System.Drawing.Color.Gainsboro
         Me.tag1.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.tag1.Location = New System.Drawing.Point(62, 12)
+        Me.tag1.Location = New System.Drawing.Point(62, 25)
         Me.tag1.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.tag1.Name = "tag1"
         Me.tag1.Size = New System.Drawing.Size(41, 16)
         Me.tag1.TabIndex = 45
         Me.tag1.Text = "Tag01"
+        Me.tag1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'LabelTag1
         '
         Me.LabelTag1.AutoSize = True
-        Me.LabelTag1.BackColor = System.Drawing.Color.RoyalBlue
-        Me.LabelTag1.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.LabelTag1.ForeColor = System.Drawing.Color.White
-        Me.LabelTag1.Location = New System.Drawing.Point(20, 12)
+        Me.LabelTag1.BackColor = System.Drawing.Color.Gainsboro
+        Me.LabelTag1.Font = New System.Drawing.Font("Verdana", 11.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.LabelTag1.ForeColor = System.Drawing.Color.Black
+        Me.LabelTag1.Location = New System.Drawing.Point(20, 21)
         Me.LabelTag1.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LabelTag1.Name = "LabelTag1"
-        Me.LabelTag1.Size = New System.Drawing.Size(14, 16)
+        Me.LabelTag1.Size = New System.Drawing.Size(19, 18)
         Me.LabelTag1.TabIndex = 44
         Me.LabelTag1.Text = "X"
         '
         'Lbl_LineNum
         '
         Me.Lbl_LineNum.AutoSize = True
-        Me.Lbl_LineNum.Location = New System.Drawing.Point(7, 94)
+        Me.Lbl_LineNum.Location = New System.Drawing.Point(7, 65)
         Me.Lbl_LineNum.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Lbl_LineNum.Name = "Lbl_LineNum"
-        Me.Lbl_LineNum.Size = New System.Drawing.Size(76, 15)
+        Me.Lbl_LineNum.Size = New System.Drawing.Size(39, 15)
         Me.Lbl_LineNum.TabIndex = 72
-        Me.Lbl_LineNum.Text = "Line Number"
+        Me.Lbl_LineNum.Text = "Line #"
         '
         'Lbl_LineNumVal
         '
         Me.Lbl_LineNumVal.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer))
         Me.Lbl_LineNumVal.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.Lbl_LineNumVal.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.Lbl_LineNumVal.Location = New System.Drawing.Point(97, 90)
+        Me.Lbl_LineNumVal.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
+        Me.Lbl_LineNumVal.Location = New System.Drawing.Point(67, 61)
         Me.Lbl_LineNumVal.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Lbl_LineNumVal.Name = "Lbl_LineNumVal"
-        Me.Lbl_LineNumVal.Size = New System.Drawing.Size(112, 22)
+        Me.Lbl_LineNumVal.Size = New System.Drawing.Size(142, 22)
         Me.Lbl_LineNumVal.TabIndex = 73
         Me.Lbl_LineNumVal.Text = "<NA>"
-        Me.Lbl_LineNumVal.TextAlign = System.Drawing.ContentAlignment.TopRight
+        Me.Lbl_LineNumVal.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'Lbl_FindTitle
         '
@@ -1781,32 +1804,32 @@ Partial Class MAIN
         '
         Me.Lbl_LineEndVal.BackColor = System.Drawing.Color.FromArgb(CType(CType(128, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer))
         Me.Lbl_LineEndVal.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.Lbl_LineEndVal.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.Lbl_LineEndVal.Location = New System.Drawing.Point(97, 177)
+        Me.Lbl_LineEndVal.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
+        Me.Lbl_LineEndVal.Location = New System.Drawing.Point(67, 119)
         Me.Lbl_LineEndVal.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Lbl_LineEndVal.Name = "Lbl_LineEndVal"
-        Me.Lbl_LineEndVal.Size = New System.Drawing.Size(112, 22)
+        Me.Lbl_LineEndVal.Size = New System.Drawing.Size(142, 22)
         Me.Lbl_LineEndVal.TabIndex = 86
         Me.Lbl_LineEndVal.Text = "<NA>"
-        Me.Lbl_LineEndVal.TextAlign = System.Drawing.ContentAlignment.TopRight
+        Me.Lbl_LineEndVal.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'Lbl_LineStartVal
         '
         Me.Lbl_LineStartVal.BackColor = System.Drawing.Color.FromArgb(CType(CType(128, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer))
         Me.Lbl_LineStartVal.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.Lbl_LineStartVal.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
-        Me.Lbl_LineStartVal.Location = New System.Drawing.Point(97, 148)
+        Me.Lbl_LineStartVal.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
+        Me.Lbl_LineStartVal.Location = New System.Drawing.Point(67, 90)
         Me.Lbl_LineStartVal.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Lbl_LineStartVal.Name = "Lbl_LineStartVal"
-        Me.Lbl_LineStartVal.Size = New System.Drawing.Size(112, 22)
+        Me.Lbl_LineStartVal.Size = New System.Drawing.Size(142, 22)
         Me.Lbl_LineStartVal.TabIndex = 85
         Me.Lbl_LineStartVal.Text = "<NA>"
-        Me.Lbl_LineStartVal.TextAlign = System.Drawing.ContentAlignment.TopRight
+        Me.Lbl_LineStartVal.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
         'Lbl_LineEndTitle
         '
         Me.Lbl_LineEndTitle.AutoSize = True
-        Me.Lbl_LineEndTitle.Location = New System.Drawing.Point(8, 181)
+        Me.Lbl_LineEndTitle.Location = New System.Drawing.Point(7, 123)
         Me.Lbl_LineEndTitle.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Lbl_LineEndTitle.Name = "Lbl_LineEndTitle"
         Me.Lbl_LineEndTitle.Size = New System.Drawing.Size(52, 15)
@@ -1816,7 +1839,7 @@ Partial Class MAIN
         'Lbl_LineStartTitle
         '
         Me.Lbl_LineStartTitle.AutoSize = True
-        Me.Lbl_LineStartTitle.Location = New System.Drawing.Point(7, 152)
+        Me.Lbl_LineStartTitle.Location = New System.Drawing.Point(7, 94)
         Me.Lbl_LineStartTitle.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Lbl_LineStartTitle.Name = "Lbl_LineStartTitle"
         Me.Lbl_LineStartTitle.Size = New System.Drawing.Size(56, 15)

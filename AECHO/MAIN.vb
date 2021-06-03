@@ -41,6 +41,10 @@ Public Class MAIN
     '   Git:        ImageDisplay
     '   Summary:    Display Images in their own form/window, remove resizing of controls to make room for image display.
 
+    '   1.060.6     June 2, 2021 Bob Hehmann
+    '   Git:        PositionsAsLines
+    '   Summary:    Modify Section Start/End & Row Star/End fields to display both Line and Char Positions.
+
     Dim M_FoundStart As Integer = -1    ' <1.060.2> When a text-search succeeds, this becomes index of start of located text
     Dim M_FoundEnd As Integer = 0       ' <1.060.2> Defines the end of located text; when 0, there is no located text defined.
     Dim M_FirstChar As Integer          ' <1.060.2> Current position in print-stream, between page calls
@@ -187,12 +191,15 @@ Public Class MAIN
         '               new Section (fields not presently updated, probably a bug.)
         ' Updates:      <1.060.2> Converted to use standard message handling. Eliminated global G_CaretPos, subbed local
         '               cursorPos. Eliminated G_RowText, take Row Text from Function value of MoveToPosition().
+        '               <1.060.6> Save Section Start/End positions in the .Tag properties, for later use when repositioning.
 
         Const lclProcName As String = " Rtb_ODF_MouseDoubleClick"   ' <1.060.2> Routine's name for message handling
 
         Dim cursorPos As Integer                                    ' <1.060.2> Local var for current Cursor Position, replaced G_CaretPos
         Dim secStart As Integer
         Dim secEnd As Integer
+        Dim secLStart As Integer                                    '<1.060.6> Starting and Ending Line Nums, already one-based
+        Dim secLEnd As Integer
         Dim lineStart As Integer
 
         If Rtb_ODF.TextLength = 0 Then                              ' ODF is empty, no text, issue informational message
@@ -210,10 +217,16 @@ Public Class MAIN
         ' MODIF VERSION 025
         G_SectionName = GetSectionFromIndex(lineStart,
                                             secStart,
-                                            secEnd)                 ' retrouver la section auquel il appartient; update the current Section Name, and display it onscreen
+                                            secEnd,
+                                            secLStart,
+                                            secLEnd)                ' retrouver la section auquel il appartient; update the current Section Name, and display it onscreen
         Lbl_SectionName.Text = G_SectionName                        ' <1.060.2> Screen update no longer done by GetSectionFromIndex
-        Lbl_SecStartVal.Text = secStart.ToString(conIntFmt)
-        Lbl_SecEndVal.Text = secEnd.ToString(conIntFmt)
+        Lbl_SecStartVal.Text = secLStart.ToString(conIntFmt) &      ' <1.060.6> Display Line # / Char Pos
+            " / " & secStart.ToString(conIntFmt)
+        Lbl_SecStartVal.Tag = secStart                              ' <1.060.6> Save raw position in .Tag property, for later repositioning
+        Lbl_SecEndVal.Text = secLEnd.ToString(conIntFmt) &
+            " / " & secEnd.ToString(conIntFmt)
+        Lbl_SecEndVal.Tag = secEnd
         DisplayXMLRow()                                             ' montrer les infos de la ligne; update screen fields; <1.059.0> Removed parameter (1), DisplayXMLRow is now parameterless
         G_PreviousRTFFile = LoadRTFFile(G_DataPath,                 ' charger le fichier RTF; retrieve and display the .rtf file that descibes this Section
                                       G_SectionName,
@@ -773,14 +786,15 @@ Public Class MAIN
         ' Side Effects: <None>
         ' Notes:        <None>
         ' Updates:      <1.060.2> Replaced global G_FindStartPosition with parameter
+        '               <1.060.6> Take Cursor position from .Tag property rather than .Text
 
         Const lclProcName As String =   ' <1.060.2> Routine's name for message handling 
             "Btn_FindFirst_Click"
 
         Dim curPos As Integer           ' <1.060.2> Set to current Cursor position
 
-        Try                             ' <1.060.2> Take position from onscreen display
-            curPos = CInt(Lbl_CursorPosVal.Text)
+        Try                             ' <1.060.6> Take position from onscreen display's .Tag property
+            curPos = CInt(Lbl_CursorPosVal.Tag)
         Catch                           ' <1.060.2> If for some reason field wasn't a valid integer, place cursor at beginning
             curPos = 0
         End Try
@@ -804,14 +818,15 @@ Public Class MAIN
         ' Notes:        <None>
         ' Updates:      <1.060.2> Replaced global G_FindStartPosition with a forward search
         '               from the current cursor position.
+        '               <1.060.6> Changed from .Text to .Tag property for retrieving Cursor's position
 
         Const lclProcName As String =   ' <1.060.2> Routine's name for message handling 
             "Btn_FindNext_Click"
 
         Dim curPos As Integer           ' <1.060.2> Set to current Cursor position
 
-        Try                             ' <1.060.2> Take position from onscreen display
-            curPos = CInt(Lbl_CursorPosVal.Text)
+        Try                             ' <1.060.2> Take position from onscreen display's .Tag property, not .Text
+            curPos = CInt(Lbl_CursorPosVal.Tag)
         Catch                           ' <1.060.2> If for some reason field wasn't a valid integer, use 0 as beginning
             curPos = 0
         End Try
@@ -892,6 +907,7 @@ Public Class MAIN
         '               to the beginning of a Line. Extended semantics to include all single Mouse-click behavior
         '               at the Marker's return-point: most importantly, updating Line#, Caret Pos, Line Start/End, and
         '               Row Start/End.
+        '               <1.060.6> Save char-based position in Marker's .Tag property.
 
         Const lclProcName As String =               ' <1.060.2> Routine's name for message handling
             "Btn_Markers_MouseDown"
@@ -904,20 +920,22 @@ Public Class MAIN
 
         If bouton = "Right" Then                    ' Save Cursor Position as text, change button's color
             marker.Text = Lbl_LineNumVal.Text
+            marker.Tag = Lbl_CursorPosVal.Tag       ' Save internally as Char postion in .Tag property
             marker.BackColor = Color.LightCyan      ' Visual indicator that the Marker is set
         End If
 
         If bouton = "Left" Then                     ' Retrieve position from text, reposition the cursor
-            If InStr(1, marker.Text, "Marker") > 0 Then
-                Return                              ' <1.060.2> Marker is empty, just return
-            End If
-            Try
-                ln = CInt(marker.Text) - 1          ' <1.060.2> Convert Line Number back to 0-base (Marker displayed 1-base Ln#)
-            Catch
+            If marker.Tag = 0 Then                  ' <1.060.6> Null Marker, just return
                 Return
-            End Try
+            End If
+            'Try
+            '    ln = CInt(marker.Text) - 1          ' <1.060.2> Convert Line Number back to 0-base (Marker displayed 1-base Ln#)
+            'Catch
+            '    Return
+            'End Try
 
-            caret = Rtb_ODF.GetFirstCharIndexFromLine(ln)
+            'caret = Rtb_ODF.GetFirstCharIndexFromLine(ln)
+            caret = marker.Tag                      ' <1.060.6> Retrieve the stored Cursor position from the .Tag property
             MoveToPosition(caret,                   ' Position to the Line in the ODF at position "caret"
                            G_LineIndex,             ' <1.060.2> Returns Line Number, 0-based
                            lineStart,               ' <1.060.2> Returns index to beginning of Line
@@ -972,6 +990,7 @@ Public Class MAIN
         '               Added support for Previous 1, 10, and 100 lines. Replaced use of global G_CaretPos
         '               with local cursorPos. Removed G_RowText reference, assign directly from MoveToPosition().
         '               Get Section Start/End dynamically from GetSectionFromIndex(), update screen.
+        '               <1.060.6> Save Section Start/End positions into the .Tag properties, for later use repositioning.
 
         Const lclProcName As String =                           ' <1.060.2> Routine's name for message handling
             "Btn_NextLine_Click"
@@ -980,6 +999,8 @@ Public Class MAIN
         Dim cursorPos As Integer                                ' <1.060.2> Local var to hold cursor's location, replaced G_CaretPos
         Dim secStart As Integer                                 ' <1.060.2> Section Start, determined dynamically by GetSectionFromIndex()
         Dim secEnd As Integer                                   ' <1.060.2> Section End, determined dynamically by GetSectionFromIndex()
+        Dim secLStart As Integer                                ' <1.060.6> Section's Starting Line
+        Dim secLEnd As Integer                                  ' <1.060.6> Section's Ending Line
         Dim lineStart As Integer                                ' <1.060.2> Line Start, do our Section search from here
 
         Try
@@ -996,11 +1017,17 @@ Public Class MAIN
                                              True)
             G_SectionName = GetSectionFromIndex(lineStart,      ' retrouver la section auquel il appartient; locate and load Section Data for the now current Section
                                                 secStart,       ' <1.060.2> Function returns the Start and End positions for the Section dynamically (no recompute)
-                                                secEnd)
+                                                secEnd,
+                                                secLStart,      ' <1.060.6> Added Starting/Ending Lines
+                                                secLEnd)
             Lbl_SectionName.Text = G_SectionName                ' <1.060.2> GetSectionFromIndex() is no longer responsible for screen update, update the Name from here
             DisplayXMLRow()                                     ' montrer les infos de la ligne; <1.059.0> Removed parameter (1), DisplayXMLRow is now parameterless; parse & display Row
-            Lbl_SecStartVal.Text = secStart.ToString(conIntFmt)
-            Lbl_SecEndVal.Text = secEnd.ToString(conIntFmt)
+            Lbl_SecStartVal.Text = secLStart.ToString(conIntFmt) &
+                " / " & secStart.ToString(conIntFmt)
+            Lbl_SecStartVal.Tag = secStart                      ' <1.060.6> Save the raw position data in the .Tag property
+            Lbl_SecEndVal.Text = secLEnd.ToString(conIntFmt) &
+                " / " & secEnd.ToString(conIntFmt)
+            Lbl_SecEndVal.Tag = secEnd
 
             G_PreviousRTFFile = LoadRTFFile(G_DataPath,         ' charger le fichier RTF; retrieve and display Section's Descriptive Text
                                             G_SectionName,
@@ -1068,14 +1095,15 @@ Public Class MAIN
         ' Side Effects: <None>
         ' Notes:        <None>
         ' Updates:      <1.060.2> First code.
+        '               <1.060.6> Changed to take position from .Tag property rather than .Text
 
         Const lclProcName As String =   ' <1.060.2> Routine's name for message handling 
             "Btn_FindPrev_Click"
 
         Dim curPos As Integer           ' <1.060.2> Set to current Cursor postiion
 
-        Try                             ' <1.060.2> Take position from onscreen display
-            curPos = CInt(Lbl_CursorPosVal.Text)
+        Try                             ' <1.060.2> Take position from onscreen display's .Tag property
+            curPos = CInt(Lbl_CursorPosVal.Tag)
         Catch                           ' <1.060.2> If for some reason field wasn't a valid integer, search from end of ODF
             curPos = Rtb_ODF.TextLength - 1
         End Try
@@ -1133,11 +1161,12 @@ Public Class MAIN
         ' Side Effects: <None>
         ' Notes:        <None>
         ' Updates:      <1.060.2> First code.
+        '               <1.060.6> Changed from using .Text to .Tag property, which holds the raw position
 
         Const lclProcName As String =       ' Routine's name for message handling
             "Lbl_SecStartVal_Click"
 
-        HotClickCursorPosition(Lbl_SecStartVal.Text)
+        HotClickCursorPosition(Lbl_SecStartVal.Tag)
 
     End Sub
     Private Sub Lbl_SecEndVal_Click(        ' Standard Control event parms...
@@ -1151,11 +1180,12 @@ Public Class MAIN
         ' Side Effects: <None>
         ' Notes:        <None>
         ' Updates:      <1.060.2> First code.
+        '               <1.060.6> Changed from using .Text to .Tag property, which holds the raw position
 
         Const lclProcName As String =       ' Routine's name for message handling
             "Lbl_SecEndVal_Click"
 
-        HotClickCursorPosition(Lbl_SecEndVal.Text)
+        HotClickCursorPosition(Lbl_SecEndVal.Tag)
 
     End Sub
     Private Sub Lbl_LineStartVal_Click(     ' Standard Control event parms...
@@ -1169,11 +1199,12 @@ Public Class MAIN
         ' Side Effects: <None>
         ' Notes:        <None>
         ' Updates:      <1.060.2> First code.
+        '               <1.060.6> Changed from using .Text to .Tag property, which holds the raw position
 
         Const lclProcName As String =       ' Routine's name for message handling
             "Lbl_LineStartVal_Click"
 
-        HotClickCursorPosition(Lbl_LineStartVal.Text)
+        HotClickCursorPosition(Lbl_LineStartVal.Tag)
 
     End Sub
     Private Sub Lbl_LineEndVal_Click(       ' Standard Control event parms...
@@ -1187,11 +1218,12 @@ Public Class MAIN
         ' Side Effects: <None>
         ' Notes:        <None>
         ' Updates:      <1.060.2> First code.
+        '               <1.060.6> Changed from using .Text to .Tag property, which holds the raw position
 
         Const lclProcName As String =       ' Routine's name for message handling
             "Lbl_LineEndVal_Click"
 
-        HotClickCursorPosition(Lbl_LineEndVal.Text)
+        HotClickCursorPosition(Lbl_LineEndVal.Tag)
 
     End Sub
     Private Sub Lbl_RowStartVal_Click(      ' Standard Control event parms...
@@ -1205,11 +1237,12 @@ Public Class MAIN
         ' Side Effects: <None>
         ' Notes:        <None>
         ' Updates:      <1.060.2> First code.
+        '               <1.060.6> Changed from using .Text to .Tag property, which holds the raw position
 
         Const lclProcName As String =       ' Routine's name for message handling
             "Lbl_RowStartVal_Click"
 
-        HotClickCursorPosition(Lbl_RowStartVal.Text)
+        HotClickCursorPosition(Lbl_RowStartVal.Tag)
 
     End Sub
     Private Sub Lbl_RowEndVal_Click(        ' Standard Control event parms...
@@ -1223,11 +1256,12 @@ Public Class MAIN
         ' Side Effects: <None>
         ' Notes:        <None>
         ' Updates:      <1.060.2> First code.
+        '               <1.060.6> Changed from using .Text to .Tag property, which holds the raw position
 
         Const lclProcName As String =       ' Routine's name for message handling
             "Lbl_RowEndVal_Click"
 
-        HotClickCursorPosition(Lbl_RowEndVal.Text)
+        HotClickCursorPosition(Lbl_RowEndVal.Tag)
 
     End Sub
     Private Sub Lbl_CursorPosVal_Click(     ' Standard Control event parms...
@@ -1241,11 +1275,12 @@ Public Class MAIN
         ' Side Effects: <None>
         ' Notes:        <None>
         ' Updates:      <1.060.2> First code.
+        '               <1.060.6> Changed from using .Text to .Tag property, which holds the raw position
 
         Const lclProcName As String =       ' Routine's name for message handling
             "Lbl_CursorPosVal_Click"
 
-        HotClickCursorPosition(Lbl_CursorPosVal.Text)
+        HotClickCursorPosition(Lbl_CursorPosVal.Tag)
 
     End Sub
     Private Sub Menu_PrintDT_Click(                 ' Standard Control event parms...

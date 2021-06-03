@@ -505,6 +505,7 @@ Module SharedCode
         ' Updates:      <1.060.2> Initial version of this routine.
         '               <1.060.4> Add Line & Char counts to the Status-Bar
         '               <1.060.5> Remove call to RemoveImage(), made Titles visible here
+        '               <1.060.6> Init Display Panel position field's Tags to "NA"
 
         Const lclProcName As String = "ResetToNoODF"        ' Routine's name for message handling
 
@@ -541,14 +542,14 @@ Module SharedCode
                        .Rtb_DescText.Right)
             .Lbl_TextBoxTitle2.Visible = True               ' <1.060.5> Make sure it is visible (this use to be in now-deprecated RemoveImage()
             .Txt_SearchText.Clear()                         ' Clear Search Box Text
-            .Lbl_SecStartVal.Text = "NA" : .Lbl_SecStartVal.Enabled = False
-            .Lbl_SecEndVal.Text = "NA" : .Lbl_SecEndVal.Enabled = False
-            .Lbl_LineNumVal.Text = "NA" : .Lbl_LineNumVal.Enabled = False
-            .Lbl_LineStartVal.Text = "NA" : .Lbl_LineStartVal.Enabled = False
-            .Lbl_LineEndVal.Text = "NA" : .Lbl_LineEndVal.Enabled = False
-            .Lbl_RowStartVal.Text = "NA" : .Lbl_RowStartVal.Enabled = False
-            .Lbl_RowEndVal.Text = "NA" : .Lbl_RowEndVal.Enabled = False
-            .Lbl_CursorPosVal.Text = "NA" : .Lbl_CursorPosVal.Enabled = False
+            .Lbl_SecStartVal.Text = "NA" : .Lbl_SecStartVal.Tag = "NA" : .Lbl_SecStartVal.Enabled = False
+            .Lbl_SecEndVal.Text = "NA" : .Lbl_SecEndVal.Tag = "NA" : .Lbl_SecEndVal.Enabled = False
+            .Lbl_LineNumVal.Text = "NA" : .Lbl_LineNumVal.Tag = "NA" : .Lbl_LineNumVal.Enabled = False
+            .Lbl_LineStartVal.Text = "NA" : .Lbl_LineStartVal.Tag = "NA" : .Lbl_LineStartVal.Enabled = False
+            .Lbl_LineEndVal.Text = "NA" : .Lbl_LineEndVal.Tag = "NA" : .Lbl_LineEndVal.Enabled = False
+            .Lbl_RowStartVal.Text = "NA" : .Lbl_RowStartVal.Tag = "NA" : .Lbl_RowStartVal.Enabled = False
+            .Lbl_RowEndVal.Text = "NA" : .Lbl_RowEndVal.Tag = "NA" : .Lbl_RowEndVal.Enabled = False
+            .Lbl_CursorPosVal.Text = "NA" : .Lbl_CursorPosVal.Tag = "NA" : .Lbl_CursorPosVal.Enabled = False
             .Lbl_NumTagsVal.Text = "0"
             .Status_RowTypeVal.Text = "<NA>"                ' <1.060.2> Status Bar, initialize Row Type to unknown
             .Status_FileDirtyVal.BackColor = Color.DarkOrange
@@ -586,14 +587,15 @@ Module SharedCode
         ' Notes:        Consider making this a Collection, then can traverse entire Collection
         '               - making it easy to add additional Markers without changing much code.
         ' Updates:      <1.060.2> Relocated here from MAIN form.
+        '               <1.060.6> Reset .Tag properties to "NA".
 
         Const lclProcName As String = "ClearMarkers"    ' <1.060.2> Routine's name for message handling
 
         With MAIN
-            .Btn_Marker1.Text = "Marker 1" : .Btn_Marker1.BackColor = Color.Gainsboro
-            .Btn_Marker2.Text = "Marker 2" : .Btn_Marker2.BackColor = Color.Gainsboro
-            .Btn_Marker3.Text = "Marker 3" : .Btn_Marker3.BackColor = Color.Gainsboro
-            .Btn_Marker4.Text = "Marker 4" : .Btn_Marker4.BackColor = Color.Gainsboro
+            .Btn_Marker1.Text = "Marker 1" : .Btn_Marker1.Tag = 0 : .Btn_Marker1.BackColor = Color.Gainsboro
+            .Btn_Marker2.Text = "Marker 2" : .Btn_Marker2.Tag = 0 : .Btn_Marker2.BackColor = Color.Gainsboro
+            .Btn_Marker3.Text = "Marker 3" : .Btn_Marker3.Tag = 0 : .Btn_Marker3.BackColor = Color.Gainsboro
+            .Btn_Marker4.Text = "Marker 4" : .Btn_Marker4.Tag = 0 : .Btn_Marker4.BackColor = Color.Gainsboro
         End With
 
     End Sub
@@ -690,11 +692,13 @@ Module SharedCode
         '               When called from the Menu, the caller will ask for the Descriptive Text to be updated. Replace global
         '               G_CaretPos with local var cursorPos. Replace search through Sections array with a call to GotSectionDataByName() -
         '               which dynamically returns the same data elements as previsouly held in the static array.
+        '               <1.060.6> Assign character-based positions to the .Tag properties of position fields.
 
         Const lclProcName As String = "PositionToSectionByName"             ' <1.060.2> Routine's Name for message handling
 
         Dim cursorPos As Integer                                            ' <1.060.2> Current location of cursor, replaces use of G_CaretPos
         Dim sec As Str_Section                                              ' <1.060.2> Data structure to represent 1 section, replacing array of 44 Sections
+        Dim secEndLine As Integer                                           ' <1.060.6> Section's Last Line, derived from Last Char
 
         sec.name = ""                                                       ' <1.060.2> Need to allocate instance of the structure.
 
@@ -724,23 +728,34 @@ Module SharedCode
                 TagsPanelVisible(False)
             End If
 
-            .Lbl_SecStartVal.Text =
-                        sec.startPos.ToString(conIntFmt)                    ' afficher infos debut et fin; update Section Start/End on screen; <1.060.2> Added formatting
-            .Lbl_SecEndVal.Text =
-                        sec.endPos.ToString(conIntFmt)                      ' <1.060.2> Added formatting
-            .Lbl_SectionName.Text = sec.name                                ' afficher le nom de la section; update the Section Name on screen
             .Rtb_ODF.Focus()                                                ' scroller de façon a avoir le titre de la section en haut de Rtb_ODF; return focus to the ODF
             .Rtb_ODF.Select(sec.startPos, 0)                                ' Scroll the Section Header's Start-Tag to the top of the Rtb_ODF display; positions cursor at the Section Title
             .Rtb_ODF.ScrollToCaret()                                        ' Make sure cursor is onscreen
             cursorPos = .Rtb_ODF.SelectionStart
             G_LineIndex =
                         .Rtb_ODF.GetLineFromCharIndex(cursorPos) + 1        ' caalculer et afficher n° dee ligne; Get the line number. Add 1 because this Method is 0-based
+
+            .Lbl_SecStartVal.Text = G_LineIndex.ToString(conIntFmt) &
+                " / " & sec.startPos.ToString(conIntFmt)                    ' afficher infos debut et fin; update Section Start/End on screen; <1.060.2> Added formatting
+            .Lbl_SecStartVal.Tag = sec.startPos                             ' <1.060.6> Save the raw character position in the .Tag property, to be used when control is clicked
+            secEndLine = MAIN.Rtb_ODF.GetLineFromCharIndex(sec.endPos) + 1  ' <1.060.6> Determine 1-based Line Number of Section's last Line, from its last Char
+            .Lbl_SecEndVal.Text = secEndLine.ToString(conIntFmt) &
+                        " / " & sec.endPos.ToString(conIntFmt)              ' <1.060.2> Added formatting
+            .Lbl_SecEndVal.Tag = sec.endPos                                 ' <1.060.6> Save the raw character position in the .Tag property, to be used when control is clicked
+            .Lbl_SectionName.Text = sec.name                                ' afficher le nom de la section; update the Section Name on screen
             .Lbl_LineNumVal.Text = G_LineIndex.ToString(conIntFmt)          ' <1.060.2> format as integer and place onscreen
-            .Lbl_RowStartVal.Text = sec.startPos.ToString(conIntFmt)
-            .Lbl_LineStartVal.Text = .Lbl_RowStartVal.Text
-            .Lbl_RowEndVal.Text = (sec.startPos + sec.titleLen).ToString(conIntFmt)
-            .Lbl_LineEndVal.Text = .Lbl_RowEndVal.Text
+            .Lbl_LineNumVal.Tag = cursorPos                                 ' <1.060.6> Save the raw character position in the .Tag property, to be used when control is clicked
+            .Lbl_RowStartVal.Text = .Lbl_SecStartVal.Text                   ' <1.060.6> Row-Start = Section-Start
+            .Lbl_RowStartVal.Tag = sec.startPos
+            .Lbl_LineStartVal.Text = sec.startPos.ToString(conIntFmt)
+            .Lbl_LineStartVal.Tag = sec.startPos
+            .Lbl_RowEndVal.Text = G_LineIndex.ToString(conIntFmt) &         ' <1.060.6> Added Line Number
+                " / " & (sec.startPos + sec.titleLen).ToString(conIntFmt)
+            .Lbl_RowEndVal.Tag = sec.startPos + sec.titleLen
+            .Lbl_LineEndVal.Text = (sec.startPos + sec.titleLen).ToString(conIntFmt)
+            .Lbl_LineEndVal.Tag = .Lbl_RowEndVal.Tag
             .Lbl_CursorPosVal.Text = cursorPos.ToString(conIntFmt)
+            .Lbl_CursorPosVal.Tag = cursorPos
             .Status_RowTypeVal.Text = "Sec Start-Tag"
         End With
 
@@ -850,63 +865,67 @@ Module SharedCode
         '               for showing the "Row Action" Button: the Row has to contain a reference to an Image file or
         '               a Sample. Renamed from DisplayObject(). Removed call to make all Tags visible, that is now done
         '               by DisplayTagText as needed, a Field at a time.
+        '               <1.060.6> Fix bug in counting Tags, only do this if this is a Record-Row
 
-        Const lclProcName As String = "DisplaySMLRow"       ' <1.060.2> Routine's name for message handling
+        Const lclProcName As String = "DisplayXMLRow"           ' <1.060.2> Routine's name for message handling
 
-        Dim lastIdx As Integer = Asc("a")                   ' The current Element Name to look for - cycled from 'a' to 'z', then 'a1' to 'z1'. Expressed as ASCII value
-        Dim counter As Integer = 0                          ' Number of Elements parsed and displayed so far. Updated by DisplayTagText().
-        Dim nbtags As Integer                               ' Number of Child Elements in the row: once [count] reaches [nbtags], display fields are cleared
+        Dim lastIdx As Integer = Asc("a")                       ' The current Element Name to look for - cycled from 'a' to 'z', then 'a1' to 'z1'. Expressed as ASCII value
+        Dim counter As Integer = 0                              ' Number of Elements parsed and displayed so far. Updated by DisplayTagText().
+        Dim nbtags As Integer                                   ' Number of Child Elements in the row: once [count] reaches [nbtags], display fields are cleared
 
-        G_ImageFile = ""                                    ' <1.060.2> If not null after calls to DisplayTagText, then we have an Image that can be displayed
-        G_ImageSet = ""                                     ' <1.060.2> For an ImageSetElement Row, will be set to the parent ImageSet, and G_PackageID will remain empty
-        G_PackageID = ""                                    ' <1.060.2> For an ImageSet Row, will be set to the PackageID, and G_ImageSet will remain empty
-        G_SampleID = ""                                     ' <1.060.2> For a Sample Row, will be set to the SampleID
+        G_ImageFile = ""                                        ' <1.060.2> If not null after calls to DisplayTagText, then we have an Image that can be displayed
+        G_ImageSet = ""                                         ' <1.060.2> For an ImageSetElement Row, will be set to the parent ImageSet, and G_PackageID will remain empty
+        G_PackageID = ""                                        ' <1.060.2> For an ImageSet Row, will be set to the PackageID, and G_ImageSet will remain empty
+        G_SampleID = ""                                         ' <1.060.2> For a Sample Row, will be set to the SampleID
 
         With MAIN
-            nbtags = CountTags(0,
+            If FindText(conRowStartTag, 0, MAIN.Rtb_XMLRow) >= 0 Then
+                nbtags = CountTags(0,                           ' <1.060.6> Only execute this code if we're in a Record Row (<o>...</o>)
                            .Rtb_XMLRow.TextLength - 1,
-                           .Rtb_XMLRow) - 1                 ' <1.060.2> Get count of tags - scans entire XML Row. Reduce count by one, to ignore outer "<o>...</o>"
-            .Lbl_NumTagsVal.Text = nbtags                   ' <1.060.2> and display it
+                           .Rtb_XMLRow) - 1                     ' <1.060.2> Get count of tags - scans entire XML Row. Reduce count by one, to ignore outer "<o>...</o>"
+                .Lbl_NumTagsVal.Text = nbtags                   ' <1.060.2> and display it
 
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag1, .tag1)
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag2, .tag2)
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag3, .tag3)
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag4, .tag4)
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag5, .tag5)
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag6, .tag6)
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag7, .tag7)
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag8, .tag8)
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag9, .tag9)
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag10, .tag10)
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag11, .tag11)
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag12, .tag12)
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag13, .tag13)
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag14, .tag14)
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag15, .tag15)
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag16, .tag16)
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag17, .tag17)
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag18, .tag18)
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag19, .tag19)
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag20, .tag20)
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag21, .tag21)
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag22, .tag22)
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag23, .tag23)
-            DisplayTagText(lastIdx, counter, nbtags, .LabelTag24, .tag24)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag1, .tag1)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag2, .tag2)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag3, .tag3)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag4, .tag4)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag5, .tag5)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag6, .tag6)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag7, .tag7)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag8, .tag8)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag9, .tag9)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag10, .tag10)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag11, .tag11)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag12, .tag12)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag13, .tag13)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag14, .tag14)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag15, .tag15)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag16, .tag16)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag17, .tag17)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag18, .tag18)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag19, .tag19)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag20, .tag20)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag21, .tag21)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag22, .tag22)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag23, .tag23)
+                DisplayTagText(lastIdx, counter, nbtags, .LabelTag24, .tag24)
 
-            If G_ImageFile <> "" Then
-                .Btn_RowAction.Text = conDisplayImage       ' <1.060.2> Paint the button as "Display Image" for an Image Row
-                .Btn_RowAction.Visible = True               ' <1.060.2> Found an Image File Tag in ImageSet or ImageSetElement: enable the Control to display that Image
-                If (G_ImageFile.Substring(0, 1) = "/") Or   ' <1.060.2> Trim a leading "/" or "\", if there is one, from the name, so Path.Combine will correctly handle the filename
+                If G_ImageFile <> "" Then
+                    .Btn_RowAction.Text = conDisplayImage       ' <1.060.2> Paint the button as "Display Image" for an Image Row
+                    .Btn_RowAction.Visible = True               ' <1.060.2> Found an Image File Tag in ImageSet or ImageSetElement: enable the Control to display that Image
+                    If (G_ImageFile.Substring(0, 1) = "/") Or   ' <1.060.2> Trim a leading "/" or "\", if there is one, from the name, so Path.Combine will correctly handle the filename
                     (G_ImageFile.Substring(0, 1) = "\") Then
-                    G_ImageFile = Right(G_ImageFile, G_ImageFile.Length - 1)
+                        G_ImageFile = Right(G_ImageFile, G_ImageFile.Length - 1)
+                    End If
+                ElseIf G_SampleID <> "" Then
+                    .Btn_RowAction.Text = conTraceSample        '<1.060.2> This is a Sample Row, display Trace Sample action
+                    .Btn_RowAction.Visible = True
+                Else
+                    .Btn_RowAction.Visible = False              ' Hide the control for Rows without context actions
                 End If
-            ElseIf G_SampleID <> "" Then
-                .Btn_RowAction.Text = conTraceSample        '<1.060.2> This is a Sample Row, display Trace Sample action
-                .Btn_RowAction.Visible = True
-            Else
-                .Btn_RowAction.Visible = False              ' Hide the control for Rows without context actions
+            Else                                                ' <1.060.6> Fix bug, if not Rec-Row, display "0"
+                .Lbl_NumTagsVal.Text = "0"
             End If
-
         End With
 
     End Sub
@@ -1164,6 +1183,7 @@ Module SharedCode
         '               of search. removed use of G_RowText. No longer affects XML Row Text, Tag Panels, Descriptive
         '               Text, Section Title, or Section Position data - is now similar to a single Mouse-click.
         '               Add parameters for Found-Text Start/End context, which are set on success, cleared on failure.
+        '               <1.060.6> Save position in .Tag properties, for later repositioning
 
         Const lclProcName As String =                       ' <1.060.2> Routine's name for message handling
             "FindButtonsProc"
@@ -1204,6 +1224,7 @@ Module SharedCode
                     "Search Text not found.")
             MAIN.Lbl_CursorPosVal.Text =                    ' <1.060.2> Return display to initial position, on screen
                 retPos.ToString(conIntFmt)
+            MAIN.Lbl_CursorPosVal.Tag = retPos              ' <1.060.6> Save position in the .Tag property, for repositioning
             MAIN.Rtb_ODF.Focus()
             MAIN.Rtb_ODF.Select(retPos, 0)                  ' <1.060.2> Reset to the original cursor position
             Return
@@ -1239,6 +1260,7 @@ Module SharedCode
         ' Notes:        <None>
         ' Updates:		New with <1.060.2>.
         '               <1.060.5> Removed ref to RemoveImage(), moved code to make Title1/2 visible here.
+        '               <1.060.6> Changed from .Text to .Tag property when retrieving Cursor's position
 
         Const lclProcName As String = "EnumerateSectionsSetFont"    ' Routine's name for message handling
 
@@ -1344,7 +1366,7 @@ Module SharedCode
                                       conQuickNoH)
             End While
 
-            HotClickCursorPosition(MAIN.Lbl_CursorPosVal.Text)      ' Reposition to original cursor position, as text was scrolled by this routine
+            HotClickCursorPosition(MAIN.Lbl_CursorPosVal.Tag)       ' <1.060.6> Reposition to original cursor position, as text was scrolled by this routine: use .Tag
             MAIN.Btn_Led.BackColor = Color.LightGreen               ' Set Led color to Green to indicate completion of enumeration
             MAIN.Btn_Led.Refresh()
             If enumSecs Then                                        ' If we listed Sections in Descriptive Text, enable Print Menu
@@ -1571,7 +1593,9 @@ Module SharedCode
     End Sub
     Friend Function GetSectionFromIndex(index As Integer,           ' TROUVE LA SECTION DANS LAQUELLE SE TROUVE LE CARET; location in ODF
                                         ByRef secStart As Integer,  ' <1.060.2> Return dynamic Section Start/End indices
-                                        ByRef secEnd As Integer
+                                        ByRef secEnd As Integer,
+                                        ByRef secStartLine As Integer,
+                                        ByRef secEndLine As Integer
                                         ) As String                 ' <1.060.2> Return the Section Name as the function result
 
         ' Purpose:      Retrieve Section info of the Section containing the character at [index] in the ODF:
@@ -1591,6 +1615,7 @@ Module SharedCode
         '               locate Section if we are at it (searching backwards would miss it if we are exactly on
         '               the Section Start-Tag Line.) Added code to hangle positioning in the XML-Header, and the
         '               ODF Start/End Tags.
+        '               <1.060.6> Added returning of Starting & Ending Lines, in 1-based form
 
         Const lclProcName As String =                               ' <1.060.2> Routine's name for message handling
             "GetSectionFromIndex"
@@ -1601,17 +1626,25 @@ Module SharedCode
         If MAIN.Rtb_ODF.TextLength = 0 Then
             secStart = 0
             secEnd = 0
+            secStartLine = 0                                        ' <1.060.6> Added Line Nums to return
+            secEndLine = 0
             Return conDefSectionName                                ' MODIF V058; if no ODF text at all, just exit
         End If
         If MAIN.Status_RowTypeVal.Text = conRowTypeODFEnd Then      ' <1.060.2> In final </Hauptwerk> tag
-            secStart = MAIN.Rtb_ODF.GetFirstCharIndexOfCurrentLine  ' <1.060.2> Start is 1 char of this line
+            secStart = MAIN.Rtb_ODF.GetFirstCharIndexOfCurrentLine  ' <1.060.2> Start is first char of this line
+            secStartLine =                                          ' <1.060.6> Convert to Line #
+                MAIN.Rtb_ODF.GetLineFromCharIndex(secStart) + 1
             secEnd = MAIN.Rtb_ODF.TextLength - 1                    ' <1.060.2> End is end-of-ODF
+            secEndLine = MAIN.Rtb_ODF.Lines.Count().ToString(conIntFmt)
             Return conDefSectionName                                ' <1.060.2> Section is "None"
         End If
-        If (MAIN.Status_RowTypeVal.Text = conRowTypeXMSHdr) Or      ' <1.060.2> In XML-Header or ODF STart-Tag
+        If (MAIN.Status_RowTypeVal.Text = conRowTypeXMSHdr) Or      ' <1.060.2> In XML-Header or ODF Start-Tag
             (MAIN.Status_RowTypeVal.Text = conRowTypeODFStart) Then
             secStart = 0                                            ' <1.060.2> Start is first char of ODF
+            secStartLine = 1                                        ' <1.060.6> And this is also the first Line (one-based)
             secEnd = FindText(conSecStartTag, 1, MAIN.Rtb_ODF) - 1  ' <1.060.2> End is just before start of first regular Section
+            secEndLine =                                            ' <1.060.6> Calculate Last Line from Last Char
+                MAIN.Rtb_ODF.GetLineFromCharIndex(secEnd) + 1
             Return conDefSectionName                                ' <1.060.2> Section is none
         End If
 
@@ -1628,6 +1661,8 @@ Module SharedCode
         If secStart = -1 Then                                       ' Did not find any Section Start-Tag, return default
             secStart = 0                                            ' <1.060.2> When not found, set Start/End to zero
             secEnd = 0
+            secStartLine = 0                                        ' <1.060.6> Added line nums to return
+            secEndLine = 0
             Return conDefSectionName
         End If
 
@@ -1635,6 +1670,10 @@ Module SharedCode
         secEnd = FindText(conSecEndTag,                             ' <1.060.2> Find Section End-Tag, add length of Tag to get End of Section
                           belongend + 1,
                           MAIN.Rtb_ODF) + conSecEndTag.Length
+        secStartLine =                                              ' <1.060.6> Convert to Line #
+                MAIN.Rtb_ODF.GetLineFromCharIndex(secStart) + 1
+        secEndLine =                                                ' <1.060.6> Calculate Last Line from Last Char
+                MAIN.Rtb_ODF.GetLineFromCharIndex(secEnd) + 1
         Return MAIN.Rtb_ODF.Text.Substring(secStart + sLen + 1,     ' <1.060.2> Extract the Section's Name
                                            (belongend - secStart) - (sLen + 2))
 
@@ -1655,9 +1694,8 @@ Module SharedCode
         '               OldGetSectionFromMenu() (deprecated)
         ' Side Effects: Updates various Global Variables; updates onscreen fields for Line Number, Start, and
         '               End positions. Highlights (selects) Row text in ODF.
-        ' Notes:        Cleanup this section, integrate logic for parsing a single text line with the additional logic
-        '               to extend to a multi-line row. Remove assumption that a row is 1-2 lines, use "<o>...</o>"
-        '               Tag-pair to bound the limits.
+        ' Notes:        Remove assumption that a record-row has no leading/trailing white-space,
+        '               use "<o>...</o>" Tag-pair to bound the limits.
         ' Updates:      <1.060.2> Add 1 to displayed Line Number, to offset zero-based internal Line Numbers. Relocated
         '               here from MAIN form; added MAIN references. Renamed from GetRowFromIndex(). Changed to a
         '               Function that returns the Row's content, rather than saving it to the global G_LineText.
@@ -1665,92 +1703,100 @@ Module SharedCode
         '               if it is a Record type; otherwise, Row=Line. Added code to conditionalize selection behavior:
         '               double-click and Next/Prev 1/10/100 Lines will expand selection to entire Row, while single-click
         '               and Text Searches will leave selection as user set it.
+        '               <1.060.6> Save character positions in .Tag properties of Position Fields, for repositioning
 
         Const lclProcName As String = "GetRowFromIndex"                 ' <1.060.2> Function's name for message handling
 
         Dim rowText As String                                           ' <1.060.2> Store the extracted Row text here
         Dim rowType As String                                           ' <1.060.2> Description of type of Row the Line is in
         Dim rowStart As Integer                                         ' <1.060.2> Start of Row
+        Dim rowLineStart As Integer                                     ' <1.060.6> Starting Line of Row, derived from Staring Char
         Dim rowExtStart As Integer                                      ' <1.060.2> Extended Start of Row, when opening <o> Tagis on a previous Line
         Dim rowEnd As Integer                                           ' <1.060.2> End of Row
+        Dim rowLineEnd As Integer                                       ' <1.060.6> Ending Line of Row, derived from End Char
         Dim rowExtEnd As Integer                                        ' <1.060.2> Extended End of Row, when closing </o> Tag is on a subsequent Line
         Dim lineEnd As Integer                                          ' <1.060.2> End of Line
 
-        lineNum = MAIN.Rtb_ODF.GetLineFromCharIndex(index)              ' Map the character Index to a Line Index (=LineNumber-1)
-        lineStart = MAIN.Rtb_ODF.GetFirstCharIndexFromLine(             ' Find out where the line starts
+        With MAIN
+            lineNum = .Rtb_ODF.GetLineFromCharIndex(index)              ' Map the character Index to a Line Index (=LineNumber-1)
+            lineStart = .Rtb_ODF.GetFirstCharIndexFromLine(             ' Find out where the line starts
             lineNum)
-        lineEnd = MAIN.Rtb_ODF.Find(vbCr,                               ' Locate the end of the line we are presently in 
-                                  lineStart,
-                                  conQuickNoH)
-        rowText = MAIN.Rtb_ODF.Text.Substring(lineStart,
+            lineEnd = .Rtb_ODF.Find(vbCr,                               ' Locate the end of the line we are presently in 
+                                    lineStart,
+                                    conQuickNoH)
+            rowText = .Rtb_ODF.Text.Substring(lineStart,
                                               (lineEnd - lineStart))    ' <1.060.2> Extract the Line's content, less the terminal <CR>
-        rowStart = lineStart                                            ' <1.060.2> For Lines not part of a Record-Row, Row=Line
-        rowEnd = lineEnd
+            rowStart = lineStart                                        ' <1.060.2> For Lines not part of a Record-Row, Row=Line
+            rowEnd = lineEnd
 
-        ' MODIF V058.2
-        If rowText = "</Hauptwerk>" Then                                ' If the text is the End-Tag of the ODF, present informational message
-            rowType = conRowTypeODFEnd
-        ElseIf InStr(rowText, "<?XML ", CompareMethod.Text) = 1 Then    ' <1.060.2> Update the Status-Bar with the Row Type
-            rowType = conRowTypeXMSHdr
-        ElseIf InStr(rowText, "<Hauptwerk ", CompareMethod.Text) = 1 Then
-            rowType = conRowTypeODFStart
-        ElseIf InStr(rowText, "<ObjectList ", CompareMethod.Text) = 1 Then
-            rowType = conRowTypeSecStart
-        ElseIf rowText = "</ObjectList>" Then
-            rowType = conRowTypeSecEnd
-        ElseIf InStr(rowText, vbTab, CompareMethod.Text) = 1 Then
-            rowType = conRowTypeGenData
-        Else
-            rowType = conRowTypeRecord                                  ' <1.060.2> If we get here, we need to check for possible multiple-Lines comprising the Row
-            '                                                             l'objet <0> ... </o> peut etre sur 2 lignes; logic to handle one Row split across two lines
-            Dim line_Ending = rowText.Substring(
+            ' MODIF V058.2
+            If rowText = "</Hauptwerk>" Then                            ' If the text is the End-Tag of the ODF, present informational message
+                rowType = conRowTypeODFEnd
+            ElseIf InStr(rowText, "<?XML ", CompareMethod.Text) = 1 Then    ' <1.060.2> Update the Status-Bar with the Row Type
+                rowType = conRowTypeXMSHdr
+            ElseIf InStr(rowText, "<Hauptwerk ", CompareMethod.Text) = 1 Then
+                rowType = conRowTypeODFStart
+            ElseIf InStr(rowText, "<ObjectList ", CompareMethod.Text) = 1 Then
+                rowType = conRowTypeSecStart
+            ElseIf rowText = "</ObjectList>" Then
+                rowType = conRowTypeSecEnd
+            ElseIf InStr(rowText, vbTab, CompareMethod.Text) = 1 Then
+                rowType = conRowTypeGenData
+            Else
+                rowType = conRowTypeRecord                              ' <1.060.2> If we get here, we need to check for possible multiple-Lines comprising the Row
+                '                                                         l'objet <0> ... </o> peut etre sur 2 lignes; logic to handle one Row split across two lines
+                Dim line_Ending = rowText.Substring(
             Len(rowText) - 4, 4)                                        ' recherche </o>; grab the End-Tag on this line
-            Dim line_starting = rowText.Substring(0, 3)                 ' recherche <o>; grab the Start-Tag on this line
+                Dim line_starting = rowText.Substring(0, 3)             ' recherche <o>; grab the Start-Tag on this line
 
-            If line_Ending <> conRowEndTag Then                         ' trouver fin de ligne; this Row extends to other Lines
-                rowExtEnd = FindText(conRowEndTag,                      ' <1.060.2> Search for </o> closing Tag
+                If line_Ending <> conRowEndTag Then                     ' trouver fin de ligne; this Row extends to other Lines
+                    rowExtEnd = FindText(conRowEndTag,                  ' <1.060.2> Search for </o> closing Tag
                                      rowEnd + 1,
-                                     MAIN.Rtb_ODF)
-                If rowExtEnd < 0 Then                                   ' <1.060.2> Never found it, just keep Row ending on this Line
-                    DispMsg(lclProcName, conMsgExcl,
+                                     .Rtb_ODF)
+                    If rowExtEnd < 0 Then                               ' <1.060.2> Never found it, just keep Row ending on this Line
+                        DispMsg(lclProcName, conMsgExcl,
                             "Did not find subsequent closing </o> tag, will not extend this Line.")
-                Else                                                    ' <1.060.2> We did find it, add in the closing Tag, that's our new Row End
-                    rowEnd = rowExtEnd + conRowEndTag.Length
+                    Else                                                ' <1.060.2> We did find it, add in the closing Tag, that's our new Row End
+                        rowEnd = rowExtEnd + conRowEndTag.Length
+                    End If
                 End If
-                'rowEnd = MAIN.Rtb_ODF.GetFirstCharIndexFromLine(
-                '    lineNum + 2) - 1                                   ' Advance line end to end of the next line
-                'rowText = MAIN.Rtb_ODF.Text.Substring(rowStart, (rowEnd - rowStart))
-            End If
 
-            If line_starting <> conRowStartTag Then                     ' The beginning of the row ("<o>" Start-Tag) is in a prior line, need to move the start back
-                rowExtStart = FindReverse(conRowStartTag,               ' <1.060.2> Search backwards for opening <o> Tag, starting from present beginning of Line
+                If line_starting <> conRowStartTag Then                 ' The beginning of the row ("<o>" Start-Tag) is in a prior line, need to move the start back
+                    rowExtStart = FindReverse(conRowStartTag,           ' <1.060.2> Search backwards for opening <o> Tag, starting from present beginning of Line
                                           rowStart,
-                                          MAIN.Rtb_ODF)
-                If rowExtStart < 0 Then                                 ' <1.060.2> Never found a prior opening Tag, just use the Line Start we have
-                    DispMsg(lclProcName, conMsgExcl,
+                                          .Rtb_ODF)
+                    If rowExtStart < 0 Then                             ' <1.060.2> Never found a prior opening Tag, just use the Line Start we have
+                        DispMsg(lclProcName, conMsgExcl,
                             "Did not find prior opening <o> Tag, will not extend this Line.")
-                Else
-                    rowStart = rowExtStart                              ' <1.060.2> Found it, index already points to start of the Tag
+                    Else
+                        rowStart = rowExtStart                          ' <1.060.2> Found it, index already points to start of the Tag
+                    End If
                 End If
-                'rowStart = MAIN.Rtb_ODF.GetFirstCharIndexFromLine(
-                '    lineNum - 1) - 1                                    ' trouver debut de ligne; is final -1 a bug?
-                'rowText = MAIN.Rtb_ODF.Text.Substring(rowStart, (rowEnd - rowStart))
-            End If
-            rowText = MAIN.Rtb_ODF.Text.Substring(rowStart,             ' <1.060.2> Extract the extended text
+                rowText = .Rtb_ODF.Text.Substring(rowStart,             ' <1.060.2> Extract the extended text
                                                   (rowEnd - rowStart))
-        End If
+            End If
 
-        MAIN.Status_RowTypeVal.Text = rowType
-        MAIN.Lbl_LineNumVal.Text = (lineNum + 1).ToString(conIntFmt)    ' afficher les positions; <1.060.2> add 1, Internal Line #s are 0-based
-        MAIN.Lbl_RowStartVal.Text = rowStart.ToString(conIntFmt)        ' Format & update fields for Line & Row Start & End
-        MAIN.Lbl_RowEndVal.Text = rowEnd.ToString(conIntFmt)
-        MAIN.Lbl_LineStartVal.Text = lineStart.ToString(conIntFmt)
-        MAIN.Lbl_LineEndVal.Text = lineEnd.ToString(conIntFmt)
-        If expandSelectionToRow Then                                    ' <1.060.2> if False (single-click and Find/Next/Prev) leave user's selection alone
-            MAIN.Rtb_ODF.Select(rowStart, rowEnd - rowStart)            ' <1.060.2> Select entire row, used for double-click and Next/Prev 1/10/100 Lines
-        End If
+            .Status_RowTypeVal.Text = rowType
+            .Lbl_LineNumVal.Text = (lineNum + 1).ToString(conIntFmt)    ' afficher les positions; <1.060.2> add 1, Internal Line #s are 0-based
+            .Lbl_LineNumVal.Tag = lineStart                             ' <1.060.6> Save raw character position in .Tag property
+            rowLineStart = .Rtb_ODF.GetLineFromCharIndex(rowStart) + 1  ' <1.060.6> Determine the Starting/Ending Lines for the Row from the S/E Chars
+            rowLineEnd = .Rtb_ODF.GetLineFromCharIndex(rowEnd) + 1
+            .Lbl_RowStartVal.Text = rowLineStart.ToString(conIntFmt) &  ' <1.060.6> Added Line Number component
+                " / " & rowStart.ToString(conIntFmt)                    ' Format & update fields for Line & Row Start & End
+            .Lbl_RowStartVal.Tag = rowStart
+            .Lbl_RowEndVal.Text = rowLineEnd.ToString(conIntFmt) &      ' <1.060.6> Added Line Number component
+                " / " & rowEnd.ToString(conIntFmt)
+            .Lbl_RowEndVal.Tag = rowEnd
+            .Lbl_LineStartVal.Text = lineStart.ToString(conIntFmt)
+            .Lbl_LineStartVal.Tag = lineStart
+            .Lbl_LineEndVal.Text = lineEnd.ToString(conIntFmt)
+            .Lbl_LineEndVal.Tag = lineEnd
+            If expandSelectionToRow Then                                ' <1.060.2> if False (single-click and Find/Next/Prev) leave user's selection alone
+                .Rtb_ODF.Select(rowStart, rowEnd - rowStart)            ' <1.060.2> Select entire row, used for double-click and Next/Prev 1/10/100 Lines
+            End If
 
-        Return rowText
+            Return rowText
+        End With
 
     End Function
     Friend Function FindReverse(text As String,                 ' Text string to search for
@@ -1816,6 +1862,7 @@ Module SharedCode
         ' Side Effects: <None>
         ' Notes:        <None>
         ' Updates:      <1.060.2> First code.
+        '               <1.060.6> Save cusor position as .Tag property, for repositioning
 
         Const lclProcName As String =                           ' Routine's name for message handling
             "MoveToPosition"
@@ -1826,6 +1873,7 @@ Module SharedCode
         End If
         MAIN.Lbl_CursorPosVal.Text =
             curPos.ToString(conIntFmt)                          ' Update cursor position onscreen
+        MAIN.Lbl_CursorPosVal.Tag = curPos                      ' <1.060.6> Save position in the .Tag property, for later repositioning
         Return GetRowFromIndex(curPos,                          ' Position to the Line in the ODF at position "caret"
                                lineIndex,                       ' Returns Line Number, 0-based, pass back to caller
                                lineStart,                       ' Returns index to beginning of Line, pass back to caller
@@ -1905,7 +1953,7 @@ Module SharedCode
     Friend Sub HotClickCursorPosition(hotVal As String)
 
         ' Purpose:      Position to the index indicated by the value, using single-click semantics.
-        ' Process:		If input parm is "?", just return - no position data. Otherwise, extract
+        ' Process:		If input parm is "NA", just return - no position data. Otherwise, extract
         '               the value as an integer, ensure it is range inside the ODF, then position
         '               to that place using single-click semantics, updating the Data fields onscreen.
         ' Called By:    Lbl_SecStartVal_Click(); Lbl_SecEndVal_Click(); Lbl_LineStartVal_Click();
