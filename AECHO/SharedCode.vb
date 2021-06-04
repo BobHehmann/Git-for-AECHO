@@ -13,6 +13,7 @@ Module SharedCode
     ' Global Constants      <1.060.2> Moved many Global Constant declarations from Main Form to here, and
     '                       narrowed their scope from "Public" to "Friend".
     '                       <1.060.2> Minor changes to optimize Printing
+    '                       <1.060.7> Added constant for Section Menu group size (22)
 
     Friend Const conHTMLHelpDir As String = "AECHOHelpFiles"                ' <1.060.2> Location of HTML Help Files with \DATA dir
     Friend Const conHTMLHelpFile As String = "AECHOMain.HTM"                ' <1.060.2> Top level HTML Help File
@@ -63,6 +64,7 @@ Module SharedCode
     Friend Const conDescFont As String = "Verdana"                          ' <1.060.2> Font for the Descriptive Text Box
     Friend conTitleColor As Color = Color.Blue                              ' <1.060.2> Color to apply to Section Titles in the ODF, when emphasizing their display
     Friend Const conTitleFontInc As Integer = 1                             ' <1.060.2> # of points to increase an emphasized Section Title, over the present display default
+    Friend Const conSecMenuGroupSize As Integer = 22                        ' <1.060.7> Max # of Section entries per Section Menu Group
 
     Friend Const conRowTypeODFStart As String = "ODF Start-Tag"             ' <1.060.2> The constants are the recognized Line/Row types, displayed in the Status-Bar
     Friend Const conRowTypeODFEnd As String = "ODF End-Tag"
@@ -522,6 +524,7 @@ Module SharedCode
 
         TagsPanelVisible(False)                             ' Hide all controls in the Tags Panel
         ClearMarkers()                                      ' Reset Markers
+        MAIN.ClearSecMenus()
 
         With MAIN                                           ' Need MAIN reference to access these Controls
             .Text = conMainTitle &                          ' Reset Title Bar to basic program name/info - we'll add the ODF filename when we've got one open
@@ -561,8 +564,6 @@ Module SharedCode
             .Menu_SaveAs.Enabled = False                    ' Can't save what isn't opened...
             .Menu_CloseODF.Enabled = False                  ' Nothing to Close...
             .Menu_PrintDT.Enabled = False                   ' Nothing to Print
-            .Menu_Sections1.Enabled = False                 ' No Sections yet
-            .Menu_Sections2.Enabled = False
             .Menu_EditMode.Enabled = False                  ' Nothing to Edit
             .Menu_Tools.Enabled = True                      ' Tools in general are enabled, but
             .Menu_FollowASample.Enabled = False             '   Trace is disabled, as it requires a loaded ODF to function
@@ -1261,6 +1262,7 @@ Module SharedCode
         ' Updates:		New with <1.060.2>.
         '               <1.060.5> Removed ref to RemoveImage(), moved code to make Title1/2 visible here.
         '               <1.060.6> Changed from .Text to .Tag property when retrieving Cursor's position
+        '               <1.060.7> Dynamically create a hierarchical Sections Menu based on actual SectionNames as parsed
 
         Const lclProcName As String = "EnumerateSectionsSetFont"    ' Routine's name for message handling
 
@@ -1271,6 +1273,7 @@ Module SharedCode
         Dim secNameEnd As Integer                                   ' End of Section Name, closing '"' -1
         Dim secName As String                                       ' Extracted Section Name
         Dim secEnd As Integer                                       ' Section End-Tag location, start of "</ObjectList>"
+        Dim secMenuCount As Integer                                 ' <1.060.7> Keeps count of Sections as they are added to the Menu
 
         srcRTB.SelectAll()                                          ' Affects all text in target RTB
         srcRTB.SelectionFont = New Font(conFont,                    ' Set entire RTB to default (Arial), selected font-size, Regular stlye
@@ -1279,13 +1282,15 @@ Module SharedCode
 
         If resizeTitles AndAlso (Not noODF) Then                    ' Only do this loop if asked, and we have an ODF present
             secNum = 0                                              ' Section counter starts at 0
+            secMenuCount = 0                                        ' <1.060.7> No Sections added to Menu yet
             If enumSecs Then
                 TagsPanelVisible(False)                             ' Hide all controls in the PackageID Panel
                 ClearMarkers()                                      ' Reset Markers
+                MAIN.ClearSecMenus()                                ' <1.060.7> Removes all Section Sub-Menu Entries
                 MAIN.Rtb_DescText.Clear()                           ' vider Rtb_DescText; clear the control that displays descriptive/help text
                 G_PreviousRTFFile = ""                              ' To enforce re-display of Section Text if menu-clicking on the present Section
                 SetRTBDescButtons(False)                            ' Disable "Set Font" and "Save Description" buttons, no Section content to work with
-                MAIN.Rtb_XMLRow.Clear()                             ' Reset Record-Row display are (<o>...</o> tags)
+                MAIN.Rtb_XMLRow.Clear()                             ' Reset Record-Row display
                 CenterText(conTextBoxTitle_ODFLoad,                 ' Display "Section Locations" Title over Display Text Area
                     MAIN.Lbl_TextBoxTitle1,                         ' Center text on the Top Title Line
                     MAIN.Rtb_DescText.Left,
@@ -1305,6 +1310,7 @@ Module SharedCode
             MAIN.Btn_Led.Refresh()
             srchPos = srcRTB.Find(conSecStartTag, 0,                ' Find location of the first Section Start-Tag '<ObjectList ObjectType='
                                   conQuickNoH)
+
             While (srchPos > 0)                                     ' We found a Section Start-Tag
                 secNum += 1                                         ' Found next Section
                 eTag = srcRTB.Find(">",                             ' Set eTag to be its ending ">" character
@@ -1360,11 +1366,15 @@ Module SharedCode
                                           srcRTB.GetLineFromCharIndex(secEnd) + 1, vbTab,
                                           srchPos, vbTab, "to", vbTab, secEnd, vbTab, secName) & vbCrLf
                     MAIN.Rtb_DescText.Refresh()                     ' Repaint the progress description
+                    secMenuCount += 1                               ' <1.060.7> 1-based index of the Sections being added to the Sections Menu
+                    AddSecSubMenu(secName, secMenuCount)            ' <1.060.7> Add this Section Name to the Sections Menu
                     eTag = Max(eTag, secEnd)                        ' Begin search for next section from farthest known location in previous one
                 End If
                 srchPos = srcRTB.Find(conSecStartTag, eTag,         ' Starting from the end of the present Title, find the next one
                                       conQuickNoH)
             End While
+
+            MAIN.BuildSecMenus()                                    ' <1.060.7> Add the .Tag and Event Handlers to the new Sub-Menus
 
             HotClickCursorPosition(MAIN.Lbl_CursorPosVal.Tag)       ' <1.060.6> Reposition to original cursor position, as text was scrolled by this routine: use .Tag
             MAIN.Btn_Led.BackColor = Color.LightGreen               ' Set Led color to Green to indicate completion of enumeration
@@ -2419,6 +2429,34 @@ Module SharedCode
         oBox.AppendText(txtVal)                         ' Append the text with these values
         oBox.DeselectAll()                              ' Deselect in prep for next action
         Return
+
+    End Sub
+
+    Friend Sub AddSecSubMenu(secName As String,         ' Name of Section as it will appear in the menu
+                             secNum As Integer)         ' 1-based counter of Sections as they are added
+
+        ' Purpose:      Adds a new Section (secName) to the Sections Menu.
+        ' Process:      If this starts a new group of 22, add the Group entry first,
+        '               then add the new Section as the last entry of the last group.
+        ' Called By:    EnumerateSectionsSetFont()
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.7> First implemented, for dynamic Section Menus
+
+        Dim lclProcName As String = "AddSecSubMenu"
+
+        Dim lastMenu As Integer
+        Dim i As ToolStripMenuItem
+
+        If (secNum Mod conSecMenuGroupSize) = 1 Then    ' When 1, time to add an new Group entry
+            MAIN.Menu_SectionsA.DropDownItems.Add("Sections (&" &
+                ((secNum \ conSecMenuGroupSize) + 1).ToString & ") ")
+        End If
+        lastMenu =                                      ' Index of the current (last) Group entry
+            MAIN.Menu_SectionsA.DropDownItems.Count - 1
+        i =                                             ' i -> last Group entry
+            MAIN.Menu_SectionsA.DropDownItems.Item(lastMenu)
+        i.DropDownItems.Add(secName)                    ' Add the new Section Name to the last Group entry
 
     End Sub
 

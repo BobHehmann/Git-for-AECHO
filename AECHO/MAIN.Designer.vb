@@ -32,52 +32,6 @@ Partial Class MAIN
         Me.Menu_PrintDT = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_Sep3 = New System.Windows.Forms.ToolStripSeparator()
         Me.Menu_Quit = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_Sections1 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_General = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_DisplayPage = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_TextStyle = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_TextInstance = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_ImageSet = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_ImageSetElement = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_ImageSetInstance = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_KeyImageSet = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_Division = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_DivisionInput = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_Switch = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_SwitchLinkage = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_SwitchExclusiveSelectGroup = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_SwitchExclusiveSelectGroupElement = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_Keyboard = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_KeyboardKey = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_KeyAction = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_Rank = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_ExternalRank = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_ExternalPipe = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_Stop = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_StopRank = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_Sections2 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_ReversiblePiston = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_Combination = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_CombinationElement = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_ContinuousControl = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_ContinuousControlStageSwitch = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_ContinuousControlImageSetStage = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_Enclosure = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_EnclosurePipe = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_Tremulant = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_TremulantWaveform = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_TremulantWaveformPipe = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_ContinuousControlLinkage = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_ContinuousControlDoubleLinkage = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_ThreePositionSwitchImage = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_WindCompartment = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_WindCompartmentLinkage = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_Sample = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_PipeSoundEngine01 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_PipeSoundEngine01Layer = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_PipeSoundEngine01AttackSample = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_PipeSoundEngine01ReleaseSample = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_RequiredInstallationPackage = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_EditMode = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_EditModeStart = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_EditModeExit = New System.Windows.Forms.ToolStripMenuItem()
@@ -89,6 +43,7 @@ Partial Class MAIN
         Me.Menu_HelpAbout = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_Help = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_About = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Menu_SectionsA = New System.Windows.Forms.ToolStripMenuItem()
         Me.Rtb_ODF = New System.Windows.Forms.RichTextBox()
         Me.OpenFileDialog = New System.Windows.Forms.OpenFileDialog()
         Me.Num_ODFFontSize = New System.Windows.Forms.NumericUpDown()
@@ -213,7 +168,7 @@ Partial Class MAIN
         '
         'Menu_Strip
         '
-        Me.Menu_Strip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Menu_File, Me.Menu_Sections1, Me.Menu_Sections2, Me.Menu_EditMode, Me.Menu_Tools, Me.Menu_HelpAbout})
+        Me.Menu_Strip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Menu_File, Me.Menu_SectionsA, Me.Menu_EditMode, Me.Menu_Tools, Me.Menu_HelpAbout})
         Me.Menu_Strip.Location = New System.Drawing.Point(0, 0)
         Me.Menu_Strip.Name = "Menu_Strip"
         Me.Menu_Strip.Padding = New System.Windows.Forms.Padding(7, 2, 0, 2)
@@ -288,335 +243,6 @@ Partial Class MAIN
         Me.Menu_Quit.ToolTipText = "Exits AECHO. If there is an ODF onscreen that has" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "been modified since it was ope" &
     "ned or last saved," & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "then Exit will offer to save that file before exiting."
         '
-        'Menu_Sections1
-        '
-        Me.Menu_Sections1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Menu_General, Me.Menu_DisplayPage, Me.Menu_TextStyle, Me.Menu_TextInstance, Me.Menu_ImageSet, Me.Menu_ImageSetElement, Me.Menu_ImageSetInstance, Me.Menu_KeyImageSet, Me.Menu_Division, Me.Menu_DivisionInput, Me.Menu_Switch, Me.Menu_SwitchLinkage, Me.Menu_SwitchExclusiveSelectGroup, Me.Menu_SwitchExclusiveSelectGroupElement, Me.Menu_Keyboard, Me.Menu_KeyboardKey, Me.Menu_KeyAction, Me.Menu_Rank, Me.Menu_ExternalRank, Me.Menu_ExternalPipe, Me.Menu_Stop, Me.Menu_StopRank})
-        Me.Menu_Sections1.Enabled = False
-        Me.Menu_Sections1.Name = "Menu_Sections1"
-        Me.Menu_Sections1.Size = New System.Drawing.Size(106, 20)
-        Me.Menu_Sections1.Text = "Sections (&1) 1-22"
-        Me.Menu_Sections1.ToolTipText = "Menu Sub-selections perform direct navigtion to the" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "chosen ODF Section. The Menu" &
-    " Item exposes" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Section 1 - 22: _General through StopRank."
-        '
-        'Menu_General
-        '
-        Me.Menu_General.Name = "Menu_General"
-        Me.Menu_General.Size = New System.Drawing.Size(276, 22)
-        Me.Menu_General.Tag = "_General"
-        Me.Menu_General.Text = "_General"
-        '
-        'Menu_DisplayPage
-        '
-        Me.Menu_DisplayPage.Name = "Menu_DisplayPage"
-        Me.Menu_DisplayPage.Size = New System.Drawing.Size(276, 22)
-        Me.Menu_DisplayPage.Tag = "DisplayPage"
-        Me.Menu_DisplayPage.Text = "Display Page"
-        '
-        'Menu_TextStyle
-        '
-        Me.Menu_TextStyle.Name = "Menu_TextStyle"
-        Me.Menu_TextStyle.Size = New System.Drawing.Size(276, 22)
-        Me.Menu_TextStyle.Tag = "TextStyle"
-        Me.Menu_TextStyle.Text = "Text Style"
-        '
-        'Menu_TextInstance
-        '
-        Me.Menu_TextInstance.Name = "Menu_TextInstance"
-        Me.Menu_TextInstance.Size = New System.Drawing.Size(276, 22)
-        Me.Menu_TextInstance.Tag = "TextInstance"
-        Me.Menu_TextInstance.Text = "Text Instance"
-        '
-        'Menu_ImageSet
-        '
-        Me.Menu_ImageSet.Name = "Menu_ImageSet"
-        Me.Menu_ImageSet.Size = New System.Drawing.Size(276, 22)
-        Me.Menu_ImageSet.Tag = "ImageSet"
-        Me.Menu_ImageSet.Text = "Image Set"
-        '
-        'Menu_ImageSetElement
-        '
-        Me.Menu_ImageSetElement.Name = "Menu_ImageSetElement"
-        Me.Menu_ImageSetElement.Size = New System.Drawing.Size(276, 22)
-        Me.Menu_ImageSetElement.Tag = "ImageSetElement"
-        Me.Menu_ImageSetElement.Text = "Image Set Element"
-        '
-        'Menu_ImageSetInstance
-        '
-        Me.Menu_ImageSetInstance.Name = "Menu_ImageSetInstance"
-        Me.Menu_ImageSetInstance.Size = New System.Drawing.Size(276, 22)
-        Me.Menu_ImageSetInstance.Tag = "ImageSetInstance"
-        Me.Menu_ImageSetInstance.Text = "Image Set Instance"
-        '
-        'Menu_KeyImageSet
-        '
-        Me.Menu_KeyImageSet.Name = "Menu_KeyImageSet"
-        Me.Menu_KeyImageSet.Size = New System.Drawing.Size(276, 22)
-        Me.Menu_KeyImageSet.Tag = "KeyImageSet"
-        Me.Menu_KeyImageSet.Text = "Key Image Set"
-        '
-        'Menu_Division
-        '
-        Me.Menu_Division.Name = "Menu_Division"
-        Me.Menu_Division.Size = New System.Drawing.Size(276, 22)
-        Me.Menu_Division.Tag = "Division"
-        Me.Menu_Division.Text = "Division"
-        '
-        'Menu_DivisionInput
-        '
-        Me.Menu_DivisionInput.Name = "Menu_DivisionInput"
-        Me.Menu_DivisionInput.Size = New System.Drawing.Size(276, 22)
-        Me.Menu_DivisionInput.Tag = "DivisionInput"
-        Me.Menu_DivisionInput.Text = "Division Input"
-        '
-        'Menu_Switch
-        '
-        Me.Menu_Switch.Name = "Menu_Switch"
-        Me.Menu_Switch.Size = New System.Drawing.Size(276, 22)
-        Me.Menu_Switch.Tag = "Switch"
-        Me.Menu_Switch.Text = "Switch"
-        '
-        'Menu_SwitchLinkage
-        '
-        Me.Menu_SwitchLinkage.Name = "Menu_SwitchLinkage"
-        Me.Menu_SwitchLinkage.Size = New System.Drawing.Size(276, 22)
-        Me.Menu_SwitchLinkage.Tag = "SwitchLinkage"
-        Me.Menu_SwitchLinkage.Text = "Switch Linkage"
-        '
-        'Menu_SwitchExclusiveSelectGroup
-        '
-        Me.Menu_SwitchExclusiveSelectGroup.Name = "Menu_SwitchExclusiveSelectGroup"
-        Me.Menu_SwitchExclusiveSelectGroup.Size = New System.Drawing.Size(276, 22)
-        Me.Menu_SwitchExclusiveSelectGroup.Tag = "SwitchExclusiveSelectGroup"
-        Me.Menu_SwitchExclusiveSelectGroup.Text = "Switch Exclusive Select Group"
-        '
-        'Menu_SwitchExclusiveSelectGroupElement
-        '
-        Me.Menu_SwitchExclusiveSelectGroupElement.Name = "Menu_SwitchExclusiveSelectGroupElement"
-        Me.Menu_SwitchExclusiveSelectGroupElement.Size = New System.Drawing.Size(276, 22)
-        Me.Menu_SwitchExclusiveSelectGroupElement.Tag = "SwitchExclusiveSelectGroupElement"
-        Me.Menu_SwitchExclusiveSelectGroupElement.Text = "Switch Exclusive Select Group Element"
-        '
-        'Menu_Keyboard
-        '
-        Me.Menu_Keyboard.Name = "Menu_Keyboard"
-        Me.Menu_Keyboard.Size = New System.Drawing.Size(276, 22)
-        Me.Menu_Keyboard.Tag = "Keyboard"
-        Me.Menu_Keyboard.Text = "Keyboard"
-        '
-        'Menu_KeyboardKey
-        '
-        Me.Menu_KeyboardKey.Name = "Menu_KeyboardKey"
-        Me.Menu_KeyboardKey.Size = New System.Drawing.Size(276, 22)
-        Me.Menu_KeyboardKey.Tag = "KeyboardKey"
-        Me.Menu_KeyboardKey.Text = "Keyboard Key"
-        '
-        'Menu_KeyAction
-        '
-        Me.Menu_KeyAction.Name = "Menu_KeyAction"
-        Me.Menu_KeyAction.Size = New System.Drawing.Size(276, 22)
-        Me.Menu_KeyAction.Tag = "KeyAction"
-        Me.Menu_KeyAction.Text = "Key Action"
-        '
-        'Menu_Rank
-        '
-        Me.Menu_Rank.Name = "Menu_Rank"
-        Me.Menu_Rank.Size = New System.Drawing.Size(276, 22)
-        Me.Menu_Rank.Tag = "Rank"
-        Me.Menu_Rank.Text = "Rank"
-        '
-        'Menu_ExternalRank
-        '
-        Me.Menu_ExternalRank.Name = "Menu_ExternalRank"
-        Me.Menu_ExternalRank.Size = New System.Drawing.Size(276, 22)
-        Me.Menu_ExternalRank.Tag = "ExternalRank"
-        Me.Menu_ExternalRank.Text = "External Rank"
-        '
-        'Menu_ExternalPipe
-        '
-        Me.Menu_ExternalPipe.Name = "Menu_ExternalPipe"
-        Me.Menu_ExternalPipe.Size = New System.Drawing.Size(276, 22)
-        Me.Menu_ExternalPipe.Tag = "ExternalPipe"
-        Me.Menu_ExternalPipe.Text = "External Pipe"
-        '
-        'Menu_Stop
-        '
-        Me.Menu_Stop.Name = "Menu_Stop"
-        Me.Menu_Stop.Size = New System.Drawing.Size(276, 22)
-        Me.Menu_Stop.Tag = "Stop"
-        Me.Menu_Stop.Text = "Stop"
-        '
-        'Menu_StopRank
-        '
-        Me.Menu_StopRank.Name = "Menu_StopRank"
-        Me.Menu_StopRank.Size = New System.Drawing.Size(276, 22)
-        Me.Menu_StopRank.Tag = "StopRank"
-        Me.Menu_StopRank.Text = "Stop Rank"
-        '
-        'Menu_Sections2
-        '
-        Me.Menu_Sections2.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Menu_ReversiblePiston, Me.Menu_Combination, Me.Menu_CombinationElement, Me.Menu_ContinuousControl, Me.Menu_ContinuousControlStageSwitch, Me.Menu_ContinuousControlImageSetStage, Me.Menu_Enclosure, Me.Menu_EnclosurePipe, Me.Menu_Tremulant, Me.Menu_TremulantWaveform, Me.Menu_TremulantWaveformPipe, Me.Menu_ContinuousControlLinkage, Me.Menu_ContinuousControlDoubleLinkage, Me.Menu_ThreePositionSwitchImage, Me.Menu_WindCompartment, Me.Menu_WindCompartmentLinkage, Me.Menu_Sample, Me.Menu_PipeSoundEngine01, Me.Menu_PipeSoundEngine01Layer, Me.Menu_PipeSoundEngine01AttackSample, Me.Menu_PipeSoundEngine01ReleaseSample, Me.Menu_RequiredInstallationPackage})
-        Me.Menu_Sections2.Enabled = False
-        Me.Menu_Sections2.Name = "Menu_Sections2"
-        Me.Menu_Sections2.Size = New System.Drawing.Size(118, 20)
-        Me.Menu_Sections2.Text = "Sections (&2) 23-44  "
-        Me.Menu_Sections2.ToolTipText = "Menu Sub-selections perform direct navigtion to the" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "chosen ODF Section. The Menu" &
-    " Item exposes" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Section 23 - 44: ReversiblePiston through" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "RequiredInstallationSe" &
-    "ction."
-        '
-        'Menu_ReversiblePiston
-        '
-        Me.Menu_ReversiblePiston.Name = "Menu_ReversiblePiston"
-        Me.Menu_ReversiblePiston.Size = New System.Drawing.Size(272, 22)
-        Me.Menu_ReversiblePiston.Tag = "ReversiblePiston"
-        Me.Menu_ReversiblePiston.Text = "Reversible Piston"
-        '
-        'Menu_Combination
-        '
-        Me.Menu_Combination.Name = "Menu_Combination"
-        Me.Menu_Combination.Size = New System.Drawing.Size(272, 22)
-        Me.Menu_Combination.Tag = "Combination"
-        Me.Menu_Combination.Text = "Combination"
-        '
-        'Menu_CombinationElement
-        '
-        Me.Menu_CombinationElement.Name = "Menu_CombinationElement"
-        Me.Menu_CombinationElement.Size = New System.Drawing.Size(272, 22)
-        Me.Menu_CombinationElement.Tag = "CombinationElement"
-        Me.Menu_CombinationElement.Text = "Combination Element"
-        '
-        'Menu_ContinuousControl
-        '
-        Me.Menu_ContinuousControl.Name = "Menu_ContinuousControl"
-        Me.Menu_ContinuousControl.Size = New System.Drawing.Size(272, 22)
-        Me.Menu_ContinuousControl.Tag = "ContinuousControl"
-        Me.Menu_ContinuousControl.Text = "Continuous Control"
-        '
-        'Menu_ContinuousControlStageSwitch
-        '
-        Me.Menu_ContinuousControlStageSwitch.Name = "Menu_ContinuousControlStageSwitch"
-        Me.Menu_ContinuousControlStageSwitch.Size = New System.Drawing.Size(272, 22)
-        Me.Menu_ContinuousControlStageSwitch.Tag = "ContinuousControlStageSwitch"
-        Me.Menu_ContinuousControlStageSwitch.Text = "Continuous Control Stage Switch"
-        '
-        'Menu_ContinuousControlImageSetStage
-        '
-        Me.Menu_ContinuousControlImageSetStage.Name = "Menu_ContinuousControlImageSetStage"
-        Me.Menu_ContinuousControlImageSetStage.Size = New System.Drawing.Size(272, 22)
-        Me.Menu_ContinuousControlImageSetStage.Tag = "ContinuousControlImageSetStage"
-        Me.Menu_ContinuousControlImageSetStage.Text = "Continuous Control Image Set Stage"
-        '
-        'Menu_Enclosure
-        '
-        Me.Menu_Enclosure.Name = "Menu_Enclosure"
-        Me.Menu_Enclosure.Size = New System.Drawing.Size(272, 22)
-        Me.Menu_Enclosure.Tag = "Enclosure"
-        Me.Menu_Enclosure.Text = "Enclosure"
-        '
-        'Menu_EnclosurePipe
-        '
-        Me.Menu_EnclosurePipe.Name = "Menu_EnclosurePipe"
-        Me.Menu_EnclosurePipe.Size = New System.Drawing.Size(272, 22)
-        Me.Menu_EnclosurePipe.Tag = "EnclosurePipe"
-        Me.Menu_EnclosurePipe.Text = "Enclosure Pipe"
-        '
-        'Menu_Tremulant
-        '
-        Me.Menu_Tremulant.Name = "Menu_Tremulant"
-        Me.Menu_Tremulant.Size = New System.Drawing.Size(272, 22)
-        Me.Menu_Tremulant.Tag = "Tremulant"
-        Me.Menu_Tremulant.Text = "Tremulant"
-        '
-        'Menu_TremulantWaveform
-        '
-        Me.Menu_TremulantWaveform.Name = "Menu_TremulantWaveform"
-        Me.Menu_TremulantWaveform.Size = New System.Drawing.Size(272, 22)
-        Me.Menu_TremulantWaveform.Tag = "TremulantWaveform"
-        Me.Menu_TremulantWaveform.Text = "Tremulant Waveform"
-        '
-        'Menu_TremulantWaveformPipe
-        '
-        Me.Menu_TremulantWaveformPipe.Name = "Menu_TremulantWaveformPipe"
-        Me.Menu_TremulantWaveformPipe.Size = New System.Drawing.Size(272, 22)
-        Me.Menu_TremulantWaveformPipe.Tag = "TremulantWaveformPipe"
-        Me.Menu_TremulantWaveformPipe.Text = "Tremulant Waveform Pipe"
-        '
-        'Menu_ContinuousControlLinkage
-        '
-        Me.Menu_ContinuousControlLinkage.Name = "Menu_ContinuousControlLinkage"
-        Me.Menu_ContinuousControlLinkage.Size = New System.Drawing.Size(272, 22)
-        Me.Menu_ContinuousControlLinkage.Tag = "ContinuousControlLinkage"
-        Me.Menu_ContinuousControlLinkage.Text = "Continuous Control Linkage"
-        '
-        'Menu_ContinuousControlDoubleLinkage
-        '
-        Me.Menu_ContinuousControlDoubleLinkage.Name = "Menu_ContinuousControlDoubleLinkage"
-        Me.Menu_ContinuousControlDoubleLinkage.Size = New System.Drawing.Size(272, 22)
-        Me.Menu_ContinuousControlDoubleLinkage.Tag = "ContinuousControlDoubleLinkage"
-        Me.Menu_ContinuousControlDoubleLinkage.Text = "Continuous Control Double Linkage"
-        '
-        'Menu_ThreePositionSwitchImage
-        '
-        Me.Menu_ThreePositionSwitchImage.Name = "Menu_ThreePositionSwitchImage"
-        Me.Menu_ThreePositionSwitchImage.Size = New System.Drawing.Size(272, 22)
-        Me.Menu_ThreePositionSwitchImage.Tag = "ThreePositionSwitchImage"
-        Me.Menu_ThreePositionSwitchImage.Text = "Three Position Switch Image"
-        '
-        'Menu_WindCompartment
-        '
-        Me.Menu_WindCompartment.Name = "Menu_WindCompartment"
-        Me.Menu_WindCompartment.Size = New System.Drawing.Size(272, 22)
-        Me.Menu_WindCompartment.Tag = "WindCompartment"
-        Me.Menu_WindCompartment.Text = "Wind Compartment"
-        '
-        'Menu_WindCompartmentLinkage
-        '
-        Me.Menu_WindCompartmentLinkage.Name = "Menu_WindCompartmentLinkage"
-        Me.Menu_WindCompartmentLinkage.Size = New System.Drawing.Size(272, 22)
-        Me.Menu_WindCompartmentLinkage.Tag = "WindCompartmentLinkage"
-        Me.Menu_WindCompartmentLinkage.Text = "Wind Compartment Linkage"
-        '
-        'Menu_Sample
-        '
-        Me.Menu_Sample.Name = "Menu_Sample"
-        Me.Menu_Sample.Size = New System.Drawing.Size(272, 22)
-        Me.Menu_Sample.Tag = "Sample"
-        Me.Menu_Sample.Text = "Sample"
-        '
-        'Menu_PipeSoundEngine01
-        '
-        Me.Menu_PipeSoundEngine01.Name = "Menu_PipeSoundEngine01"
-        Me.Menu_PipeSoundEngine01.Size = New System.Drawing.Size(272, 22)
-        Me.Menu_PipeSoundEngine01.Tag = "Pipe_SoundEngine01"
-        Me.Menu_PipeSoundEngine01.Text = "Pipe Sound Engine 01"
-        '
-        'Menu_PipeSoundEngine01Layer
-        '
-        Me.Menu_PipeSoundEngine01Layer.Name = "Menu_PipeSoundEngine01Layer"
-        Me.Menu_PipeSoundEngine01Layer.Size = New System.Drawing.Size(272, 22)
-        Me.Menu_PipeSoundEngine01Layer.Tag = "Pipe_SoundEngine01_Layer"
-        Me.Menu_PipeSoundEngine01Layer.Text = "Pipe Sound Engine 01 Layer"
-        '
-        'Menu_PipeSoundEngine01AttackSample
-        '
-        Me.Menu_PipeSoundEngine01AttackSample.Name = "Menu_PipeSoundEngine01AttackSample"
-        Me.Menu_PipeSoundEngine01AttackSample.Size = New System.Drawing.Size(272, 22)
-        Me.Menu_PipeSoundEngine01AttackSample.Tag = "Pipe_SoundEngine01_AttackSample"
-        Me.Menu_PipeSoundEngine01AttackSample.Text = "Pipe Sound Engine 01 Attack Sample"
-        '
-        'Menu_PipeSoundEngine01ReleaseSample
-        '
-        Me.Menu_PipeSoundEngine01ReleaseSample.Name = "Menu_PipeSoundEngine01ReleaseSample"
-        Me.Menu_PipeSoundEngine01ReleaseSample.Size = New System.Drawing.Size(272, 22)
-        Me.Menu_PipeSoundEngine01ReleaseSample.Tag = "Pipe_SoundEngine01_ReleaseSample"
-        Me.Menu_PipeSoundEngine01ReleaseSample.Text = "Pipe Sound Engine 01 Release Sample"
-        '
-        'Menu_RequiredInstallationPackage
-        '
-        Me.Menu_RequiredInstallationPackage.Name = "Menu_RequiredInstallationPackage"
-        Me.Menu_RequiredInstallationPackage.Size = New System.Drawing.Size(272, 22)
-        Me.Menu_RequiredInstallationPackage.Tag = "RequiredInstallationPackage"
-        Me.Menu_RequiredInstallationPackage.Text = "Required Installation Package"
-        '
         'Menu_EditMode
         '
         Me.Menu_EditMode.BackColor = System.Drawing.Color.Gainsboro
@@ -647,7 +273,7 @@ Partial Class MAIN
         '
         Me.Menu_ReComputeSections.Name = "Menu_ReComputeSections"
         Me.Menu_ReComputeSections.Size = New System.Drawing.Size(185, 22)
-        Me.Menu_ReComputeSections.Text = "&List Sections"
+        Me.Menu_ReComputeSections.Text = "&Recompute Sections"
         Me.Menu_ReComputeSections.ToolTipText = resources.GetString("Menu_ReComputeSections.ToolTipText")
         '
         'Menu_Tools
@@ -702,6 +328,13 @@ Partial Class MAIN
         Me.Menu_About.Size = New System.Drawing.Size(173, 22)
         Me.Menu_About.Text = "&About AECHO"
         Me.Menu_About.ToolTipText = "Displays AECHO's About Box."
+        '
+        'Menu_SectionsA
+        '
+        Me.Menu_SectionsA.Enabled = False
+        Me.Menu_SectionsA.Name = "Menu_SectionsA"
+        Me.Menu_SectionsA.Size = New System.Drawing.Size(63, 20)
+        Me.Menu_SectionsA.Text = "&Sections"
         '
         'Rtb_ODF
         '
@@ -2151,35 +1784,6 @@ Partial Class MAIN
     Friend WithEvents Rtb_ODF As System.Windows.Forms.RichTextBox
     Friend WithEvents OpenFileDialog As System.Windows.Forms.OpenFileDialog
     Friend WithEvents Num_ODFFontSize As System.Windows.Forms.NumericUpDown
-    Friend WithEvents Menu_Sections1 As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_TextStyle As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_TextInstance As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_ImageSet As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_ImageSetElement As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_ImageSetInstance As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_DisplayPage As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_KeyImageSet As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_Division As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_DivisionInput As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_Switch As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_SwitchLinkage As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_SwitchExclusiveSelectGroup As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_SwitchExclusiveSelectGroupElement As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_Keyboard As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_KeyboardKey As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_KeyAction As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_Rank As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_ExternalRank As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_ExternalPipe As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_Stop As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_StopRank As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_Sections2 As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_ReversiblePiston As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_Combination As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_CombinationElement As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_ContinuousControl As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_ContinuousControlStageSwitch As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_ContinuousControlImageSetStage As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents Lbl_SecStartTitle As System.Windows.Forms.Label
     Friend WithEvents Lbl_SecEndTitle As System.Windows.Forms.Label
     Friend WithEvents Lbl_RowStartTitle As System.Windows.Forms.Label
@@ -2194,20 +1798,7 @@ Partial Class MAIN
     Friend WithEvents Lbl_SectionName As System.Windows.Forms.Label
     Friend WithEvents Lbl_NumTagsTitle As System.Windows.Forms.Label
     Friend WithEvents Lbl_NumTagsVal As System.Windows.Forms.Label
-    Friend WithEvents Menu_Enclosure As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_EnclosurePipe As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_Tremulant As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_TremulantWaveform As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents Rtb_DescText As System.Windows.Forms.RichTextBox
-    Friend WithEvents Menu_TremulantWaveformPipe As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_ContinuousControlLinkage As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_ContinuousControlDoubleLinkage As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_ThreePositionSwitchImage As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_WindCompartment As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_WindCompartmentLinkage As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_Sample As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_PipeSoundEngine01 As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_PipeSoundEngine01Layer As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents Rtb_XMLRow As System.Windows.Forms.RichTextBox
     Friend WithEvents Btn_SaveDescText As System.Windows.Forms.Button
     Friend WithEvents Pnl_Tags As System.Windows.Forms.Panel
@@ -2259,9 +1850,6 @@ Partial Class MAIN
     Friend WithEvents LabelTag2 As System.Windows.Forms.Label
     Friend WithEvents tag1 As System.Windows.Forms.Label
     Friend WithEvents LabelTag1 As System.Windows.Forms.Label
-    Friend WithEvents Menu_PipeSoundEngine01AttackSample As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_PipeSoundEngine01ReleaseSample As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_RequiredInstallationPackage As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents Menu_HelpAbout As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents Menu_Help As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents Lbl_LineNum As System.Windows.Forms.Label
@@ -2315,7 +1903,6 @@ Partial Class MAIN
     Friend WithEvents Lbl_LineStartTitle As Windows.Forms.Label
     Friend WithEvents Status_RowTypeTitle As Windows.Forms.ToolStripStatusLabel
     Friend WithEvents Status_RowTypeVal As Windows.Forms.ToolStripStatusLabel
-    Friend WithEvents Menu_General As Windows.Forms.ToolStripMenuItem
     Friend WithEvents Status_FileDirtyTitle As Windows.Forms.ToolStripStatusLabel
     Friend WithEvents Status_FileDirtyVal As Windows.Forms.ToolStripStatusLabel
     Friend WithEvents Menu_PrintDT As Windows.Forms.ToolStripMenuItem
@@ -2326,4 +1913,5 @@ Partial Class MAIN
     Friend WithEvents Status_LinesVal As Windows.Forms.ToolStripStatusLabel
     Friend WithEvents Status_CharsTitle As Windows.Forms.ToolStripStatusLabel
     Friend WithEvents Status_CharsVal As Windows.Forms.ToolStripStatusLabel
+    Friend WithEvents Menu_SectionsA As Windows.Forms.ToolStripMenuItem
 End Class

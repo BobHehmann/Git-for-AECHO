@@ -334,7 +334,7 @@
     4)  Changed TakeRowAction() to use Case statement to decide on semantics of the Action button.
 
 1.060.6     June 2, 2021 Bob Hehmann
-    Git:    PositionsAsLines
+    Git:        PositionsAsLines
     Summary:    Modify the Data Panel's Section Start/End and Row Start/End fields to display both Line and Char values.
     Details:    In present ODF's, Section Start/End Tags always index to dedicated Lines; Rows always are comprised of
                 continguous dedicated Lines. Neither construct shares a Line with another. Changing the displays to present
@@ -360,6 +360,32 @@
         absolute position, so if editing moves text, a Marker may drift from its original textual postion i.e., if a Marker
         is set to character 100, then 50 chars are added at position 10, then the Marker will still be positioned to
         index 100, now 50 characters before the original textual area.
+
+1.060.7     June 2, 2021 Bob Hehmann
+    Git:        DynamicSecMenus
+    Summary:    Replace Static Menus for direct-access to  Sections with calculated menus that reflect the actual
+                Sections present when parsed. Allows creation of new Sections without coding.
+    Details:    When enumerating the Sections at initial ODF load or due to Recompute request, the Section Menu is
+                first cleared, then each SectionName is added as it is found. The two menu item design was replaced
+                with a single Sections entry on the Menu-Bar, which then is dynamically populated with hierarchical sub-menus
+                that each handle up to 22 entries. Implemented as a three-level hierarchy: Section Menu -> Section Groups ->
+                Links to Individual Sections. The Groups are similar to the original top-level menu entries, each
+                holding up to 22 individual links.
+
+    1)  Modified main Menu-Bar to have a single Sections menu entry, initially null. When initializing to "NoODF", or
+        when a full enumeration of Sections is to be performed, this entry is scanned bottom-up, deleteing any entries:
+        for each Sub-menu entry, delete all of that entries navigation items, then delete that entry.
+
+    2)  As Sections are located during enumeration, a routine adds them to the Sections Menu. The add routing breaks them
+        into groups of 22, creating a sub-menu level for each group. When that group is full, the next add creates the
+        next group.
+
+    3)  After all menu-additionas are complete, the structure is scanned, creating .Tag entries containing each Section's
+        Name for the third-level in the hierarchy, and attaching it to the common Click-Event handler (unchanged from
+        prior versions.) The intermediate levels have their visible text suffixed with their range: "1-22", "23-44"...
+        The levels are not clickable.
+
+    4)  The old hard-coded linkages to the Event Handler are deleted.
 
 Routines relocated from various forms over to SharedCode.vb (or new routines created in SharedCode.vb):
 
@@ -402,7 +428,7 @@ Friend Sub          TraceSample()                   <Relocated from Follow Form>
 Private Sub         TraceAddSection                 <New, abstracts repeated code from TraceSample()>
 Friend Function     LocateRecRowByKey()             <New, modified logic from old TraceSample, now generalized for reuse>
 Friend Sub          AppendTxt()                     <New, appends text to any enhanced RTB, allowing choice of Font and Color>
-
+Friend Sub          AddSEcSubMenu()                 <New, processes addition of Section Names to the Sections Menu hierarchy>
 
 Private Sub         ColorSectionTitles()            <Deprecated, no longer used>
 Friend Sub          GetSectionsInfos()              <Deprecated, not needed with elimination of ReCompute & S_Sections array>

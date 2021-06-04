@@ -45,6 +45,10 @@ Public Class MAIN
     '   Git:        PositionsAsLines
     '   Summary:    Modify Section Start/End & Row Star/End fields to display both Line and Char Positions.
 
+    '   1.060.7     June 3, 2021 Bob Hehmann
+    '   Git:        DynamicSecMenus
+    '   Summary:    Replace static Section Navigation Menus with Menus created from ODF Content - including via Recompute
+
     Dim M_FoundStart As Integer = -1    ' <1.060.2> When a text-search succeeds, this becomes index of start of located text
     Dim M_FoundEnd As Integer = 0       ' <1.060.2> Defines the end of located text; when 0, there is no located text defined.
     Dim M_FirstChar As Integer          ' <1.060.2> Current position in print-stream, between page calls
@@ -390,8 +394,6 @@ Public Class MAIN
             Text = conMainTitle & My.Application.Info.Version.ToString &
                 ", Current ODF is " & G_OrganFile                           ' Update the Windows Title Bar. <1.059.0> changed text to "Compiled" <1.060.2> Setup for "Close file" in Menu Bar
 
-            Menu_Sections1.Enabled = True                                   ' valider les menus Sections et boutons; enable the menu sections and buttons
-            Menu_Sections2.Enabled = True
             Menu_CloseODF.Enabled = True                                    ' <1.060.2> New menu choice, close the current ODF (with option to save if content changed)
             Menu_SaveAs.Enabled = True                                      ' <1.060.2> File is loaded, so now we can save it
             Menu_EditMode.Enabled = True
@@ -501,34 +503,22 @@ Public Class MAIN
     ' MENU SECTIONS
     Private Sub Menu_SectionChoice_Click(sender As ToolStripMenuItem,  ' Standard Control event parms...
                                    e As EventArgs
-                                   ) Handles Menu_General.Click, Menu_DisplayPage.Click,
-            Menu_TextStyle.Click, Menu_TextInstance.Click, Menu_ImageSet.Click, Menu_ImageSetElement.Click,
-            Menu_ImageSetInstance.Click, Menu_KeyImageSet.Click, Menu_Division.Click, Menu_DivisionInput.Click,
-            Menu_Switch.Click, Menu_SwitchLinkage.Click, Menu_SwitchExclusiveSelectGroup.Click,
-            Menu_SwitchExclusiveSelectGroupElement.Click, Menu_Keyboard.Click, Menu_KeyboardKey.Click,
-            Menu_KeyAction.Click, Menu_Rank.Click, Menu_ExternalRank.Click, Menu_ExternalPipe.Click, Menu_Stop.Click,
-            Menu_StopRank.Click, Menu_ReversiblePiston.Click, Menu_Combination.Click, Menu_CombinationElement.Click,
-            Menu_ContinuousControl.Click, Menu_ContinuousControlStageSwitch.Click, Menu_ContinuousControlImageSetStage.Click,
-            Menu_Enclosure.Click, Menu_EnclosurePipe.Click, Menu_Tremulant.Click, Menu_TremulantWaveform.Click,
-            Menu_TremulantWaveformPipe.Click, Menu_ContinuousControlLinkage.Click, Menu_ContinuousControlDoubleLinkage.Click,
-            Menu_ThreePositionSwitchImage.Click, Menu_WindCompartment.Click, Menu_WindCompartmentLinkage.Click,
-            Menu_Sample.Click, Menu_PipeSoundEngine01.Click, Menu_PipeSoundEngine01Layer.Click,
-            Menu_PipeSoundEngine01AttackSample.Click, Menu_PipeSoundEngine01ReleaseSample.Click, Menu_RequiredInstallationPackage.Click
+                                   )
 
-        ' Purpose:      Process the 44 "Select a Section" Menu Bar choices, to navigate directly
-        '               to the desired Section in the ODF.
-        ' Process:		Pass the hard-coded name of the Section to PositionToSectionByName(), based on which item
-        '               is chosen from the Menu Bar: the name is from the Tag Property of each Menu Item.
+        ' Purpose:      Process Section Menu choices, to navigate directly to Sections in the ODF.
+        ' Process:		When building the Sections Menu, Sections are linked dynamically to this handler. The .Tags property of
+        '               each Section entry has the exact name of the Section: pass this to PositionToSectionByName().
         ' Called By:    Each of the Section Menu choices' Click Events...
         ' Side Effects: <NA>
         ' Notes:        <None>
         ' Updates:      <1.060.2> Eliminated 43 distinct functions/calls, moved SectionName literals into the Tag
         '               Properties of the Menu Items, just retrieve that Tag-text and go to that section. Added
         '               _General Section to the Menu, other logic now handles this unique Section.
+        '               <1.060.7> Removed all explicit "Handles" references, Event Handler linkages are now built
+        '               programatically.
 
         Const lclProcName As String =                                   ' <1.060.2> Routine's name for message handling
             "Menu_SectionChoice_Click"
-
 
         PositionToSectionByName(sender.Tag, True)                       ' <1.060.2> Pass embedded Tag data to search: Tag = SectionName; True -> update Descriptive Box
 
@@ -1442,6 +1432,62 @@ Public Class MAIN
         Else
             e.HasMorePages = False
         End If
+
+    End Sub
+    Public Sub BuildSecMenus()
+
+        Const lclProcName As String = "BuildSecMenus"
+
+        ' Purpose:      Scans the Sections Menu, filling out .Tag properties, adding
+        '               references to the Event Handler for lowest-level entries,
+        '               and completing the range (1-22, 22-44...) in the text of the
+        '               intermediate entries.
+        ' Process:      If this starts a new group of 22, add the Group entry first,
+        '               then add the new Section as the last entry of the last group.
+        ' Called By:    EnumerateSectionsSetFont()
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.7> First implemented, for dynamic Section Menus
+
+        Dim beg As Integer = 1                                              ' Beginning value of each Group's range: 1, 23, 45...
+
+        For Each i As ToolStripMenuItem In Menu_SectionsA.DropDownItems     ' This level loops through the intermediate Groups
+            i.Tag = ""                                                      ' No .Tag properties at this level
+            i.Enabled = True
+            For Each j As ToolStripMenuItem In i.DropDownItems              ' Loop over the individual entries within each Group
+                j.Tag = j.Text                                              ' These are the actual active links, set the .Tag
+                AddHandler j.Click, AddressOf Menu_SectionChoice_Click      ' Link the individual entries to the Event Handler
+                j.Enabled = True
+            Next
+            i.Text += " " & beg.ToString & "-" &                            ' Add the range to the text of the Group level entry
+                ((beg + i.DropDownItems.Count) - 1).ToString
+            beg += i.DropDownItems.Count                                    ' Advance to beginning value for the next Group
+        Next
+
+        If Menu_SectionsA.DropDownItems.Count > 0 Then                      ' Enable the Menu-Bar level if there is any content
+            Menu_SectionsA.Enabled = True
+        Else                                                                ' Otherwise leave is disabled, no Sections
+            Menu_SectionsA.Enabled = False
+        End If
+
+    End Sub
+
+    Public Sub ClearSecMenus()
+
+        ' Purpose:      Deletes all Group and Detail entries from the Sections menu
+        ' Process:      For each Group, delete all its children, then delete the Group
+        ' Called By:    ResetToNoODF(); EnumerateSectionsSetFont()
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.7> First implemented, for dynamic Section Menus
+
+        Const lclProcName As String = "ClearSecMenus"
+
+        For Each i As ToolStripMenuItem In Menu_SectionsA.DropDownItems
+            i.DropDownItems.Clear()             ' Delete the detail level entries first
+        Next
+        Menu_SectionsA.DropDownItems.Clear()    ' Then their parent Group entry
+        Menu_SectionsA.Enabled = False          ' When done, grey-out the main Menu-Bar entry
 
     End Sub
 
