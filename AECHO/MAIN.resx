@@ -92,8 +92,27 @@ Pitch Rank Base, Pitch Normal MIDI Note, Pitch Exact
 Sample Pitch, License Info, and Pipe Sound Engine 01
 Attack Sample.</value>
   </data>
+  <data name="Menu_ListSections.ToolTipText" xml:space="preserve">
+    <value>Display the List of Sections (SecID, LIne Start/End,
+Character Position Start/End, Section Name) in
+the Descriptive Text Area. If data has changed
+sinced last Recompute, asks if Sections should
+be recalculated before display.</value>
+  </data>
+  <metadata name="CM_ODF.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1271, 17</value>
+  </metadata>
+  <metadata name="CM_XML.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>958, 17</value>
+  </metadata>
   <metadata name="OpenFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>130, 17</value>
+  </metadata>
+  <metadata name="CM_Desc.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1170, 17</value>
+  </metadata>
+  <metadata name="CM_Search.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1058, 17</value>
   </metadata>
   <metadata name="Status_Strip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>265, 17</value>

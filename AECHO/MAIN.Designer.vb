@@ -22,6 +22,7 @@ Partial Class MAIN
     'Ne la modifiez pas à l'aide de l'éditeur de code.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(MAIN))
         Me.Menu_Strip = New System.Windows.Forms.MenuStrip()
         Me.Menu_File = New System.Windows.Forms.ToolStripMenuItem()
@@ -32,6 +33,7 @@ Partial Class MAIN
         Me.Menu_PrintDT = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_Sep3 = New System.Windows.Forms.ToolStripSeparator()
         Me.Menu_Quit = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Menu_SectionsA = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_EditMode = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_EditModeStart = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_EditModeExit = New System.Windows.Forms.ToolStripMenuItem()
@@ -40,11 +42,24 @@ Partial Class MAIN
         Me.Menu_ClearMarkers = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_CouplersCode = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_FollowASample = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Menu_ListSections = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_HelpAbout = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_Help = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_About = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_SectionsA = New System.Windows.Forms.ToolStripMenuItem()
         Me.Rtb_ODF = New System.Windows.Forms.RichTextBox()
+        Me.CM_ODF = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.CM_ODFUndo = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CM_ODFRedo = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator4 = New System.Windows.Forms.ToolStripSeparator()
+        Me.CM_ODFCut = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CM_ODFCopy = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CM_ODFPaste = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator()
+        Me.CM_ODFEditMode = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator6 = New System.Windows.Forms.ToolStripSeparator()
+        Me.CM_ODFRecompute = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CM_XML = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.CM_XMLCopy = New System.Windows.Forms.ToolStripMenuItem()
         Me.OpenFileDialog = New System.Windows.Forms.OpenFileDialog()
         Me.Num_ODFFontSize = New System.Windows.Forms.NumericUpDown()
         Me.Lbl_SecStartTitle = New System.Windows.Forms.Label()
@@ -62,6 +77,15 @@ Partial Class MAIN
         Me.Lbl_NumTagsTitle = New System.Windows.Forms.Label()
         Me.Lbl_NumTagsVal = New System.Windows.Forms.Label()
         Me.Rtb_DescText = New System.Windows.Forms.RichTextBox()
+        Me.CM_Desc = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.CM_DescUndo = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CM_DescRedo = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
+        Me.CM_DescCut = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CM_DescCopy = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CM_DescPaste = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator()
+        Me.CM_DescPrint = New System.Windows.Forms.ToolStripMenuItem()
         Me.Rtb_XMLRow = New System.Windows.Forms.RichTextBox()
         Me.Btn_SaveDescText = New System.Windows.Forms.Button()
         Me.Pnl_Tags = New System.Windows.Forms.Panel()
@@ -122,6 +146,12 @@ Partial Class MAIN
         Me.Btn_FindNext = New System.Windows.Forms.Button()
         Me.Btn_FindFirst = New System.Windows.Forms.Button()
         Me.Txt_SearchText = New System.Windows.Forms.TextBox()
+        Me.CM_Search = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.CM_SearchUndo = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
+        Me.CM_SearchCut = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CM_SearchCopy = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CM_SearchPaste = New System.Windows.Forms.ToolStripMenuItem()
         Me.Btn_Led = New System.Windows.Forms.Button()
         Me.Btn_SetFont = New System.Windows.Forms.Button()
         Me.Btn_Marker1 = New System.Windows.Forms.Button()
@@ -159,9 +189,13 @@ Partial Class MAIN
         Me.PrintDialog1 = New System.Windows.Forms.PrintDialog()
         Me.PrintDocument1 = New System.Drawing.Printing.PrintDocument()
         Me.Menu_Strip.SuspendLayout()
+        Me.CM_ODF.SuspendLayout()
+        Me.CM_XML.SuspendLayout()
         CType(Me.Num_ODFFontSize, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.CM_Desc.SuspendLayout()
         Me.Pnl_Tags.SuspendLayout()
         Me.Pnl_Find.SuspendLayout()
+        Me.CM_Search.SuspendLayout()
         Me.Pnl_Data.SuspendLayout()
         Me.Status_Strip1.SuspendLayout()
         Me.SuspendLayout()
@@ -243,6 +277,13 @@ Partial Class MAIN
         Me.Menu_Quit.ToolTipText = "Exits AECHO. If there is an ODF onscreen that has" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "been modified since it was ope" &
     "ned or last saved," & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "then Exit will offer to save that file before exiting."
         '
+        'Menu_SectionsA
+        '
+        Me.Menu_SectionsA.Enabled = False
+        Me.Menu_SectionsA.Name = "Menu_SectionsA"
+        Me.Menu_SectionsA.Size = New System.Drawing.Size(63, 20)
+        Me.Menu_SectionsA.Text = "&Sections"
+        '
         'Menu_EditMode
         '
         Me.Menu_EditMode.BackColor = System.Drawing.Color.Gainsboro
@@ -257,7 +298,9 @@ Partial Class MAIN
         'Menu_EditModeStart
         '
         Me.Menu_EditModeStart.Name = "Menu_EditModeStart"
-        Me.Menu_EditModeStart.Size = New System.Drawing.Size(185, 22)
+        Me.Menu_EditModeStart.ShortcutKeys = CType(((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Alt) _
+            Or System.Windows.Forms.Keys.E), System.Windows.Forms.Keys)
+        Me.Menu_EditModeStart.Size = New System.Drawing.Size(250, 22)
         Me.Menu_EditModeStart.Text = "ODF Editing &Enabled"
         Me.Menu_EditModeStart.ToolTipText = "Selecting this enters Edit-Mode, allowing modifications" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "to the current ODF. When" &
     " enabled, the Main Menu" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Item ""Edit Mode"" is highlighted with a RED background."
@@ -265,20 +308,24 @@ Partial Class MAIN
         'Menu_EditModeExit
         '
         Me.Menu_EditModeExit.Name = "Menu_EditModeExit"
-        Me.Menu_EditModeExit.Size = New System.Drawing.Size(185, 22)
+        Me.Menu_EditModeExit.ShortcutKeys = CType(((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Alt) _
+            Or System.Windows.Forms.Keys.D), System.Windows.Forms.Keys)
+        Me.Menu_EditModeExit.Size = New System.Drawing.Size(250, 22)
         Me.Menu_EditModeExit.Text = "ODF Editing &Disabled"
         Me.Menu_EditModeExit.ToolTipText = "This command exits Edit-Mode, returning the ODF" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "to read-only."
         '
         'Menu_ReComputeSections
         '
         Me.Menu_ReComputeSections.Name = "Menu_ReComputeSections"
-        Me.Menu_ReComputeSections.Size = New System.Drawing.Size(185, 22)
+        Me.Menu_ReComputeSections.ShortcutKeys = CType(((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Alt) _
+            Or System.Windows.Forms.Keys.R), System.Windows.Forms.Keys)
+        Me.Menu_ReComputeSections.Size = New System.Drawing.Size(250, 22)
         Me.Menu_ReComputeSections.Text = "&Recompute Sections"
         Me.Menu_ReComputeSections.ToolTipText = resources.GetString("Menu_ReComputeSections.ToolTipText")
         '
         'Menu_Tools
         '
-        Me.Menu_Tools.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Menu_ClearMarkers, Me.Menu_CouplersCode, Me.Menu_FollowASample})
+        Me.Menu_Tools.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Menu_ClearMarkers, Me.Menu_CouplersCode, Me.Menu_FollowASample, Me.Menu_ListSections})
         Me.Menu_Tools.Name = "Menu_Tools"
         Me.Menu_Tools.Size = New System.Drawing.Size(46, 20)
         Me.Menu_Tools.Text = "&Tools"
@@ -305,6 +352,13 @@ Partial Class MAIN
         Me.Menu_FollowASample.Text = "&Trace a Sample"
         Me.Menu_FollowASample.ToolTipText = resources.GetString("Menu_FollowASample.ToolTipText")
         '
+        'Menu_ListSections
+        '
+        Me.Menu_ListSections.Name = "Menu_ListSections"
+        Me.Menu_ListSections.Size = New System.Drawing.Size(216, 22)
+        Me.Menu_ListSections.Text = "&List Sections"
+        Me.Menu_ListSections.ToolTipText = resources.GetString("Menu_ListSections.ToolTipText")
+        '
         'Menu_HelpAbout
         '
         Me.Menu_HelpAbout.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Menu_Help, Me.Menu_About})
@@ -329,16 +383,10 @@ Partial Class MAIN
         Me.Menu_About.Text = "&About AECHO"
         Me.Menu_About.ToolTipText = "Displays AECHO's About Box."
         '
-        'Menu_SectionsA
-        '
-        Me.Menu_SectionsA.Enabled = False
-        Me.Menu_SectionsA.Name = "Menu_SectionsA"
-        Me.Menu_SectionsA.Size = New System.Drawing.Size(63, 20)
-        Me.Menu_SectionsA.Text = "&Sections"
-        '
         'Rtb_ODF
         '
         Me.Rtb_ODF.BackColor = System.Drawing.Color.WhiteSmoke
+        Me.Rtb_ODF.ContextMenuStrip = Me.CM_ODF
         Me.Rtb_ODF.DetectUrls = False
         Me.Rtb_ODF.Font = New System.Drawing.Font("Arial", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
         Me.Rtb_ODF.HideSelection = False
@@ -350,6 +398,101 @@ Partial Class MAIN
         Me.Rtb_ODF.TabIndex = 1
         Me.Rtb_ODF.Text = ""
         Me.Rtb_ODF.WordWrap = False
+        '
+        'CM_ODF
+        '
+        Me.CM_ODF.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CM_ODFUndo, Me.CM_ODFRedo, Me.ToolStripSeparator4, Me.CM_ODFCut, Me.CM_ODFCopy, Me.CM_ODFPaste, Me.ToolStripSeparator5, Me.CM_ODFEditMode, Me.ToolStripSeparator6, Me.CM_ODFRecompute})
+        Me.CM_ODF.Name = "CM_ODF"
+        Me.CM_ODF.Size = New System.Drawing.Size(183, 176)
+        '
+        'CM_ODFUndo
+        '
+        Me.CM_ODFUndo.Name = "CM_ODFUndo"
+        Me.CM_ODFUndo.ShortcutKeyDisplayString = " "
+        Me.CM_ODFUndo.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Z), System.Windows.Forms.Keys)
+        Me.CM_ODFUndo.Size = New System.Drawing.Size(182, 22)
+        Me.CM_ODFUndo.Text = "Undo"
+        Me.CM_ODFUndo.ToolTipText = "Undo last operation in the" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "ODF Area"
+        '
+        'CM_ODFRedo
+        '
+        Me.CM_ODFRedo.Name = "CM_ODFRedo"
+        Me.CM_ODFRedo.ShortcutKeyDisplayString = " "
+        Me.CM_ODFRedo.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Y), System.Windows.Forms.Keys)
+        Me.CM_ODFRedo.Size = New System.Drawing.Size(182, 22)
+        Me.CM_ODFRedo.Text = "Redo"
+        Me.CM_ODFRedo.ToolTipText = "Redo  last operation in the " & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "ODF Area"
+        '
+        'ToolStripSeparator4
+        '
+        Me.ToolStripSeparator4.Name = "ToolStripSeparator4"
+        Me.ToolStripSeparator4.Size = New System.Drawing.Size(179, 6)
+        '
+        'CM_ODFCut
+        '
+        Me.CM_ODFCut.Name = "CM_ODFCut"
+        Me.CM_ODFCut.ShortcutKeyDisplayString = " "
+        Me.CM_ODFCut.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.X), System.Windows.Forms.Keys)
+        Me.CM_ODFCut.Size = New System.Drawing.Size(182, 22)
+        Me.CM_ODFCut.Text = "Cut"
+        Me.CM_ODFCut.ToolTipText = "Cut selected text from the" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "ODF Area"
+        '
+        'CM_ODFCopy
+        '
+        Me.CM_ODFCopy.Name = "CM_ODFCopy"
+        Me.CM_ODFCopy.ShortcutKeyDisplayString = " "
+        Me.CM_ODFCopy.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
+        Me.CM_ODFCopy.Size = New System.Drawing.Size(182, 22)
+        Me.CM_ODFCopy.Text = "Copy"
+        Me.CM_ODFCopy.ToolTipText = "Copy selected text from the" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "ODF Area"
+        '
+        'CM_ODFPaste
+        '
+        Me.CM_ODFPaste.Name = "CM_ODFPaste"
+        Me.CM_ODFPaste.ShortcutKeyDisplayString = " "
+        Me.CM_ODFPaste.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.V), System.Windows.Forms.Keys)
+        Me.CM_ODFPaste.Size = New System.Drawing.Size(182, 22)
+        Me.CM_ODFPaste.Text = "Paste"
+        Me.CM_ODFPaste.ToolTipText = "Paste text into the ODF Area"
+        '
+        'ToolStripSeparator5
+        '
+        Me.ToolStripSeparator5.Name = "ToolStripSeparator5"
+        Me.ToolStripSeparator5.Size = New System.Drawing.Size(179, 6)
+        '
+        'CM_ODFEditMode
+        '
+        Me.CM_ODFEditMode.Name = "CM_ODFEditMode"
+        Me.CM_ODFEditMode.Size = New System.Drawing.Size(182, 22)
+        Me.CM_ODFEditMode.Text = "Enable Editing"
+        Me.CM_ODFEditMode.ToolTipText = "Enable or Disable editing of the" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "ODF Area"
+        '
+        'ToolStripSeparator6
+        '
+        Me.ToolStripSeparator6.Name = "ToolStripSeparator6"
+        Me.ToolStripSeparator6.Size = New System.Drawing.Size(179, 6)
+        '
+        'CM_ODFRecompute
+        '
+        Me.CM_ODFRecompute.Name = "CM_ODFRecompute"
+        Me.CM_ODFRecompute.Size = New System.Drawing.Size(182, 22)
+        Me.CM_ODFRecompute.Text = "Recompute Sections"
+        Me.CM_ODFRecompute.ToolTipText = "Recompute the Section locations"
+        '
+        'CM_XML
+        '
+        Me.CM_XML.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CM_XMLCopy})
+        Me.CM_XML.Name = "CM_XML"
+        Me.CM_XML.Size = New System.Drawing.Size(181, 48)
+        '
+        'CM_XMLCopy
+        '
+        Me.CM_XMLCopy.Name = "CM_XMLCopy"
+        Me.CM_XMLCopy.ShortcutKeyDisplayString = " "
+        Me.CM_XMLCopy.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
+        Me.CM_XMLCopy.Size = New System.Drawing.Size(180, 22)
+        Me.CM_XMLCopy.Text = "Copy"
+        Me.CM_XMLCopy.ToolTipText = "Copy text from the XML Row/Record Area"
         '
         'Num_ODFFontSize
         '
@@ -526,6 +669,7 @@ Partial Class MAIN
         'Rtb_DescText
         '
         Me.Rtb_DescText.AcceptsTab = True
+        Me.Rtb_DescText.ContextMenuStrip = Me.CM_Desc
         Me.Rtb_DescText.DetectUrls = False
         Me.Rtb_DescText.Font = New System.Drawing.Font("Verdana", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
         Me.Rtb_DescText.Location = New System.Drawing.Point(722, 451)
@@ -536,9 +680,80 @@ Partial Class MAIN
         Me.Rtb_DescText.Text = ""
         Me.Rtb_DescText.WordWrap = False
         '
+        'CM_Desc
+        '
+        Me.CM_Desc.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CM_DescUndo, Me.CM_DescRedo, Me.ToolStripSeparator2, Me.CM_DescCut, Me.CM_DescCopy, Me.CM_DescPaste, Me.ToolStripSeparator3, Me.CM_DescPrint})
+        Me.CM_Desc.Name = "CM_Desc"
+        Me.CM_Desc.Size = New System.Drawing.Size(119, 148)
+        '
+        'CM_DescUndo
+        '
+        Me.CM_DescUndo.Name = "CM_DescUndo"
+        Me.CM_DescUndo.ShortcutKeyDisplayString = " "
+        Me.CM_DescUndo.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Z), System.Windows.Forms.Keys)
+        Me.CM_DescUndo.Size = New System.Drawing.Size(118, 22)
+        Me.CM_DescUndo.Text = "Undo"
+        Me.CM_DescUndo.ToolTipText = "Undo last from the Descriptive" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Text Area"
+        '
+        'CM_DescRedo
+        '
+        Me.CM_DescRedo.Name = "CM_DescRedo"
+        Me.CM_DescRedo.ShortcutKeyDisplayString = " "
+        Me.CM_DescRedo.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Y), System.Windows.Forms.Keys)
+        Me.CM_DescRedo.Size = New System.Drawing.Size(118, 22)
+        Me.CM_DescRedo.Text = "Redo"
+        Me.CM_DescRedo.ToolTipText = "Redo the last operation in the" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Descriptive Text Area"
+        '
+        'ToolStripSeparator2
+        '
+        Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
+        Me.ToolStripSeparator2.Size = New System.Drawing.Size(115, 6)
+        '
+        'CM_DescCut
+        '
+        Me.CM_DescCut.Name = "CM_DescCut"
+        Me.CM_DescCut.ShortcutKeyDisplayString = " "
+        Me.CM_DescCut.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.X), System.Windows.Forms.Keys)
+        Me.CM_DescCut.Size = New System.Drawing.Size(118, 22)
+        Me.CM_DescCut.Text = "Cut"
+        Me.CM_DescCut.ToolTipText = "Cut text from the Descriptive" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Text Area"
+        '
+        'CM_DescCopy
+        '
+        Me.CM_DescCopy.Name = "CM_DescCopy"
+        Me.CM_DescCopy.ShortcutKeyDisplayString = " "
+        Me.CM_DescCopy.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
+        Me.CM_DescCopy.Size = New System.Drawing.Size(118, 22)
+        Me.CM_DescCopy.Text = "Copy"
+        Me.CM_DescCopy.ToolTipText = "Copy text from the Descriptive" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Text Area"
+        '
+        'CM_DescPaste
+        '
+        Me.CM_DescPaste.Name = "CM_DescPaste"
+        Me.CM_DescPaste.ShortcutKeyDisplayString = " "
+        Me.CM_DescPaste.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.V), System.Windows.Forms.Keys)
+        Me.CM_DescPaste.Size = New System.Drawing.Size(118, 22)
+        Me.CM_DescPaste.Text = "Paste"
+        Me.CM_DescPaste.ToolTipText = "Paste text or image into the" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Descriptive Text Area"
+        '
+        'ToolStripSeparator3
+        '
+        Me.ToolStripSeparator3.Name = "ToolStripSeparator3"
+        Me.ToolStripSeparator3.Size = New System.Drawing.Size(115, 6)
+        '
+        'CM_DescPrint
+        '
+        Me.CM_DescPrint.Name = "CM_DescPrint"
+        Me.CM_DescPrint.ShortcutKeyDisplayString = " "
+        Me.CM_DescPrint.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.P), System.Windows.Forms.Keys)
+        Me.CM_DescPrint.Size = New System.Drawing.Size(118, 22)
+        Me.CM_DescPrint.Text = "Print..."
+        Me.CM_DescPrint.ToolTipText = "Print the Descriptive Text Area"
+        '
         'Rtb_XMLRow
         '
         Me.Rtb_XMLRow.BackColor = System.Drawing.Color.WhiteSmoke
+        Me.Rtb_XMLRow.ContextMenuStrip = Me.CM_XML
         Me.Rtb_XMLRow.DetectUrls = False
         Me.Rtb_XMLRow.Font = New System.Drawing.Font("Arial", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
         Me.Rtb_XMLRow.Location = New System.Drawing.Point(14, 307)
@@ -1331,11 +1546,60 @@ Partial Class MAIN
         '
         'Txt_SearchText
         '
+        Me.Txt_SearchText.ContextMenuStrip = Me.CM_Search
         Me.Txt_SearchText.Location = New System.Drawing.Point(94, 12)
         Me.Txt_SearchText.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Txt_SearchText.Name = "Txt_SearchText"
         Me.Txt_SearchText.Size = New System.Drawing.Size(857, 23)
         Me.Txt_SearchText.TabIndex = 75
+        '
+        'CM_Search
+        '
+        Me.CM_Search.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CM_SearchUndo, Me.ToolStripSeparator1, Me.CM_SearchCut, Me.CM_SearchCopy, Me.CM_SearchPaste})
+        Me.CM_Search.Name = "ContextMenuStrip1"
+        Me.CM_Search.Size = New System.Drawing.Size(114, 98)
+        Me.CM_Search.Text = "Search"
+        '
+        'CM_SearchUndo
+        '
+        Me.CM_SearchUndo.Name = "CM_SearchUndo"
+        Me.CM_SearchUndo.ShortcutKeyDisplayString = " "
+        Me.CM_SearchUndo.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Z), System.Windows.Forms.Keys)
+        Me.CM_SearchUndo.Size = New System.Drawing.Size(113, 22)
+        Me.CM_SearchUndo.Text = "Undo"
+        Me.CM_SearchUndo.ToolTipText = "Undo the last operation in the" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Search Box"
+        '
+        'ToolStripSeparator1
+        '
+        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(110, 6)
+        '
+        'CM_SearchCut
+        '
+        Me.CM_SearchCut.Name = "CM_SearchCut"
+        Me.CM_SearchCut.ShortcutKeyDisplayString = " "
+        Me.CM_SearchCut.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.X), System.Windows.Forms.Keys)
+        Me.CM_SearchCut.Size = New System.Drawing.Size(113, 22)
+        Me.CM_SearchCut.Text = "Cut"
+        Me.CM_SearchCut.ToolTipText = "Cut text from the Search Box"
+        '
+        'CM_SearchCopy
+        '
+        Me.CM_SearchCopy.Name = "CM_SearchCopy"
+        Me.CM_SearchCopy.ShortcutKeyDisplayString = " "
+        Me.CM_SearchCopy.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
+        Me.CM_SearchCopy.Size = New System.Drawing.Size(113, 22)
+        Me.CM_SearchCopy.Text = "Copy"
+        Me.CM_SearchCopy.ToolTipText = "Copy Text from the Search Box"
+        '
+        'CM_SearchPaste
+        '
+        Me.CM_SearchPaste.Name = "CM_SearchPaste"
+        Me.CM_SearchPaste.ShortcutKeyDisplayString = " "
+        Me.CM_SearchPaste.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.V), System.Windows.Forms.Keys)
+        Me.CM_SearchPaste.Size = New System.Drawing.Size(113, 22)
+        Me.CM_SearchPaste.Text = "Paste"
+        Me.CM_SearchPaste.ToolTipText = "Paste text into the Search Box"
         '
         'Btn_Led
         '
@@ -1764,11 +2028,15 @@ Partial Class MAIN
         Me.Text = "AECHO : Hauptwerk Organ Analyzer , Version 1.62.X"
         Me.Menu_Strip.ResumeLayout(False)
         Me.Menu_Strip.PerformLayout()
+        Me.CM_ODF.ResumeLayout(False)
+        Me.CM_XML.ResumeLayout(False)
         CType(Me.Num_ODFFontSize, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.CM_Desc.ResumeLayout(False)
         Me.Pnl_Tags.ResumeLayout(False)
         Me.Pnl_Tags.PerformLayout()
         Me.Pnl_Find.ResumeLayout(False)
         Me.Pnl_Find.PerformLayout()
+        Me.CM_Search.ResumeLayout(False)
         Me.Pnl_Data.ResumeLayout(False)
         Me.Pnl_Data.PerformLayout()
         Me.Status_Strip1.ResumeLayout(False)
@@ -1914,4 +2182,33 @@ Partial Class MAIN
     Friend WithEvents Status_CharsTitle As Windows.Forms.ToolStripStatusLabel
     Friend WithEvents Status_CharsVal As Windows.Forms.ToolStripStatusLabel
     Friend WithEvents Menu_SectionsA As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents CM_XML As Windows.Forms.ContextMenuStrip
+    Friend WithEvents CM_XMLCopy As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents CM_Search As Windows.Forms.ContextMenuStrip
+    Friend WithEvents CM_SearchUndo As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator1 As Windows.Forms.ToolStripSeparator
+    Friend WithEvents CM_SearchCut As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents CM_SearchCopy As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents CM_SearchPaste As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents Menu_ListSections As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents CM_Desc As Windows.Forms.ContextMenuStrip
+    Friend WithEvents CM_DescUndo As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents CM_DescRedo As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator2 As Windows.Forms.ToolStripSeparator
+    Friend WithEvents CM_DescCut As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents CM_DescCopy As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents CM_DescPaste As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator3 As Windows.Forms.ToolStripSeparator
+    Friend WithEvents CM_DescPrint As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents CM_ODF As Windows.Forms.ContextMenuStrip
+    Friend WithEvents CM_ODFUndo As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents CM_ODFRedo As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator4 As Windows.Forms.ToolStripSeparator
+    Friend WithEvents CM_ODFCut As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents CM_ODFCopy As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents CM_ODFPaste As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator5 As Windows.Forms.ToolStripSeparator
+    Friend WithEvents CM_ODFEditMode As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator6 As Windows.Forms.ToolStripSeparator
+    Friend WithEvents CM_ODFRecompute As Windows.Forms.ToolStripMenuItem
 End Class

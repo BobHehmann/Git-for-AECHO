@@ -1250,13 +1250,14 @@ Module SharedCode
         ' Purpose:      Set the contents of a designated RTB Control to a designated size, forcing the font face and emphasis to
         '               the defaults. Optionally, readjust the emphasis (upsizing/bold) for Section Titles - used when changing the
         '               font size in the Rtb_ODF display. If enumSecs is True, also display the Section position data in the
-        '               Display Text Area, as the Section Title are located.
+        '               Display Text Area, as Section Titles are located.
         ' Process:		Regardless of Title handling, first set the entire RTB Control to the standard font at the specified size.
         '               If re-emphasizing Section Titles, sequentially scan the Section Title Start-Tags, and when found,
         '               apply the emphasis. Additionally, if enumerating the Sections, set up the display areas and headers,
         '               clear the Record-Row, Parsed Tags, and Descriptive Area, and isolate the Section's Name and End-Tag
         '               position, displaying it in the Descriptive Text Area as each Section is located.
-        ' Called By:    Num_ODFFontSize_ValueChanged()
+        ' Called By:    Num_ODFFontSize_ValueChanged(); Menu_OpenHauptwerkOrganClick();
+        '               Menu_RecomputeSectionsClick(); CM_ODFRecomputeClick()
         ' Side Effects: Alters the designated Control's properties.
         ' Notes:        <None>
         ' Updates:		New with <1.060.2>.
@@ -1370,8 +1371,13 @@ Module SharedCode
                     AddSecSubMenu(secName, secMenuCount)            ' <1.060.7> Add this Section Name to the Sections Menu
                     eTag = Max(eTag, secEnd)                        ' Begin search for next section from farthest known location in previous one
                 End If
-                srchPos = srcRTB.Find(conSecStartTag, eTag,         ' Starting from the end of the present Title, find the next one
+                If eTag >= srcRTB.TextLength - 1 Then               ' <1.080.8> Sometime Find wraps at EOF - check if we're already there
+                    srchPos = -1                                    ' <1.080.8> Yes, terminate search
+                Else
+                    srchPos = srcRTB.Find(conSecStartTag, eTag,     ' Starting from the end of the present Title, find the next one
                                       conQuickNoH)
+
+                End If
             End While
 
             MAIN.BuildSecMenus()                                    ' <1.060.7> Add the .Tag and Event Handlers to the new Sub-Menus
@@ -1734,6 +1740,10 @@ Module SharedCode
             lineEnd = .Rtb_ODF.Find(vbCr,                               ' Locate the end of the line we are presently in 
                                     lineStart,
                                     conQuickNoH)
+            If lineEnd < 0 Then                                         ' <1.080.8> If final <Cr> is missing, sub EOF to save exception
+                DispMsg(lclProcName, conMsgExcl, "ODF is missing final <Cr> at EOF")
+                lineEnd = .Rtb_ODF.TextLength - 1                       ' <1.080.8> Sub EOF for missing terminal <Cr>
+            End If
             rowText = .Rtb_ODF.Text.Substring(lineStart,
                                               (lineEnd - lineStart))    ' <1.060.2> Extract the Line's content, less the terminal <CR>
             rowStart = lineStart                                        ' <1.060.2> For Lines not part of a Record-Row, Row=Line

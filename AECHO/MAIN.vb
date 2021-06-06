@@ -56,9 +56,10 @@ Public Class MAIN
         New RTBPrint
 
     ' MAIN FORM LOAD
-    Private Sub MAIN_Load(sender As Object,                     ' AECHO's base Form
-                          e As EventArgs
-                          ) Handles Me.Load
+    Private Sub MAIN_Load(                                      ' AECHO's base Form
+            sender As Object,
+            e As EventArgs
+            ) Handles Me.Load
 
         ' Purpose:      Initialize the application: application registered check, prep default paths to AppData & ODF,
         '               update Window Title Bar, ensure the tags display is cleared and Edit Mode is off.
@@ -153,9 +154,10 @@ Public Class MAIN
 
     ' FONCTIONS RICH TEXT BOX; Useful Functions for the Rich Text Boxes, ODF, XML Rows...
     ' CONTROLES
-    Private Sub Num_ODFFontSize_ValueChanged(sender As Object,  ' Standard Control event parms...
-                                             e As EventArgs
-                                             ) Handles Num_ODFFontSize.ValueChanged
+    Private Sub Num_ODFFontSize_ValueChanged(
+            sender As Object,                                   ' Standard Control event parms...
+            e As EventArgs
+            ) Handles Num_ODFFontSize.ValueChanged
 
         ' Purpose:      Set Rtb_ODF's (ODF display) font-size to match the new value in the font-size control
         ' Process:      Call EnumerateSectionsSetFont() to do the work, specifying the ODF (with Titles)
@@ -177,9 +179,10 @@ Public Class MAIN
                                  True)                          ' <1.060.2> Re-emphasize Titles after setting overall ODF Font size (size change resets all other attributes)
 
     End Sub
-    Private Sub Rtb_ODF_MouseDoubleClick(sender As Object,                ' Standard Control event parms...
-                                  e As MouseEventArgs
-                                  ) Handles Rtb_ODF.MouseDoubleClick
+    Private Sub Rtb_ODF_MouseDoubleClick(
+            sender As Object,                                       ' Standard Control event parms...
+            e As MouseEventArgs
+            ) Handles Rtb_ODF.MouseDoubleClick
 
         ' Purpose:      Select a complete (XML) Row from the ODF, copy it to Rtb_XMLRow, highlight the Row in the ODF
         ' Process:      Position Cursor to the point double-clicked in Rtb_ODF & update Cursor Position field to match.
@@ -237,9 +240,11 @@ Public Class MAIN
                                       G_PreviousRTFFile)
 
     End Sub
-    Private Sub Rtb_ODF_MouseClick(sender As Object,                ' Standard Control event parms...
-                                 e As MouseEventArgs
-                                 ) Handles Rtb_ODF.MouseClick
+    Private Sub Rtb_ODF_MouseClick(
+            sender As Object,                                       ' Standard Control event parms...
+            e As MouseEventArgs
+            ) Handles Rtb_ODF.MouseClick
+
         ' TROUVER L'INDEX SELON POSITION SOURIS
         ' modif version 055
 
@@ -254,28 +259,31 @@ Public Class MAIN
         '               call, to tell it not to extend the selection to the entire Row, rather leave it as user set it.
         '               Removed code to reduce selection to a single caret position when in Edit-Mode.
 
-        Const lclProcName As String = "Rtb_ODF_MouseClick"          ' <1.060.2> Routine's name for message handling
+        Const lclProcName As String =   ' <1.060.2> Routine's name for message handling
+            "Rtb_ODF_MouseClick"
 
-        Dim cursorPos As Integer                                    ' <1.060.2> Local var to replace use of G_CaretPos global
+        Dim cursorPos As Integer        ' <1.060.2> Local var to replace use of G_CaretPos global
         Dim lineStart As Integer
 
-        If Rtb_ODF.TextLength = 0 Then                              ' ODF is empty, no text, issue informational message
-            Return                                                  ' MODIF V058
+        If Rtb_ODF.TextLength = 0 Then  ' ODF is empty, no text, issue informational message
+            Return                      ' MODIF V058
         End If
 
-        cursorPos = Rtb_ODF.GetCharIndexFromPosition(e.Location)    ' Extract the Cursor position from Rtb_ODF
-        MoveToPosition(cursorPos,                                   ' Trouver et selectionner la ligne; Select (highlight) the text of the Row in the ODF
-                       G_LineIndex,                                 ' <1.060.2> Returns Line Number, 0-based
-                       lineStart,                                   ' <1.060.2> Returns index to beginning of Line
-                       False,                                       ' <1.060.2> Do not further position the cursor, this would erase a selection
-                       False)                                       ' <1.060.2> False -> Do not extend selection on screen, leave as user set it
+        cursorPos =                     ' Extract the Cursor position from Rtb_ODF
+            Rtb_ODF.GetCharIndexFromPosition(e.Location)
+        MoveToPosition(cursorPos,       ' Trouver et selectionner la ligne; Select (highlight) the text of the Row in the ODF
+                       G_LineIndex,     ' <1.060.2> Returns Line Number, 0-based
+                       lineStart,       ' <1.060.2> Returns index to beginning of Line
+                       False,           ' <1.060.2> Do not further position the cursor, this would erase a selection
+                       False)           ' <1.060.2> False -> Do not extend selection on screen, leave as user set it
 
     End Sub
 
     'FONCTIONS ET PROCEDURES
-    Private Sub Btn_SaveDescText_Click(sender As Object,            ' Standard Control event parms...
-                              e As EventArgs
-                              ) Handles Btn_SaveDescText.Click
+    Private Sub Btn_SaveDescTextClick(
+            sender As Object,                           ' Standard Control event parms...
+            e As EventArgs
+            ) Handles Btn_SaveDescText.Click
 
         ' activé par Btn_SaveDescText_Click
 
@@ -290,25 +298,26 @@ Public Class MAIN
         '               on G_PreviousRTFFile to contain file path/name of the loaded & displayed .rtf file. Added
         '               exception handler.
 
-        Const lclProcName As String = "Btn_SaveDescText_Click"      ' <1.060.2> Routine's name for message handling
+        Const lclProcName As String =
+            "Btn_SaveDescTextClick"                     ' <1.060.2> Routine's name for message handling
 
-        Dim pathToRTFFile As String                                 ' <1.060.2> Var for constructing path/filename
+        Dim pathToRTFFile As String                     ' <1.060.2> Var for constructing path/filename
 
         Try
             If G_PreviousRTFFile =
-            Path.Combine(G_DataPath, "help.rtf") Then               ' Disallow altering the Help file. <1.060.2> Modified to check PreviousRTFFile variable
+            Path.Combine(G_DataPath, "help.rtf") Then   ' Disallow altering the Help file. <1.060.2> Modified to check PreviousRTFFile variable
                 DispMsg("", conMsgInfo,
                         "Rewriting the Help File is not permitted.")
-                'Rtb_DescText.SaveFile(G_PreviousRTFFile)           ' temp - uncomment when need to write to the Help file, such as initial setup or major editing.
+                'Rtb_DescText.SaveFile(G_PreviousRTFFile)   ' temp - uncomment when need to write to the Help file, such as initial setup or major editing.
                 Exit Sub
             End If
 
-            If G_SectionName <> "" Then                             ' Only save if Section Name is not blank
+            If G_SectionName <> "" Then                 ' Only save if Section Name is not blank
                 pathToRTFFile =
                         Path.Combine(G_DataPath, (G_SectionName & ".rtf"))
-                Rtb_DescText.SaveFile(pathToRTFFile)                ' Save Control's contents.
+                Rtb_DescText.SaveFile(pathToRTFFile)    ' Save Control's contents.
             End If
-        Catch ex As ArgumentException                               ' Couldn't rewrite the requested data
+        Catch ex As ArgumentException                   ' Couldn't rewrite the requested data
             DispMsg(lclProcName, conMsgCrit,
                     "Unable to rewrite a Descriptive Text File" & vbCrLf &
                     "Section requested was: " & G_SectionName & vbCrLf &
@@ -318,7 +327,7 @@ Public Class MAIN
     End Sub
 
     ' MENU FILES
-    Private Sub Menu_OpenHauptwerkOrgan_Click(                              ' Standard Control event parms...
+    Private Sub Menu_OpenHauptwerkOrganClick(                               ' Standard Control event parms...
             sender As Object,
             e As EventArgs
             ) Handles Menu_OpenHauptwerkOrgan.Click
@@ -341,7 +350,7 @@ Public Class MAIN
         '               after the load completes. Replaced parsing routines, calling EnumerateSectionsSetFont() to both
         '               list the Sections in the Descriptive Text Area, and set the initial Font and Section Title emphasis.
 
-        Const lclProcName As String = "Menu_OpenHauptwerkOrgan.Click"       ' <1.060.2> Routine's name for message handling
+        Const lclProcName As String = "Menu_OpenHauptwerkOrganClick"        ' <1.060.2> Routine's name for message handling
         Const conDemoMaxODFBytes As Integer = 1024000                       ' <1.060.2> Max allowable ODF file size when in Demo mode
 
         Dim sizeInBytes As Integer                                          ' Length of ODF file that is to be opened
@@ -433,7 +442,7 @@ Public Class MAIN
         End If
 
     End Sub
-    Private Sub Menu_SaveAs_Click(          ' Standard Control event parms...
+    Private Sub Menu_SaveAsClick(           ' Standard Control event parms...
             sender As Object,
             e As EventArgs
             ) Handles Menu_SaveAs.Click
@@ -449,7 +458,7 @@ Public Class MAIN
         '               If SaveODFAs() returns True, the file was safely written, so clear the file-dirty bit.
 
         Const lclProcName As String =       ' <1.060.2> Routine's name for message handling
-            "Menu_SaveAs_Click"
+            "Menu_SaveAsClick"
 
         If SaveODFAs() Then                 ' <1.060.2> If save did not complete, leave G_ODFModSinceSaved as it was, whatever its state.
             G_ODFModSinceSaved = False      ' <1.060.2> Only reset the dirty-bit if we actually saved it to a file. Also update Status-Bar
@@ -457,10 +466,10 @@ Public Class MAIN
         End If
 
     End Sub
-    Private Sub Menu_CloseODF_Click(        ' Standard Control event parms...
-                                   sender As Object,
-                                   e As EventArgs
-                                   ) Handles Menu_CloseODF.Click
+    Private Sub Menu_CloseODFClick(         ' Standard Control event parms...
+            sender As Object,
+            e As EventArgs
+            ) Handles Menu_CloseODF.Click
 
         ' Purpose:      Close the open ODF. If modified since load or last save, offer to save as
         '               a file first.
@@ -471,14 +480,14 @@ Public Class MAIN
         ' Updates:      <1.060.2> New
 
         Const lclProcName As String =       ' <1.060.2> Routine's name for message handling
-            "Menu_CloseODF_Click"
+            "Menu_CloseODFClick"
 
         CheckUnloadODF(G_OrganFile,         ' If there is a dirty current ODF, offer to save it
                        G_ODFModSinceSaved)
         ResetToNoODF()                      ' Clears data areas, resets menus and globals...
 
     End Sub
-    Private Sub Menu_Quit_Click(            ' Standard Control event parms...
+    Private Sub Menu_QuitClick(             ' Standard Control event parms...
             sender As Object,
             e As EventArgs) Handles Menu_Quit.Click
 
@@ -491,7 +500,7 @@ Public Class MAIN
         '               exiting.
 
         Const lclProcName As String =       ' <1.060.2> Routine's name for message handling
-            "Menu_Quit_Click"
+            "Menu_QuitClick"
 
         CheckUnloadODF(G_OrganFile,
                        G_ODFModSinceSaved)  ' <1.060.2> Check if we have a dirty ODF - if so, offer to save it
@@ -501,9 +510,9 @@ Public Class MAIN
     End Sub
 
     ' MENU SECTIONS
-    Private Sub Menu_SectionChoice_Click(sender As ToolStripMenuItem,  ' Standard Control event parms...
-                                   e As EventArgs
-                                   )
+    Private Sub Menu_SectionChoiceClick(
+            sender As ToolStripMenuItem,            ' Standard Control event parms...
+            e As EventArgs)                         ' <1.060.7> Event Handlers added dynamically as Sections are located
 
         ' Purpose:      Process Section Menu choices, to navigate directly to Sections in the ODF.
         ' Process:		When building the Sections Menu, Sections are linked dynamically to this handler. The .Tags property of
@@ -517,16 +526,16 @@ Public Class MAIN
         '               <1.060.7> Removed all explicit "Handles" references, Event Handler linkages are now built
         '               programatically.
 
-        Const lclProcName As String =                                   ' <1.060.2> Routine's name for message handling
-            "Menu_SectionChoice_Click"
+        Const lclProcName As String =               ' <1.060.2> Routine's name for message handling
+            "Menu_SectionChoiceClick"
 
-        PositionToSectionByName(sender.Tag, True)                       ' <1.060.2> Pass embedded Tag data to search: Tag = SectionName; True -> update Descriptive Box
+        PositionToSectionByName(sender.Tag, True)   ' <1.060.2> Pass embedded Tag data to search: Tag = SectionName; True -> update Descriptive Box
 
     End Sub
 
     ' MENU EDIT MODE
-    Private Sub Menu_StartEditMode_Click(           ' Standard Control event parms...
-            sender As Object,
+    Private Sub Menu_StartEditModeClick(            ' Clicked in menu > Tools > ODF Editing Enabled
+            sender As Object,                       ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Menu_EditModeStart.Click
 
@@ -534,17 +543,35 @@ Public Class MAIN
         ' modif version 055 & 56
 
         ' Purpose:      Allows modifications to the ODF text in Rtb_ODF
+        ' Process:		Call EnableEditing()
+        ' Called By:    Menu_EditModeStart Click Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.8> Seperated processing logic from Event Handler, to allow other calls
+        '               to the logic.
+
+        Const lclProcName As String =               ' <1.060.2> Routine's name for message handling
+            "Menu_StartEditModeClick"
+
+        EnableEditing()                             ' <1.060.8> Call relocated logic
+
+    End Sub
+    Private Sub EnableEditing()
+
+        ' Purpose:      Allows modifications to the ODF text in Rtb_ODF
         ' Process:		Enable modification of the Rtb_ODF control, adjust the Menu to reflect the
         '               new state; issue a warning message re. recomputing Section details if text
         '               has been added/deleted.
-        ' Called By:    Menu_EditModeStart Click Event
-        ' Side Effects: Alters Menu State, sets global G_Edit_Mode
+        ' Called By:    Menu_StartEditModeClick(); CM_ODFEditModeClick();
+        ' Side Effects: Alters Menu State, sets global G_EditMode
         ' Notes:        <None>
         ' Updates:      <1.060.2> Force Enable/Disable submenu choices to be a toggle. Shorten warning.
         '               Removed recompute warning, ReCompute is no longer needed.
+        '               <1.060.8> Seperated processing logic from Event Handler, to allow other calls
+        '               to the logic.
 
         Const lclProcName As String =               ' <1.060.2> Routine's name for message handling
-            "Menu_StartEditMode_Click"
+            "EnableEditing"
 
         Rtb_ODF.ReadOnly = False                    ' Set control to allow modifications
         Rtb_ODF.BackColor = Color.White             ' Lighten the background to indicate text is editable
@@ -557,28 +584,47 @@ Public Class MAIN
 
         DispMsg("", conMsgInfo,
                 "ODF Text is now editable")
-
     End Sub
-    Private Sub Menu_ExitEditMode_Click(            ' Standard Control event parms...
+    Private Sub Menu_ExitEditModeClick(             ' Standard Control event parms...
             sender As Object,
             e As EventArgs
             ) Handles Menu_EditModeExit.Click
 
         ' REMET L'ODF EN MODE EDITION INTERDITE
 
-        ' Purpose:      Exit Edit Mode - solicit recomputation of the Section data (S_Section array)
+        ' Purpose:      Exit Edit Mode
+        ' Process:		Call DisableEditing()
+        ' Called By:    Menu_EditModeExit Click Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates       <1.060.8> Seperated processing logic from Event Handler, allowing logic to be
+        '               called from other procedures.
+
+        Const lclProcName As String =               ' <1.060.2> Routine's name for message handling
+            "Menu_ExitEditModeClick"
+
+        DisableEditing()                            ' <1.060.8> Call relocated logic
+
+    End Sub
+    Private Sub DisableEditing()
+
+        ' REMET L'ODF EN MODE EDITION INTERDITE
+
+        ' Purpose:      Exit Edit Mode - Resets mode and menus to Read-Only
         ' Process:		Disable editing in the ODF, revert background color to the standard Light Gray,
         '               adjust the EDIT-MODE menus to reflect status. ReComputes no longer needed.
-        ' Called By:    Menu_EditModeExit Click Event
+        ' Called By:    Menu_ExitEditModeClick(); CM_ODFEditModeClick()
         ' Side Effects: Alters Menu state, adjusts G_EditMode
         ' Notes:        <None>
         ' Updates       <1.060.2> Added enable/disable settings to force the submenu items for enabling
         '               and disabling ODF editing to act as a true toggle - only one choice is available
         '               at a time. Changed "Edit Mode" menu item to use standard background color when
         '               editing is disabled (the default). Removed solicitation to recompute.
+        '               <1.060.8> Seperated processing logic from Event Handler, allowing logic to be
+        '               called from other procedures.
 
         Const lclProcName As String =               ' <1.060.2> Routine's name for message handling
-            "Menu_ExitEditMode_Click"
+            "DisableEditing"
 
         'Dim rep As Integer                          ' Response from warning MsgBox: recompute Sections or not?
 
@@ -604,12 +650,12 @@ Public Class MAIN
         'End If
 
     End Sub
-    Private Sub Menu_ReComputeSections_Click(           ' Standard Control event parms...
+    Private Sub Menu_ReComputeSectionsClick(            ' Standard Control event parms...
             sender As Object,
             e As EventArgs
             ) Handles Menu_ReComputeSections.Click
 
-        ' Purpose:      REplace old ReCompute with a scan of all Sections, displaying them as we find them
+        ' Purpose:      Replace old ReCompute with a scan of all Sections, displaying them as we find them
         ' Process:		Call EnumerateSectionsSetFont(), which scans for all Section Headers - let it list the Section Data
         ' Called By:    Menu_RecomputeSections Click Event
         ' Side Effects: <NA>
@@ -618,7 +664,7 @@ Public Class MAIN
         '               deprecating actual ReCompute, as we no longer use a static data table to navigate.
 
         Const lclProcName As String =                   ' <1.060.2> Routine's name for message handling
-            "Menu_ReComputeSections_Click"
+            "Menu_ReComputeSectionsClick"
 
         EnumerateSectionsSetFont(Rtb_ODF,
                                  Num_ODFFontSize.Value, ' <1.060.2> Keep present Font size
@@ -631,7 +677,7 @@ Public Class MAIN
     End Sub
 
     ' MENU TOOLS
-    Private Sub Menu_ClearMarkers_Click(    ' Standard Control event parms...
+    Private Sub Menu_ClearMarkersClick(     ' Standard Control event parms...
             sender As Object,
             e As EventArgs
             ) Handles Menu_ClearMarkers.Click
@@ -643,12 +689,12 @@ Public Class MAIN
         ' Notes:        <None>
 
         Const lclProcName As String =       ' <1.060.2> Routine's name for message handling
-            "Menu_ClearMarkers_Click"
+            "Menu_ClearMarkersClick"
 
         ClearMarkers()                      ' Dispatch common routine
 
     End Sub
-    Private Sub Menu_CouplersCode_Click(    ' Standard Control event parms...
+    Private Sub Menu_CouplersCodeClick(     ' Standard Control event parms...
             sender As Object,
             e As EventArgs
             ) Handles Menu_CouplersCode.Click
@@ -662,13 +708,13 @@ Public Class MAIN
         ' Notes:        <None>
 
         Const lclProcName As String =       ' <1.060.2> Routine's name for message handling
-            "Menu_CouplersCode_Click"
+            "Menu_CouplersCodeClick"
 
         Couplers.Visible = False
         Couplers.Show(Me)                   ' Open the form; if already open, give it focus
 
     End Sub
-    Private Sub FollowASampleToolStripMenuItem_Click(   ' Standard Control event parms...
+    Private Sub FollowASampleToolStripMenuItemClick(    ' Standard Control event parms...
             sender As Object,
             e As EventArgs
             ) Handles Menu_FollowASample.Click
@@ -682,7 +728,7 @@ Public Class MAIN
         ' Notes:        <None>
 
         Const lclProcName As String =                   ' <1.060.2> Routine's name for message handling
-            "FollowASampleToolStripMenuItem_Click"
+            "FollowASampleToolStripMenuItemClick"
 
         Trace.Visible = False
         Trace.Show(Me)                                 ' Open the form, if already open, give it focus
@@ -690,7 +736,7 @@ Public Class MAIN
     End Sub
 
     ' MENU ?
-    Private Sub Menu_Help_Click(                                ' Standard Control event parms...
+    Private Sub Menu_HelpClick(                                 ' Standard Control event parms...
             sender As Object,
             e As EventArgs
             ) Handles Menu_Help.Click
@@ -708,7 +754,8 @@ Public Class MAIN
         '               HTML Help as the default help system, falling back to the original if the HTML
         '               content is missing.
 
-        Const lclProcName As String = "Menu_Help_Click"         ' <1.060.2> Routine's name for message handling
+        Const lclProcName As String =                           ' <1.060.2> Routine's name for message handling
+            "Menu_HelpClick"
 
         Dim pathToHelpFile As String = ""                       ' <1.060.2> To build full path/filename to the Help File
 
@@ -765,7 +812,7 @@ Public Class MAIN
     End Sub
 
     ' BOUTONS
-    Private Sub Btn_FindFirst_Click(    ' Standard Control event parms...
+    Private Sub Btn_FindFirstClick(     ' Standard Control event parms...
             sender As Object,
             e As EventArgs
             ) Handles Btn_FindFirst.Click
@@ -779,7 +826,7 @@ Public Class MAIN
         '               <1.060.6> Take Cursor position from .Tag property rather than .Text
 
         Const lclProcName As String =   ' <1.060.2> Routine's name for message handling 
-            "Btn_FindFirst_Click"
+            "Btn_FindFirstClick"
 
         Dim curPos As Integer           ' <1.060.2> Set to current Cursor position
 
@@ -796,7 +843,7 @@ Public Class MAIN
                         True)           ' <1.060.2> Execute a forward search
 
     End Sub
-    Private Sub Btn_FindNext_Click(     ' Standard Control event parms...
+    Private Sub Btn_FindNextClick(      ' Standard Control event parms...
             sender As Object,
             e As EventArgs
             ) Handles Btn_FindNext.Click
@@ -811,7 +858,7 @@ Public Class MAIN
         '               <1.060.6> Changed from .Text to .Tag property for retrieving Cursor's position
 
         Const lclProcName As String =   ' <1.060.2> Routine's name for message handling 
-            "Btn_FindNext_Click"
+            "Btn_FindNextClick"
 
         Dim curPos As Integer           ' <1.060.2> Set to current Cursor position
 
@@ -828,7 +875,7 @@ Public Class MAIN
                         True)           ' <1.060.2> Search forward
 
     End Sub
-    Private Sub Btn_Led_Click(                      ' Standard Control event parms...
+    Private Sub Btn_LedClick(                       ' Standard Control event parms...
             sender As Object,
             e As EventArgs
             ) Handles Btn_Led.Click
@@ -843,12 +890,12 @@ Public Class MAIN
         '               In last revision, just return - actions are no longer required.
 
         Const lclProcName As String =               ' <a1.060.2> Routine's name for message handling
-            "Btn_Led_Click"
+            "Btn_LedClick"
 
         Return
 
     End Sub
-    Private Sub Btn_SetFont_Click(              ' Standard Control event parms...
+    Private Sub Btn_SetFontClick(               ' Standard Control event parms...
             sender As Object,
             e As EventArgs
             ) Handles Btn_SetFont.Click
@@ -867,7 +914,7 @@ Public Class MAIN
         '               of Font and Size to symbolic constants (still defined as Verdana 10)
 
         Const lclProcName As String =           ' <1.060.2> Routine's name for message handling
-            "Btn_SetFont_Click"
+            "Btn_SetFontClick"
 
         Dim i As Integer                        ' <1.060.2> Loop index var
 
@@ -880,7 +927,7 @@ Public Class MAIN
         Rtb_DescText.Refresh()                  ' Update screen
 
     End Sub
-    Private Sub Btn_Markers_MouseDown(              ' Standard Control event parms...
+    Private Sub Btn_MarkersMouseDown(               ' Standard Control event parms...
             sender As Object,
             e As MouseEventArgs
             ) Handles Btn_Marker1.MouseDown, Btn_Marker2.MouseDown, Btn_Marker3.MouseDown, Btn_Marker4.MouseDown
@@ -900,7 +947,7 @@ Public Class MAIN
         '               <1.060.6> Save char-based position in Marker's .Tag property.
 
         Const lclProcName As String =               ' <1.060.2> Routine's name for message handling
-            "Btn_Markers_MouseDown"
+            "Btn_MarkersMouseDown"
 
         Dim bouton As String = e.Button.ToString    ' "Left" or "Right", tells us which button
         Dim marker As Control = sender              ' Superfluous (just use [sender]); Control object that raised the event
@@ -934,7 +981,7 @@ Public Class MAIN
         End If
 
     End Sub
-    Private Sub Btn_RowAction_Click(     ' Standard Control event parms...
+    Private Sub Btn_RowActionClick(         ' Standard Control event parms...
             sender As Object,
             e As EventArgs
             ) Handles Btn_RowAction.Click
@@ -951,16 +998,16 @@ Public Class MAIN
         '               ImageSetElement Row.
 
         Const lclProcName As String =       ' <1.060.2> Routine's name for message handling
-            "Btn_RowAction_Click"
+            "Btn_RowActionClick"
 
-        TakeRowAction(G_PackagePath,         ' <1.060.2> Let TakeRowAction() do all the work
+        TakeRowAction(G_PackagePath,        ' <1.060.2> Let TakeRowAction() do all the work
                      G_ImageFile,
                      G_ImageSet,
                      G_PackageID,
                      G_MinPanelHeights)
 
     End Sub
-    Private Sub Btn_NextLine_Click(                             ' Standard Control event parms...
+    Private Sub Btn_NextLineClick(                              ' Standard Control event parms...
             sender As Button,
             e As EventArgs
             ) Handles Btn_NextLine.Click, Btn_Next10Lines.Click, Btn_Next100Lines.Click,
@@ -983,7 +1030,7 @@ Public Class MAIN
         '               <1.060.6> Save Section Start/End positions into the .Tag properties, for later use repositioning.
 
         Const lclProcName As String =                           ' <1.060.2> Routine's name for message handling
-            "Btn_NextLine_Click"
+            "Btn_NextLineClick"
 
         Dim desiredNewLine As Integer                           ' Where do we want to move to, prior to imposing limitations
         Dim cursorPos As Integer                                ' <1.060.2> Local var to hold cursor's location, replaced G_CaretPos
@@ -1029,7 +1076,7 @@ Public Class MAIN
         End Try
 
     End Sub
-    Private Sub Rtb_ODF_TextChanged(                    ' Standard Control event parms...
+    Private Sub Rtb_ODFTextChanged(                     ' Standard Control event parms...
             sender As Object,
             e As EventArgs
             ) Handles Rtb_ODF.TextChanged
@@ -1044,7 +1091,7 @@ Public Class MAIN
         '               <1.060.2> Update Status-Bar Line & Char counts if changed while in Edit Mode
 
         Const lclProcName As String =                   ' <1.060.2> Routine's name for message handling
-            "Rtb_ODF_TextChanged"
+            "Rtb_ODFTextChanged"
 
         If G_EditMode Then
             G_ODFModSinceSaved = True
@@ -1056,7 +1103,7 @@ Public Class MAIN
         End If
 
     End Sub
-    Private Sub Menu_About_Click(       ' Standard Control event parms...
+    Private Sub Menu_AboutClick(        ' Standard Control event parms...
             sender As Object,
             e As EventArgs
             ) Handles Menu_About.Click
@@ -1070,12 +1117,12 @@ Public Class MAIN
         '               This control takes its content from the Project's Assemby Parameters, maintained by the IDE.
 
         Const lclProcName As String =   ' <1.060.2> Routine's name for message handling
-            "Menu_About_Click"
+            "Menu_AboutClick"
 
         AboutBox1.Show(Me)              ' Display the form
 
     End Sub
-    Private Sub Btn_FindPrev_Click(     ' Standard Control event parms...
+    Private Sub Btn_FindPrevClick(      ' Standard Control event parms...
             sender As Object,
             e As EventArgs) Handles Btn_FindPrev.Click
 
@@ -1088,7 +1135,7 @@ Public Class MAIN
         '               <1.060.6> Changed to take position from .Tag property rather than .Text
 
         Const lclProcName As String =   ' <1.060.2> Routine's name for message handling 
-            "Btn_FindPrev_Click"
+            "Btn_FindPrevClick"
 
         Dim curPos As Integer           ' <1.060.2> Set to current Cursor postiion
 
@@ -1105,7 +1152,7 @@ Public Class MAIN
                         False)          ' <1.060.2> Search backwards from present cursor position
 
     End Sub
-    Private Sub Lbl_LineNumVal_Click(       ' Standard Control event parms...
+    Private Sub Lbl_LineNumValClick(        ' Standard Control event parms...
             sender As Object,
             e As EventArgs) Handles Lbl_LineNumVal.Click
 
@@ -1117,7 +1164,7 @@ Public Class MAIN
         ' Updates:      <1.060.2> First code.
 
         Const lclProcName As String =       ' Routine's name for message handling
-            "Lbl_LineNumVal_Click"
+            "Lbl_LineNumValClick"
 
         Dim ln As Integer
         Dim curPos As Integer
@@ -1140,7 +1187,7 @@ Public Class MAIN
                        False)               ' False -> Do not extend selection on screen, leave as user set it
 
     End Sub
-    Private Sub Lbl_SecStartVal_Click(      ' Standard Control event parms...
+    Private Sub Lbl_SecStartValClick(       ' Standard Control event parms...
             sender As Object,
             e As EventArgs
             ) Handles Lbl_SecStartVal.Click
@@ -1154,12 +1201,12 @@ Public Class MAIN
         '               <1.060.6> Changed from using .Text to .Tag property, which holds the raw position
 
         Const lclProcName As String =       ' Routine's name for message handling
-            "Lbl_SecStartVal_Click"
+            "Lbl_SecStartValClick"
 
         HotClickCursorPosition(Lbl_SecStartVal.Tag)
 
     End Sub
-    Private Sub Lbl_SecEndVal_Click(        ' Standard Control event parms...
+    Private Sub Lbl_SecEndValClick(         ' Standard Control event parms...
             sender As Object,
             e As EventArgs
             ) Handles Lbl_SecEndVal.Click
@@ -1173,12 +1220,12 @@ Public Class MAIN
         '               <1.060.6> Changed from using .Text to .Tag property, which holds the raw position
 
         Const lclProcName As String =       ' Routine's name for message handling
-            "Lbl_SecEndVal_Click"
+            "Lbl_SecEndValClick"
 
         HotClickCursorPosition(Lbl_SecEndVal.Tag)
 
     End Sub
-    Private Sub Lbl_LineStartVal_Click(     ' Standard Control event parms...
+    Private Sub Lbl_LineStartValClick(      ' Standard Control event parms...
             sender As Object,
             e As EventArgs
             ) Handles Lbl_LineStartVal.Click
@@ -1192,12 +1239,12 @@ Public Class MAIN
         '               <1.060.6> Changed from using .Text to .Tag property, which holds the raw position
 
         Const lclProcName As String =       ' Routine's name for message handling
-            "Lbl_LineStartVal_Click"
+            "Lbl_LineStartValClick"
 
         HotClickCursorPosition(Lbl_LineStartVal.Tag)
 
     End Sub
-    Private Sub Lbl_LineEndVal_Click(       ' Standard Control event parms...
+    Private Sub Lbl_LineEndValClick(        ' Standard Control event parms...
             sender As Object,
             e As EventArgs
             ) Handles Lbl_LineEndVal.Click
@@ -1211,12 +1258,12 @@ Public Class MAIN
         '               <1.060.6> Changed from using .Text to .Tag property, which holds the raw position
 
         Const lclProcName As String =       ' Routine's name for message handling
-            "Lbl_LineEndVal_Click"
+            "Lbl_LineEndValClick"
 
         HotClickCursorPosition(Lbl_LineEndVal.Tag)
 
     End Sub
-    Private Sub Lbl_RowStartVal_Click(      ' Standard Control event parms...
+    Private Sub Lbl_RowStartValClick(       ' Standard Control event parms...
             sender As Object,
             e As EventArgs
             ) Handles Lbl_RowStartVal.Click
@@ -1230,12 +1277,12 @@ Public Class MAIN
         '               <1.060.6> Changed from using .Text to .Tag property, which holds the raw position
 
         Const lclProcName As String =       ' Routine's name for message handling
-            "Lbl_RowStartVal_Click"
+            "Lbl_RowStartValClick"
 
         HotClickCursorPosition(Lbl_RowStartVal.Tag)
 
     End Sub
-    Private Sub Lbl_RowEndVal_Click(        ' Standard Control event parms...
+    Private Sub Lbl_RowEndValClick(         ' Standard Control event parms...
             sender As Object,
             e As EventArgs
             ) Handles Lbl_RowEndVal.Click
@@ -1249,12 +1296,12 @@ Public Class MAIN
         '               <1.060.6> Changed from using .Text to .Tag property, which holds the raw position
 
         Const lclProcName As String =       ' Routine's name for message handling
-            "Lbl_RowEndVal_Click"
+            "Lbl_RowEndValClick"
 
         HotClickCursorPosition(Lbl_RowEndVal.Tag)
 
     End Sub
-    Private Sub Lbl_CursorPosVal_Click(     ' Standard Control event parms...
+    Private Sub Lbl_CursorPosValClick(      ' Standard Control event parms...
             sender As Object,
             e As EventArgs
             ) Handles Lbl_CursorPosVal.Click
@@ -1268,19 +1315,36 @@ Public Class MAIN
         '               <1.060.6> Changed from using .Text to .Tag property, which holds the raw position
 
         Const lclProcName As String =       ' Routine's name for message handling
-            "Lbl_CursorPosVal_Click"
+            "Lbl_CursorPosValClick"
 
         HotClickCursorPosition(Lbl_CursorPosVal.Tag)
 
     End Sub
-    Private Sub Menu_PrintDT_Click(                 ' Standard Control event parms...
-            sender As Object,
+    Private Sub Menu_PrintDTClick(      ' Clicked on Menu > File > Print Descriptive Text...
+            sender As Object,           ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Menu_PrintDT.Click
 
         ' Purpose:      Initialize Print Dialog, if User agrees, submit print job
-        ' Process:      Display dialog, get answer, if Yes, submit print job
+        ' Process:      Call Print Hanlfer
         ' Called By:    Menu_Print Click event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.2> First implemented as a test skeleton
+        '               <1.060.8> Seperated Event Handler from Print Logic, so Print can be
+        '               called from elsewhere.
+
+        Const lclProcName As String =   ' Routine's name for message handling
+            "Menu_PrintDRClick"
+
+        PrintDT()                       ' <1.060.8> Invoke Print command handler
+
+    End Sub
+    Private Sub PrintDT()                           ' Handle Print request for Descriptive Text Area
+
+        ' Purpose:      Initialize Print Dialog, if User agrees, submit print job
+        ' Process:      Display dialog, get answer, if Yes, submit print job
+        ' Called By:    Menu_PrintDT_Click(); CM_DescPrintClick()
         ' Side Effects: <None>
         ' Notes:        <None>
         ' Updates:      <1.060.2> First implemented as a test skeleton
@@ -1288,9 +1352,11 @@ Public Class MAIN
         '               headers in the custom box and printing from there. The hidden
         '               RTB is extended through inheitence to add WYSIWYG printing capability,
         '               which the standard RTB does not support.
+        '               <1.060.8> Seperated Event Handler from Print Logic, so Print can be
+        '               called from elsewhere.
 
         Const lclProcName As String =               ' Routine's name for message handling
-            "Menu_PrintDR_Click"
+            "PrintDT"
 
         Dim result As DialogResult
         Dim header As String                        ' Build print header here...
@@ -1373,7 +1439,7 @@ Public Class MAIN
         End If
 
     End Sub
-    Private Sub PrintDocument1_BeginPrint() Handles PrintDocument1.BeginPrint
+    Private Sub PrintDocument1BeginPrint() Handles PrintDocument1.BeginPrint
 
         ' Purpose:      Initializer invoked as start of print job. Sets start to 1 char in control
         ' Process:      Set a shared variable that tracks the next char to print
@@ -1383,12 +1449,12 @@ Public Class MAIN
         ' Updates:      <1.060.3> First implemented, supports extended RTB printing
 
         Const lclProcName As String =   ' Routine's name for message handling
-            "PrintDocument1_BeginPrint"
+            "PrintDocument1BeginPrint"
 
         M_FirstChar = 0                 ' Start at first character
 
     End Sub
-    Private Sub PrintDocument1_EndPrint() Handles PrintDocument1.EndPrint
+    Private Sub PrintDocument1EndPrint() Handles PrintDocument1.EndPrint
 
         ' Purpose:      Free graphics memory used by formatter, once print job is fully rendered
         ' Process:      Have an appropriate message sent
@@ -1398,13 +1464,13 @@ Public Class MAIN
         ' Updates:      <1.060.3> First implemented, supports extended RTB printing
 
         Const lclProcName As String =   ' Routine's name for message handling
-            "PrintDocument1_EndPrint"
+            "PrintDocument1EndPrint"
 
         Rtb_DText.FormatRangeDone()     ' Free graphics memory now that we're done
 
     End Sub
-    Private Sub PrintDocument1_PrintPage(                   ' Standard Control event parms...
-            sender As Object,
+    Private Sub PrintDocument1PrintPage(
+            sender As Object,                               ' Standard Event Parameters for a Control
             e As Printing.PrintPageEventArgs
             ) Handles PrintDocument1.PrintPage
 
@@ -1418,7 +1484,7 @@ Public Class MAIN
         '               <1.060.3> Modified for production use with extended RTB print-capable control
 
         Const lclProcName As String =                       ' Routine's name for message handling
-            "PrintDocument1_PrintPage"
+            "PrintDocument1PrintPage"
 
         M_FirstChar =
             Rtb_DText.FormatRange(False,                    ' Select Render mode
@@ -1436,8 +1502,6 @@ Public Class MAIN
     End Sub
     Public Sub BuildSecMenus()
 
-        Const lclProcName As String = "BuildSecMenus"
-
         ' Purpose:      Scans the Sections Menu, filling out .Tag properties, adding
         '               references to the Event Handler for lowest-level entries,
         '               and completing the range (1-22, 22-44...) in the text of the
@@ -1449,6 +1513,9 @@ Public Class MAIN
         ' Notes:        <None>
         ' Updates:      <1.060.7> First implemented, for dynamic Section Menus
 
+        Const lclProcName As String =                                       ' Routine's name for message handling
+            "BuildSecMenus"
+
         Dim beg As Integer = 1                                              ' Beginning value of each Group's range: 1, 23, 45...
 
         For Each i As ToolStripMenuItem In Menu_SectionsA.DropDownItems     ' This level loops through the intermediate Groups
@@ -1456,7 +1523,7 @@ Public Class MAIN
             i.Enabled = True
             For Each j As ToolStripMenuItem In i.DropDownItems              ' Loop over the individual entries within each Group
                 j.Tag = j.Text                                              ' These are the actual active links, set the .Tag
-                AddHandler j.Click, AddressOf Menu_SectionChoice_Click      ' Link the individual entries to the Event Handler
+                AddHandler j.Click, AddressOf Menu_SectionChoiceClick       ' Link the individual entries to the Event Handler
                 j.Enabled = True
             Next
             i.Text += " " & beg.ToString & "-" &                            ' Add the range to the text of the Group level entry
@@ -1471,7 +1538,6 @@ Public Class MAIN
         End If
 
     End Sub
-
     Public Sub ClearSecMenus()
 
         ' Purpose:      Deletes all Group and Detail entries from the Sections menu
@@ -1481,13 +1547,519 @@ Public Class MAIN
         ' Notes:        <None>
         ' Updates:      <1.060.7> First implemented, for dynamic Section Menus
 
-        Const lclProcName As String = "ClearSecMenus"
+        Const lclProcName As String =           ' Routine's name for message handling
+            "ClearSecMenus"
 
         For Each i As ToolStripMenuItem In Menu_SectionsA.DropDownItems
             i.DropDownItems.Clear()             ' Delete the detail level entries first
         Next
         Menu_SectionsA.DropDownItems.Clear()    ' Then their parent Group entry
         Menu_SectionsA.Enabled = False          ' When done, grey-out the main Menu-Bar entry
+
+    End Sub
+    Private Sub CM_XMLOpening(                  ' Right-clicked in XML Row, init CM Menu
+            sender As Object,                   ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles CM_XML.Opening
+
+        ' Purpose:      Init CM Menu for XML Row
+        ' Process:      Enable Copy item if text is currently selected
+        ' Called By:    CM_XML Opening Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.8> First implementation
+
+        Const lclProcName As String =           ' Routine's name for message handling
+            "CM_XMLOpening"
+
+        CM_XMLCopy.Enabled = (Rtb_XMLRow.SelectionLength > 0)
+
+    End Sub
+    Private Sub CM_XMLCopyClick(                    ' CM Copy or Ctrl-C in XML Row Area
+            sender As Object,                           ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles CM_XMLCopy.Click
+
+        ' Purpose:      Handles Click on CM-Copy while in XML Row
+        ' Process:      Executes .Copy Method if text is selected
+        ' Called By:    CM_CMLCopy Click Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.8> First implementation
+
+        Dim lclProcName As String =                 ' Routine's name for message handling
+            "CM_XMLCopyClick"
+
+        If Rtb_XMLRow.SelectionLength > 0 Then      ' Selected Text present: do the Copy
+            Rtb_XMLRow.Copy()
+        End If
+
+    End Sub
+    Private Sub CM_SearchOpening(               ' Right-clicked in Search Box, init CM Menu
+            sender As Object,                   ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles CM_Search.Opening
+
+        ' Purpose:      Init CM Menu for Search Box
+        ' Process:      For Cut/Copy, enable if text is selected; For Paste, if ANSI/Unicode Text is
+        '               in the Clipbord; For Undo, undo is enabled.
+        ' Called By:    CM_Search Opening Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.8> First implementation
+
+        Const lclProcName As String =           ' Routine's name for message handling
+            "CM_SearchOpening"
+
+        CM_SearchUndo.Enabled =                 ' System tells us its OK
+            Txt_SearchText.CanUndo
+        CM_SearchCopy.Enabled =                 ' Got a selection, Copy is enabled
+            (Txt_SearchText.SelectionLength > 0)
+        CM_SearchCut.Enabled =                  ' Cut has same criteria as Copy
+            CM_SearchCopy.Enabled
+        CM_SearchPaste.Enabled =                ' Unicode or ANSI text is present in Clipboard
+            (Clipboard.ContainsText() Or
+            Clipboard.ContainsText(TextDataFormat.Text))
+
+    End Sub
+    Private Sub CM_SearchUndoClick(             ' CM or Ctrl-Z Undo for Search Box
+            sender As Object,                   ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles CM_SearchUndo.Click
+
+        ' Purpose:      Handles Click on Undo for Search Box
+        ' Process:      If system allows, perform .Undo Method
+        ' Called By:    CM_SearchUndo Click Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.8> First implementation
+
+        Const lclProcName As String =           ' Routine's name for message handling
+            "CM_SearchUndoClick"
+
+        If Txt_SearchText.CanUndo Then
+            Txt_SearchText.Undo()
+        End If
+
+    End Sub
+    Private Sub CM_SearchCutClick(              ' CM Cut or Ctrl-X in Search Box
+            sender As Object,                   ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles CM_SearchCut.Click
+
+        ' Purpose:      Handles Click on Cut for Search Box
+        ' Process:      If text selected, perform .Cut Method
+        ' Called By:    CM_SearchCut Click Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.8> First implementation
+
+        Const lclProcName As String =           ' Routine's name for message handling
+            "CM_SearchCutClick"
+
+        If Txt_SearchText.SelectionLength > 0 Then
+            Txt_SearchText.Cut()
+        End If
+
+    End Sub
+    Private Sub CM_SearchCopyClick(             ' CM Copy or Ctrl-C in Search Box
+            sender As Object,                   ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles CM_SearchCopy.Click
+
+        ' Purpose:      Handles Click on Copy for Search Box
+        ' Process:      If text selected, perform .Copy Method
+        ' Called By:    CM_SearchCopy Click Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.8> First implementation
+
+        Const lclProcName As String =           ' Routine's name for message handling
+            "CM_SearchCopyClick"
+
+        If Txt_SearchText.SelectionLength > 0 Then
+            Txt_SearchText.Copy()
+        End If
+
+    End Sub
+    Private Sub CM_SearchPasteClick(            ' CM Paste or Ctrl-V in Search Box
+            sender As Object,                   ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles CM_SearchPaste.Click
+
+        ' Purpose:      Handles Click on Paste for Search Box
+        ' Process:      If acceptable text present in Clipboard, perform .Paste Method
+        ' Called By:    CM_SearchPaste Click Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.8> First implementation
+
+        Const lclProcName As String =           ' Routine's name for message handling
+            "CM_SearchPasteClick"
+
+        If (Clipboard.ContainsText() Or
+            Clipboard.ContainsText(TextDataFormat.Text)) Then
+            Txt_SearchText.Paste()
+        End If
+
+    End Sub
+    Private Sub CM_DescOpening(                 ' Right-clicked in Descriptive Text Area, init CM Menu
+            sender As Object,                   ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles CM_Desc.Opening
+
+        ' Purpose:      Init CM Menu for Descriptive Text Are
+        ' Process:      For Cut/Copy, enable if text is selected; For Paste, if any Text or Image is
+        '               in the Clipbord; For Undo, undo is enabled; Redo, if redo is enabled. Print
+        '               if there is content
+        ' Called By:    CM_Desc Opening Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.8> First implementation
+
+        Const lclProcName As String =           ' Routine's name for message handling
+            "CM_DescOpening"
+
+        CM_DescUndo.Enabled =                   ' System tells us Undo is OK
+            Rtb_DescText.CanUndo
+        CM_DescRedo.Enabled =                   ' System controls Redo
+            Rtb_DescText.CanRedo
+        CM_DescCopy.Enabled =                   ' Got a selection, enable Copy
+            (Rtb_DescText.SelectionLength > 0)
+        CM_DescCut.Enabled =                    ' Cut has same criteria as Copy
+            CM_DescCopy.Enabled
+        CM_DescPrint.Enabled =                  ' Print enabled if there is text
+            (Rtb_DescText.TextLength > 0)
+        CM_DescPaste.Enabled =                  ' Paste allowed if Clipboard has any Text or Image content
+            (Clipboard.ContainsText() Or
+            Clipboard.ContainsText(TextDataFormat.Text) Or
+            Clipboard.ContainsText(TextDataFormat.Rtf) Or
+            Clipboard.ContainsImage)
+
+    End Sub
+    Private Sub CM_DescUndoClick(               ' CM Undo or Ctrl-Z Click in Descriptive Text Area
+            sender As Object,                   ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles CM_DescUndo.Click
+
+        ' Purpose:      Handles Click on Undo for Descriptive Text
+        ' Process:      If system allows, perform .Undo Method
+        ' Called By:    CM_DescUndo Click Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.8> First implementation
+
+        Const lclProcName As String =           ' Routine's name for message handling
+            "CM_DescUndoClick"
+
+        If Rtb_DescText.CanUndo Then
+            Rtb_DescText.Undo()
+        End If
+
+    End Sub
+    Private Sub CM_DescRedoClick(               ' CM Redo or Ctrl-Y Click in Descriptive Text Area
+            sender As Object,                   ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles CM_DescRedo.Click
+
+        ' Purpose:      Handles Click on Redo for Descriptive Text Area
+        ' Process:      If system allows, perform .Redo Method
+        ' Called By:    CM_DeschUndo Click Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.8> First implementation
+
+        Const lclProcName As String =           ' Routine's name for message handling
+            "CM_DescUndoClick"
+
+        If Rtb_DescText.CanRedo Then
+            Rtb_DescText.Redo()
+        End If
+
+    End Sub
+    Private Sub CM_DescCutClick(                ' CM Cut or Ctrl-X Click in Descriptive Text Area
+            sender As Object,                   ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles CM_DescCut.Click
+
+        ' Purpose:      Handles Click on Cut for Descriptive Text Area
+        ' Process:      If text selected, perform .Cut Method
+        ' Called By:    CM_DescCut Click Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.8> First implementation
+
+        Const lclProcName As String =           ' Routine's name for message handling
+            "CM_DescCutClick"
+
+        If Rtb_DescText.SelectionLength > 0 Then
+            Rtb_DescText.Cut()
+        End If
+
+    End Sub
+    Private Sub CM_DescCopyClick(               ' CM Copy or Ctrl-C Click in Descriptive Text Area
+            sender As Object,                   ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles CM_DescCopy.Click
+
+        ' Purpose:      Handles Click on Copy for Descriptive Text Area
+        ' Process:      If text selected, perform .Copy Method
+        ' Called By:    CM_DescCopy Click Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.8> First implementation
+
+        Const lclProcName As String =           ' Routine's name for message handling
+            "CM_DescCopyClick"
+
+        If Rtb_DescText.SelectionLength > 0 Then
+            Rtb_DescText.Copy()
+        End If
+
+    End Sub
+    Private Sub CM_DescPasteClick(              ' CM Paste or Ctrl-V Click in Descriptive Text Area
+            sender As Object,                   ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles CM_DescPaste.Click
+
+        ' Purpose:      Handles Click on Paste for Descriptive Text Area
+        ' Process:      If there is valid pasteable content in Clipboard, invoke the .Paste Method
+        ' Called By:    CM_DescPaste Click Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.8> First implementation
+
+        Dim lclProcName As String =             ' Routine's name for message handling
+            "CM_DescPasteClick"
+
+        If (Clipboard.ContainsText() Or         ' Accept Unicode, Ansi, RTF, and Image Data
+        Clipboard.ContainsText(TextDataFormat.Text) Or
+        Clipboard.ContainsText(TextDataFormat.Rtf) Or
+        Clipboard.ContainsImage()) Then
+            Rtb_DescText.Paste()
+        End If
+
+    End Sub
+    Private Sub CM_DescPrintClick(              ' CM Print or Ctrl-P Click in Descriptive Text Area
+            sender As Object,                   ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles CM_DescPrint.Click
+
+        ' Purpose:      Handles Click on Print for Descriptive Text Area
+        ' Process:      If there is content in the RTB, invoke the .Paste Method
+        ' Called By:    CM_DescPaste Click Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.8> First implementation
+
+        Dim lclProcName As String =             ' Routine's name for message handling
+            "CM_DescPrintClick"
+
+        If Rtb_DescText.TextLength > 0 Then     ' Something in RTB to print
+            PrintDT()                           ' Call common print handler
+        End If
+
+    End Sub
+    Private Sub CM_ODFOpening(                  ' Right-clicked in ODF Area, init CM Menu
+            sender As Object,                   ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles CM_ODF.Opening
+
+        ' Purpose:      Init CM Menu for ODF Are
+        ' Process:      For Copy, ODF text must be selected; For Undo or Redo, ODF must be
+        '               Editable, and operation OKd by the system; For Cut, must be
+        '               Editable with text selected. For Paste, must be Editable with
+        '               text present in the clipboard. For Enable/Disable-Edit and
+        '               Recompute, an ODF must be loaded.
+        ' Called By:    CM_ODF Opening Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.8> First implementation
+
+        Const lclProcName As String =           ' Routine's name for message handling
+            "CM_ODFOpening"
+
+        CM_ODFUndo.Enabled =                    ' Undo & Redo require Editing enabled and system permission
+            (G_EditMode And Rtb_ODF.CanUndo)
+        CM_ODFRedo.Enabled =
+            (G_EditMode And Rtb_ODF.CanRedo)
+
+        CM_ODFCut.Enabled =                     ' Cut requires Editing enabled and selected text
+            (G_EditMode And (Rtb_ODF.SelectionLength > 0))
+        CM_ODFCopy.Enabled =                    ' Copy requires selected text
+            (Rtb_ODF.SelectionLength > 0)
+        CM_ODFPaste.Enabled =                   ' Pasting requires Editing enabled and Text in the clipboard (Unicode or ANSI or RTF)
+            (G_EditMode And
+            (Clipboard.ContainsText Or Clipboard.ContainsText(TextDataFormat.Text) Or Clipboard.ContainsText(TextDataFormat.Rtf)))
+
+        If G_NoODF Then                         ' Edit Mode changes require an ODF
+            CM_ODFEditMode.Enabled = False      ' Set to default, even though disabled
+            CM_ODFEditMode.Text = "Enable Editing"
+        Else                                    ' Have and ODF
+            CM_ODFEditMode.Enabled = True       ' Enable the CM item
+            If G_EditMode Then                  ' Set its text to the opposite of the current Edit Mode state
+                CM_ODFEditMode.Text = "Disable Editing"
+            Else
+                CM_ODFEditMode.Text = "Enable Editing"
+            End If
+        End If
+
+        CM_ODFRecompute.Enabled =               ' Recompute requires an ODF to be loaded
+            (Not (G_NoODF) And
+            (Rtb_ODF.TextLength > 0))
+
+    End Sub
+    Private Sub CM_ODFUndoClick(                ' CM Undo or Ctrl-Z Click in ODF Area
+            sender As Object,                   ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles CM_ODFUndo.Click
+
+        ' Purpose:      Handles Click on Undo for ODF Area
+        ' Process:      If Editable and system allows, perform .Undo Method
+        ' Called By:    CM_ODF Undo Click Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.8> First implementation
+
+        Dim lclProcName As String =             ' Routine's name for message handling
+            "CM_ODFUndoClick"
+
+        If G_EditMode And Rtb_ODF.CanUndo Then  ' Undo requires Editing enbaled and system permission
+            Rtb_ODF.Undo()
+        End If
+
+    End Sub
+    Private Sub CM_ODFRedoClick(                ' CM Redo or Ctrl-Y Click in ODF Area
+            sender As Object,                   ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles CM_ODFRedo.Click
+
+        ' Purpose:      Handles Click on Redo for ODF Area
+        ' Process:      If Editable and system allows, perform .Redo Method
+        ' Called By:    CM_ODF Redo Click Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.8> First implementation
+
+        Dim lclProcName As String =             ' Routine's name for message handling
+            "CM_ODFRedoClick"
+
+        If G_EditMode And Rtb_ODF.CanRedo Then  ' Redo requires Editing enabled and system permission
+            Rtb_ODF.Redo()
+        End If
+
+    End Sub
+    Private Sub CM_ODFCutClick(                             ' CM Cut or Ctrl-X Click in ODF Area
+            sender As Object,                               ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles CM_ODFCut.Click
+
+        ' Purpose:      Handles Click on Cut for ODF Area
+        ' Process:      If Editable and selected text is present in ODF, perform .Cut Method
+        ' Called By:    CM_ODF Cut Click Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.8> First implementation
+
+        Dim lclProcName As String =                         ' Routine's name for message handling
+            "CM_ODFCutClick"
+
+        If G_EditMode And (Rtb_ODF.SelectionLength > 0) Then  ' Cut requires Editing enabled and selected text
+            Rtb_ODF.Cut()
+        End If
+
+    End Sub
+    Private Sub CM_ODFCopyClick(                ' CM Copy or Ctrl-C Click in ODF Area
+            sender As Object,                   ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles CM_ODFCopy.Click
+
+        ' Purpose:      Handles Click on Copy for ODF Area
+        ' Process:      If selected text is present in ODF, perform .Copy Method
+        ' Called By:    CM_ODF Copy Click Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.8> First implementation
+
+        Dim lclProcName As String =             ' Routine's name for message handling
+            "CM_ODFCopyClick"
+
+        If (Rtb_ODF.SelectionLength > 0) Then   ' Copy requires selected text
+            Rtb_ODF.Copy()
+        End If
+
+    End Sub
+    Private Sub CM_ODFPasteClick(               ' CM Paste or Ctrl-V Click in ODF Area
+            sender As Object,                   ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles CM_ODFPaste.Click
+
+        ' Purpose:      Handles Click on Paste for ODF Area
+        ' Process:      If Editable and Text is present in the Clipboard, perform .Paste Method
+        ' Called By:    CM_ODF Paste Click Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.8> First implementation
+
+        Dim lclProcName As String =             ' Routine's name for message handling
+            "CM_ODFPasteClick"
+
+        If (G_EditMode And                      ' Pating requires Editing enabled, and Unicode/ANSI/RTF text in clipboard
+            (Clipboard.ContainsText Or
+            Clipboard.ContainsText(TextDataFormat.Text) Or
+            Clipboard.ContainsText(TextDataFormat.Rtf))) Then
+            Rtb_ODF.Paste()
+        End If
+
+    End Sub
+    Private Sub CM_ODFEditModeClick(            ' CM Enable/Disable Editing Click in ODF Area
+            sender As Object,                   ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles CM_ODFEditMode.Click
+
+        ' Purpose:      Handles Click on EditMode for ODF Area
+        ' Process:      If ODF is loaded, call ...
+        ' Called By:    CM_ODF EditMode Click Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.8> First implementation
+
+        Dim lclProcName As String =             ' Routine's name for message handling
+            "CM_ODFEditmodeClick"
+
+        If Not (G_NoODF) Then
+            If CM_ODFEditMode.Text = "Enable Editing" Then
+                CM_ODFEditMode.Text = "Disable Editing"
+                EnableEditing()
+            Else
+                CM_ODFEditMode.Text = "Enable Editing"
+                DisableEditing()
+            End If
+        End If
+
+    End Sub
+    Private Sub CM_ODFRecomputeClick(                           ' CM Recompute Click in ODF Area
+            sender As Object,                                   ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles CM_ODFRecompute.Click
+
+        ' Purpose:      Handles Click on Recompute for ODF Area
+        ' Process:      If ODF is loaded, call EnumerateSectionsSetFont()
+        ' Called By:    CM_ODF Recompute Click Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.8> First implementation
+
+        Dim lclProcName As String =                             ' Routine's name for message handling
+            "CM_ODFRecomputeClick"
+
+        If (Not (G_NoODF) And (Rtb_ODF.TextLength > 0)) Then
+            EnumerateSectionsSetFont(Rtb_ODF,                   ' Operate on the ODF
+                                     Num_ODFFontSize.Value,     ' Maintain present font-size
+                                     G_NoODF,                   ' Have ODF, this is False
+                                     True,                      ' List Sections in the Descriptive Text Area
+                                     True)                      ' Ensure all Titles are emphasize correctly (there may be new Sections after an edit!)
+        End If
 
     End Sub
 

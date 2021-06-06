@@ -387,6 +387,35 @@
 
     4)  The old hard-coded linkages to the Event Handler are deleted.
 
+1.060.8     June 4, 2021 Bob Hehmann
+    Git:        ContextMenus
+    Summary:    Add Context Menus (right-click) to:
+                    ODF Read-Only (Copy, EnableEdit, Recompute) (All Text Text Types);
+                    ODF EditEnabled (Undo, Redo, Copy, Cut, Paste, DisbableEdit, Recompute) (All Text Types);
+                    XML Rec/Row (Copy);
+                    Search (Undo, Copy, Cut, Paste) (ANSI/Unicode Text Only);
+                    Descriptive Text (Undo, Redo, Copy, Cut, Paste, Print) (All Text & Images);
+                    SampleTrace (Undo, Redo, Copy, Cut, Paste) (All Text and Images).
+    Details:    During CMenu Opening, build the appropriate Menu. Within each CM Menus own code,
+                perform the specific criteria checks to build that menu. Within each CM Menu's
+                Click-event handlers, recheck that operation is permissible, in case it was invoked
+                by a shortcut key e.g., Crtl-X, and the CM Menu build at right-click never happened,
+                or is not current. Generally, Undo/Redo require system permission; Cut/Copy require
+                selected text; Paste requires acceptable clipboard content. ODF has to be edit-enabled
+                to Cut or Paste.
+
+    1)  Added Undo, Redo, Cut, Copy, and Paste to SampleTrace Form.
+
+    2)  Added Copy to Main form, XML Row/Rec RTB.
+
+    3)  Added Undo, Cut, Copy, & Paste to Search Box (no Redo for simple Text Boxes.)
+
+    4)  Added Undo, Redo, Cut, Copy, Paste, and Print to Descriptive Text Area.
+
+    5)  Added Undo, Redo, Cut, Copy, Paste, Enable/Disable Edit, and Recompute Sections to ODF Area.
+
+    6)  Fixed several minor edge-case bugs that can happen when an ODF is edited to be malformed.
+
 Routines relocated from various forms over to SharedCode.vb (or new routines created in SharedCode.vb):
 
 Friend              Constant Declarations / Init    <Relocated from MAIN form>

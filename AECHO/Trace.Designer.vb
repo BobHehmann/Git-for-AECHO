@@ -22,6 +22,7 @@ Partial Class Trace
     'Ne la modifiez pas à l'aide de l'éditeur de code.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.Txt_SampleID = New System.Windows.Forms.TextBox()
         Me.Btn_TraceSample = New System.Windows.Forms.Button()
@@ -31,7 +32,15 @@ Partial Class Trace
         Me.MenuTSPrint = New System.Windows.Forms.ToolStripMenuItem()
         Me.PrintDialogTrace = New System.Windows.Forms.PrintDialog()
         Me.PrintDocumentTrace = New System.Drawing.Printing.PrintDocument()
+        Me.CM_SampleTrace = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.CM_TraceCut = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CM_TraceCopy = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CM_TracePaste = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CM_TraceUndo = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CM_TraceRedo = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
         Me.Menu_SampleTrace.SuspendLayout()
+        Me.CM_SampleTrace.SuspendLayout()
         Me.SuspendLayout()
         '
         'Label1
@@ -109,6 +118,57 @@ Partial Class Trace
         '
         Me.PrintDocumentTrace.DocumentName = "AECHOSampleTrace"
         '
+        'CM_SampleTrace
+        '
+        Me.CM_SampleTrace.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CM_TraceUndo, Me.CM_TraceRedo, Me.ToolStripSeparator1, Me.CM_TraceCut, Me.CM_TraceCopy, Me.CM_TracePaste})
+        Me.CM_SampleTrace.Name = "ContextMenuStrip1"
+        Me.CM_SampleTrace.Size = New System.Drawing.Size(181, 142)
+        '
+        'CM_TraceCut
+        '
+        Me.CM_TraceCut.Name = "CM_TraceCut"
+        Me.CM_TraceCut.ShortcutKeyDisplayString = " "
+        Me.CM_TraceCut.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.X), System.Windows.Forms.Keys)
+        Me.CM_TraceCut.Size = New System.Drawing.Size(180, 22)
+        Me.CM_TraceCut.Text = "Cut"
+        '
+        'CM_TraceCopy
+        '
+        Me.CM_TraceCopy.Name = "CM_TraceCopy"
+        Me.CM_TraceCopy.ShortcutKeyDisplayString = " "
+        Me.CM_TraceCopy.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
+        Me.CM_TraceCopy.Size = New System.Drawing.Size(180, 22)
+        Me.CM_TraceCopy.Text = "Copy"
+        '
+        'CM_TracePaste
+        '
+        Me.CM_TracePaste.Name = "CM_TracePaste"
+        Me.CM_TracePaste.ShortcutKeyDisplayString = " "
+        Me.CM_TracePaste.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.V), System.Windows.Forms.Keys)
+        Me.CM_TracePaste.Size = New System.Drawing.Size(180, 22)
+        Me.CM_TracePaste.Text = "Paste"
+        '
+        'CM_TraceUndo
+        '
+        Me.CM_TraceUndo.Name = "CM_TraceUndo"
+        Me.CM_TraceUndo.ShortcutKeyDisplayString = " "
+        Me.CM_TraceUndo.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Z), System.Windows.Forms.Keys)
+        Me.CM_TraceUndo.Size = New System.Drawing.Size(180, 22)
+        Me.CM_TraceUndo.Text = "Undo"
+        '
+        'CM_TraceRedo
+        '
+        Me.CM_TraceRedo.Name = "CM_TraceRedo"
+        Me.CM_TraceRedo.ShortcutKeyDisplayString = " "
+        Me.CM_TraceRedo.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Y), System.Windows.Forms.Keys)
+        Me.CM_TraceRedo.Size = New System.Drawing.Size(180, 22)
+        Me.CM_TraceRedo.Text = "Redo"
+        '
+        'ToolStripSeparator1
+        '
+        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(177, 6)
+        '
         'Trace
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 15.0!)
@@ -126,6 +186,7 @@ Partial Class Trace
         Me.Text = "Sample Trace"
         Me.Menu_SampleTrace.ResumeLayout(False)
         Me.Menu_SampleTrace.PerformLayout()
+        Me.CM_SampleTrace.ResumeLayout(False)
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -139,4 +200,11 @@ Partial Class Trace
     Friend WithEvents MenuTSPrint As Windows.Forms.ToolStripMenuItem
     Friend WithEvents PrintDialogTrace As Windows.Forms.PrintDialog
     Friend WithEvents PrintDocumentTrace As Printing.PrintDocument
+    Friend WithEvents CM_SampleTrace As Windows.Forms.ContextMenuStrip
+    Friend WithEvents CM_TraceCut As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents CM_TraceCopy As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents CM_TracePaste As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents CM_TraceUndo As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents CM_TraceRedo As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator1 As Windows.Forms.ToolStripSeparator
 End Class
