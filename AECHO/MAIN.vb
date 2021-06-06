@@ -49,6 +49,11 @@ Public Class MAIN
     '   Git:        DynamicSecMenus
     '   Summary:    Replace static Section Navigation Menus with Menus created from ODF Content - including via Recompute
 
+    '   1.060.8     June 4, 2021 Bob Hehmann
+    '   Git:        Context Menus
+    '   Summary:    Add Context (right-click) Menus to Sample Trace RTB, ODF Area, XML Row Area, Search Text, and Descriptive
+    '               Text Area
+
     Dim M_FoundStart As Integer = -1    ' <1.060.2> When a text-search succeeds, this becomes index of start of located text
     Dim M_FoundEnd As Integer = 0       ' <1.060.2> Defines the end of located text; when 0, there is no located text defined.
     Dim M_FirstChar As Integer          ' <1.060.2> Current position in print-stream, between page calls
@@ -438,7 +443,6 @@ Public Class MAIN
             G_ODFModSinceSaved = False                                      ' <1.060.2> Introduced to track if ODF is modified, and we should prompt to save it before discarding.
             Status_FileDirtyVal.BackColor = Color.LightGreen                ' <1.060.2> Clean file loaded, update Status-Bar
             G_PackagePath = GetPackagePath(G_OrganFile)                     ' trouver le path pour OrganInstallationPackages; Location of Packages: sounds, image files...
-
         End If
 
     End Sub

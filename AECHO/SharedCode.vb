@@ -1309,6 +1309,7 @@ Module SharedCode
 
             MAIN.Btn_Led.BackColor = Color.Red                      ' At the start, change Btn_Led to Red, then back to Green when done
             MAIN.Btn_Led.Refresh()
+
             srchPos = srcRTB.Find(conSecStartTag, 0,                ' Find location of the first Section Start-Tag '<ObjectList ObjectType='
                                   conQuickNoH)
 
@@ -1376,12 +1377,10 @@ Module SharedCode
                 Else
                     srchPos = srcRTB.Find(conSecStartTag, eTag,     ' Starting from the end of the present Title, find the next one
                                       conQuickNoH)
-
                 End If
             End While
 
             MAIN.BuildSecMenus()                                    ' <1.060.7> Add the .Tag and Event Handlers to the new Sub-Menus
-
             HotClickCursorPosition(MAIN.Lbl_CursorPosVal.Tag)       ' <1.060.6> Reposition to original cursor position, as text was scrolled by this routine: use .Tag
             MAIN.Btn_Led.BackColor = Color.LightGreen               ' Set Led color to Green to indicate completion of enumeration
             MAIN.Btn_Led.Refresh()
@@ -1735,6 +1734,9 @@ Module SharedCode
 
         With MAIN
             lineNum = .Rtb_ODF.GetLineFromCharIndex(index)              ' Map the character Index to a Line Index (=LineNumber-1)
+            If lineNum >= (.Rtb_ODF.Lines.Count - 1) Then               ' <1.080.8> Bugfix, don't let Line# exceed last line (ignore the final null line)
+                lineNum = .Rtb_ODF.Lines.Count() - 2                    ' <1.080.8) .Count is 1-based, lineNum is 0-based, so compare to -1, decrement -2
+            End If
             lineStart = .Rtb_ODF.GetFirstCharIndexFromLine(             ' Find out where the line starts
             lineNum)
             lineEnd = .Rtb_ODF.Find(vbCr,                               ' Locate the end of the line we are presently in 
