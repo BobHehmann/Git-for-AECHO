@@ -416,6 +416,17 @@
 
     6)  Fixed several minor edge-case bugs that can happen when an ODF is edited to be malformed.
 
+1.060.9     June 6, 2021 Bob Hehmann
+    Git:        ArrowKeys
+    Summary:    Properly handle the Up, Down, Left, and Right arrow keys, updating screen position to match
+                onscreen actions.
+    Details:    Using the Keyup Event for the ODF, intercept all keystrokes - ignore all but the Up, Down, Left,
+                and Right Arrow Keys. This Event triggers after the arrow key has moved the Cursor onscreen.
+                Retrieve the (new) position of the Cursor, and call MoveToPosition() to this position, parms
+                configured to emulate a single mouse-click on the new position - this updates all the internal
+                data, plus the Data Panel location Fields, to meatch the new location. Note - arrows (and single-
+                clicks) do not update Section data.
+
 Routines relocated from various forms over to SharedCode.vb (or new routines created in SharedCode.vb):
 
 Friend              Constant Declarations / Init    <Relocated from MAIN form>

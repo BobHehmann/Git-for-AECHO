@@ -50,9 +50,13 @@ Public Class MAIN
     '   Summary:    Replace static Section Navigation Menus with Menus created from ODF Content - including via Recompute
 
     '   1.060.8     June 4, 2021 Bob Hehmann
-    '   Git:        Context Menus
-    '   Summary:    Add Context (right-click) Menus to Sample Trace RTB, ODF Area, XML Row Area, Search Text, and Descriptive
+    '   Git:        ContextMenus
+    '   Summary:    Add Context (right-click) Menus to Sample-Trace RTB, ODF Area, XML Row Area, Search Text, and Descriptive
     '               Text Area
+
+    '   1.060.9     June 6, 2021 Bob Hehmann
+    '   Git:        ArrowKeys
+    '   Summary:    Treat Up, Down, Left, and Right arrow keys as single-mouse clicks at new Cursor position, updating locatio info.
 
     Dim M_FoundStart As Integer = -1    ' <1.060.2> When a text-search succeeds, this becomes index of start of located text
     Dim M_FoundEnd As Integer = 0       ' <1.060.2> Defines the end of located text; when 0, there is no located text defined.
@@ -159,8 +163,8 @@ Public Class MAIN
 
     ' FONCTIONS RICH TEXT BOX; Useful Functions for the Rich Text Boxes, ODF, XML Rows...
     ' CONTROLES
-    Private Sub Num_ODFFontSize_ValueChanged(
-            sender As Object,                                   ' Standard Control event parms...
+    Private Sub Num_ODFFontSize_ValueChanged(                   ' Changed the ODF Font-size Control
+            sender As Object,                                   ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Num_ODFFontSize.ValueChanged
 
@@ -184,8 +188,8 @@ Public Class MAIN
                                  True)                          ' <1.060.2> Re-emphasize Titles after setting overall ODF Font size (size change resets all other attributes)
 
     End Sub
-    Private Sub Rtb_ODF_MouseDoubleClick(
-            sender As Object,                                       ' Standard Control event parms...
+    Private Sub Rtb_ODF_MouseDoubleClick(                           ' Double Mouse-click in the ODF
+            sender As Object,                                       ' Standard Event Parameters for a Control
             e As MouseEventArgs
             ) Handles Rtb_ODF.MouseDoubleClick
 
@@ -205,7 +209,8 @@ Public Class MAIN
         '               cursorPos. Eliminated G_RowText, take Row Text from Function value of MoveToPosition().
         '               <1.060.6> Save Section Start/End positions in the .Tag properties, for later use when repositioning.
 
-        Const lclProcName As String = " Rtb_ODF_MouseDoubleClick"   ' <1.060.2> Routine's name for message handling
+        Const lclProcName As String =                               ' <1.060.2> Routine's name for message handling
+            " Rtb_ODF_MouseDoubleClick"
 
         Dim cursorPos As Integer                                    ' <1.060.2> Local var for current Cursor Position, replaced G_CaretPos
         Dim secStart As Integer
@@ -245,8 +250,8 @@ Public Class MAIN
                                       G_PreviousRTFFile)
 
     End Sub
-    Private Sub Rtb_ODF_MouseClick(
-            sender As Object,                                       ' Standard Control event parms...
+    Private Sub Rtb_ODF_MouseClick(     ' Single Mouse-click in the ODF
+            sender As Object,           ' Standard Event Parameters for a Control
             e As MouseEventArgs
             ) Handles Rtb_ODF.MouseClick
 
@@ -285,8 +290,8 @@ Public Class MAIN
     End Sub
 
     'FONCTIONS ET PROCEDURES
-    Private Sub Btn_SaveDescTextClick(
-            sender As Object,                           ' Standard Control event parms...
+    Private Sub Btn_SaveDescTextClick(                  ' Clicked Save Desc. Button
+            sender As Object,                           ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Btn_SaveDescText.Click
 
@@ -332,8 +337,8 @@ Public Class MAIN
     End Sub
 
     ' MENU FILES
-    Private Sub Menu_OpenHauptwerkOrganClick(                               ' Standard Control event parms...
-            sender As Object,
+    Private Sub Menu_OpenHauptwerkOrganClick(                               ' menu > File > Open Hauptwerk Organ...
+            sender As Object,                                               ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Menu_OpenHauptwerkOrgan.Click
 
@@ -446,8 +451,8 @@ Public Class MAIN
         End If
 
     End Sub
-    Private Sub Menu_SaveAsClick(           ' Standard Control event parms...
-            sender As Object,
+    Private Sub Menu_SaveAsClick(           ' menu > File > Save As...
+            sender As Object,               ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Menu_SaveAs.Click
 
@@ -470,8 +475,8 @@ Public Class MAIN
         End If
 
     End Sub
-    Private Sub Menu_CloseODFClick(         ' Standard Control event parms...
-            sender As Object,
+    Private Sub Menu_CloseODFClick(         ' menu > File > Close ODF...
+            sender As Object,               ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Menu_CloseODF.Click
 
@@ -491,8 +496,8 @@ Public Class MAIN
         ResetToNoODF()                      ' Clears data areas, resets menus and globals...
 
     End Sub
-    Private Sub Menu_QuitClick(             ' Standard Control event parms...
-            sender As Object,
+    Private Sub Menu_QuitClick(             ' menu > File > Exit
+            sender As Object,               ' Standard Event Parameters for a Control
             e As EventArgs) Handles Menu_Quit.Click
 
         ' Purpose:      Terminate AECHO
@@ -514,8 +519,8 @@ Public Class MAIN
     End Sub
 
     ' MENU SECTIONS
-    Private Sub Menu_SectionChoiceClick(
-            sender As ToolStripMenuItem,            ' Standard Control event parms...
+    Private Sub Menu_SectionChoiceClick(            ' Any menu > Sections > sub-menu choice
+            sender As ToolStripMenuItem,            ' Standard Event Parameters for a Control
             e As EventArgs)                         ' <1.060.7> Event Handlers added dynamically as Sections are located
 
         ' Purpose:      Process Section Menu choices, to navigate directly to Sections in the ODF.
@@ -589,8 +594,8 @@ Public Class MAIN
         DispMsg("", conMsgInfo,
                 "ODF Text is now editable")
     End Sub
-    Private Sub Menu_ExitEditModeClick(             ' Standard Control event parms...
-            sender As Object,
+    Private Sub Menu_ExitEditModeClick(             ' menu > Edit Mode > ODF Editing Disabled
+            sender As Object,                       ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Menu_EditModeExit.Click
 
@@ -654,8 +659,8 @@ Public Class MAIN
         'End If
 
     End Sub
-    Private Sub Menu_ReComputeSectionsClick(            ' Standard Control event parms...
-            sender As Object,
+    Private Sub Menu_ReComputeSectionsClick(            ' menu > Edit Mode > Recompute Sections
+            sender As Object,                           ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Menu_ReComputeSections.Click
 
@@ -681,8 +686,8 @@ Public Class MAIN
     End Sub
 
     ' MENU TOOLS
-    Private Sub Menu_ClearMarkersClick(     ' Standard Control event parms...
-            sender As Object,
+    Private Sub Menu_ClearMarkersClick(     ' menu > Tools > Clear Markers
+            sender As Object,               ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Menu_ClearMarkers.Click
 
@@ -698,8 +703,8 @@ Public Class MAIN
         ClearMarkers()                      ' Dispatch common routine
 
     End Sub
-    Private Sub Menu_CouplersCodeClick(     ' Standard Control event parms...
-            sender As Object,
+    Private Sub Menu_CouplersCodeClick(     ' menu > Tools > Couplers (Encode/Decode)
+            sender As Object,               ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Menu_CouplersCode.Click
 
@@ -718,8 +723,8 @@ Public Class MAIN
         Couplers.Show(Me)                   ' Open the form; if already open, give it focus
 
     End Sub
-    Private Sub FollowASampleToolStripMenuItemClick(    ' Standard Control event parms...
-            sender As Object,
+    Private Sub FollowASampleToolStripMenuItemClick(    ' menu > Tools > Trace a Sample
+            sender As Object,                           ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Menu_FollowASample.Click
 
@@ -740,17 +745,19 @@ Public Class MAIN
     End Sub
 
     ' MENU ?
-    Private Sub Menu_HelpClick(                                 ' Standard Control event parms...
-            sender As Object,
+    Private Sub Menu_HelpClick(                                 ' menu > ? > View Help
+            sender As Object,                                   ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Menu_Help.Click
 
-        ' Purpose:      Display the helptest file in the Section Description box
-        ' Process:		Construct path to file, check if it exists, if so, copy its content into
-        '               the box.
+        ' Purpose:      Display the help text: HTML version is first option, short version in
+        '               Descriptive Text Area is fallback if HTML can't be found or opened.
+        ' Process:		COnstruct path to HTML Help, if found, attempt to dispatch in default
+        '               browser; if any of this fails, fallback to locating the short-help .rtf
+        '               file and displaying that. If that fails, apologize.
         ' Called By:    Menu_Help Click Event
-        ' Side Effects: Updates Rtb_DescText control contents
-        ' Notes:        Consider changing to a standard Help object.
+        ' Side Effects: If HTML fails, updates Rtb_DescText control contents
+        ' Notes:        <None>
         ' Updates:      <1.060.2> Add code to let user know if help file is missing. Change filname/path assembly
         '               to Path.Combine, for greater OS independence. Update Title over RTB. Eliminate reference
         '               to unneeded global G_RTFFile, use a local var instead to construct the path/filename.
@@ -816,8 +823,8 @@ Public Class MAIN
     End Sub
 
     ' BOUTONS
-    Private Sub Btn_FindFirstClick(     ' Standard Control event parms...
-            sender As Object,
+    Private Sub Btn_FindFirstClick(     ' Clicked the Find First Button
+            sender As Object,           ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Btn_FindFirst.Click
 
@@ -847,8 +854,8 @@ Public Class MAIN
                         True)           ' <1.060.2> Execute a forward search
 
     End Sub
-    Private Sub Btn_FindNextClick(      ' Standard Control event parms...
-            sender As Object,
+    Private Sub Btn_FindNextClick(      ' Clicked the Find Next > Button
+            sender As Object,           ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Btn_FindNext.Click
 
@@ -879,8 +886,8 @@ Public Class MAIN
                         True)           ' <1.060.2> Search forward
 
     End Sub
-    Private Sub Btn_LedClick(                       ' Standard Control event parms...
-            sender As Object,
+    Private Sub Btn_LedClick(                       ' Clicked the Led Button in the Data Panel
+            sender As Object,                       ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Btn_Led.Click
 
@@ -899,8 +906,8 @@ Public Class MAIN
         Return
 
     End Sub
-    Private Sub Btn_SetFontClick(               ' Standard Control event parms...
-            sender As Object,
+    Private Sub Btn_SetFontClick(               ' Clicked the Set Desc. Font Button
+            sender As Object,                   ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Btn_SetFont.Click
 
@@ -931,8 +938,8 @@ Public Class MAIN
         Rtb_DescText.Refresh()                  ' Update screen
 
     End Sub
-    Private Sub Btn_MarkersMouseDown(               ' Standard Control event parms...
-            sender As Object,
+    Private Sub Btn_MarkersMouseDown(               ' Mouse-clicked on a Marker Button
+            sender As Object,                       ' Standard Event Parameters for a Control
             e As MouseEventArgs
             ) Handles Btn_Marker1.MouseDown, Btn_Marker2.MouseDown, Btn_Marker3.MouseDown, Btn_Marker4.MouseDown
 
@@ -985,13 +992,13 @@ Public Class MAIN
         End If
 
     End Sub
-    Private Sub Btn_RowActionClick(         ' Standard Control event parms...
-            sender As Object,
+    Private Sub Btn_RowActionClick(         ' Take a contextual action on a Row: Display Image, Trace Sample...
+            sender As Object,               ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Btn_RowAction.Click
 
-        ' Purpose:      When the current Row includes a Child Element that names an Image File (Mask,
-        '               Imgage), attempt to retrieve and display that file.
+        ' Purpose:      When the current Row includes a Child Element supports a contextual action assigned
+        '               to the ActionButton, dispatch that Action e.g. Display Image and Trace Sample
         ' Process:		Call TakeRowAction() to do the work
         ' Called By:    Btn_DisplayImage Click Event
         ' Side Effects: <NA>
@@ -1011,8 +1018,8 @@ Public Class MAIN
                      G_MinPanelHeights)
 
     End Sub
-    Private Sub Btn_NextLineClick(                              ' Standard Control event parms...
-            sender As Button,
+    Private Sub Btn_NextLineClick(                              ' Handle the 6 Next/Prev Line Buttons
+            sender As Button,                                   ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Btn_NextLine.Click, Btn_Next10Lines.Click, Btn_Next100Lines.Click,
             Btn_PrevLine.Click, Btn_Prev10Lines.Click, Btn_Prev100Lines.Click
@@ -1080,12 +1087,13 @@ Public Class MAIN
         End Try
 
     End Sub
-    Private Sub Rtb_ODFTextChanged(                     ' Standard Control event parms...
-            sender As Object,
+    Private Sub Rtb_ODFTextChanged(                     ' Updadate Status-Bar and "Dirty Bits"
+            sender As Object,                           ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Rtb_ODF.TextChanged
 
-        ' Purpose:      Event triggers whenever text of Rtb_ODF is changed: loaded, cleared, edited by user
+        ' Purpose:      Event triggers whenever text of Rtb_ODF is changed: loaded, cleared, edited by user.
+        '               Updates Status-Bar and "Dirty" Bits.
         ' Process:		If length changed, set length global to new length; If in Edit Mode, set ODF dirty bit
         ' Called By:    Rtb_ODF TextChanged Event
         ' Side Effects: Set global ODF Dirty Bit to True, and alter Status-Bar on screen.
@@ -1107,8 +1115,51 @@ Public Class MAIN
         End If
 
     End Sub
-    Private Sub Menu_AboutClick(        ' Standard Control event parms...
-            sender As Object,
+    Private Sub Rtb_ODFKeyup(               ' When Key is released, detect if it was an Arrow Key
+            sender As Object,               ' Standard Event Parameters for a Control
+            e As KeyEventArgs
+            ) Handles Rtb_ODF.KeyUp
+
+        ' Purpose:      Intercept Arrow Keys, cause them to update Positin Data.
+        ' Process:		KeyUp triggers after screen has updated, so an arrow key has already moved the
+        '               onscreen cursor to its new location, per normal rules. We now need to update
+        '               the related position data - identify where the cursor is, and process a
+        '               Single-Click Move to that location.
+        ' Called By:    Rtb_ODF KeyUp Event
+        ' Side Effects: Updates Data Panel Position Fields & G_LineIndex
+        ' Notes:        <None>
+        ' Updates:      <1.060.9> First Implementation
+
+        Const lclProcName As String =       ' Routine's name for message handling
+                "Rtb_ODFKeyup"
+
+        Dim c As Keys                       ' Will get the value of the key that was pressed
+        Dim cursorPos As Integer            ' New cursor location after ey was pressed
+        Dim lineStart As Integer            ' Dummy variable for call to MoveToPostion()
+
+        c = e.KeyValue                      ' Retrieve the Key's ID
+        If (c = Keys.Up) Or                 ' We only take action for Up, Down, Left, & Right Arrows
+            (c = Keys.Down) Or
+            (c = Keys.Left) Or
+            (c = Keys.Right) Then
+
+            If Rtb_ODF.TextLength = 0 Then  ' ODF is empty
+                Return
+            End If
+
+            cursorPos =                     ' Extract the Cursor position from Rtb_ODF
+                Rtb_ODF.SelectionStart
+
+            MoveToPosition(cursorPos,       ' Move to this position "officially", so data matches screen
+                           G_LineIndex,     ' Returns Line Number, 0-based
+                           lineStart,       ' Returns index to beginning of Line, we can ignore
+                           False,           ' Do not further position the cursor, this would erase a selection
+                           False)           ' False -> Do not extend selection on screen, leave as user set it - a single-click
+        End If
+
+    End Sub
+    Private Sub Menu_AboutClick(        ' menu > ? > About AECHO was clicked
+            sender As Object,           ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Menu_About.Click
 
@@ -1126,8 +1177,8 @@ Public Class MAIN
         AboutBox1.Show(Me)              ' Display the form
 
     End Sub
-    Private Sub Btn_FindPrevClick(      ' Standard Control event parms...
-            sender As Object,
+    Private Sub Btn_FindPrevClick(      ' < Find Prev button was clicked
+            sender As Object,           ' Standard Event Parameters for a Control
             e As EventArgs) Handles Btn_FindPrev.Click
 
         ' Purpose:      Continue a reverse search in the ODF, starting from the current position
@@ -1156,8 +1207,8 @@ Public Class MAIN
                         False)          ' <1.060.2> Search backwards from present cursor position
 
     End Sub
-    Private Sub Lbl_LineNumValClick(        ' Standard Control event parms...
-            sender As Object,
+    Private Sub Lbl_LineNumValClick(        ' Clicked on Line Number field in Daa Panel
+            sender As Object,               ' Standard Event Parameters for a Control
             e As EventArgs) Handles Lbl_LineNumVal.Click
 
         ' Purpose:      If active, position to the beginning of the line identified here. Use single-click model.
@@ -1191,8 +1242,8 @@ Public Class MAIN
                        False)               ' False -> Do not extend selection on screen, leave as user set it
 
     End Sub
-    Private Sub Lbl_SecStartValClick(       ' Standard Control event parms...
-            sender As Object,
+    Private Sub Lbl_SecStartValClick(       ' Clicked on Section Start field of Data Panel
+            sender As Object,               ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Lbl_SecStartVal.Click
 
@@ -1210,8 +1261,8 @@ Public Class MAIN
         HotClickCursorPosition(Lbl_SecStartVal.Tag)
 
     End Sub
-    Private Sub Lbl_SecEndValClick(         ' Standard Control event parms...
-            sender As Object,
+    Private Sub Lbl_SecEndValClick(         ' Clicked on Section End field of Data Panel
+            sender As Object,               ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Lbl_SecEndVal.Click
 
@@ -1229,8 +1280,8 @@ Public Class MAIN
         HotClickCursorPosition(Lbl_SecEndVal.Tag)
 
     End Sub
-    Private Sub Lbl_LineStartValClick(      ' Standard Control event parms...
-            sender As Object,
+    Private Sub Lbl_LineStartValClick(      ' Clciked on Line Start field of Data Panel
+            sender As Object,               ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Lbl_LineStartVal.Click
 
@@ -1248,8 +1299,8 @@ Public Class MAIN
         HotClickCursorPosition(Lbl_LineStartVal.Tag)
 
     End Sub
-    Private Sub Lbl_LineEndValClick(        ' Standard Control event parms...
-            sender As Object,
+    Private Sub Lbl_LineEndValClick(        ' Clicked on Line End field of Data Panel
+            sender As Object,               ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Lbl_LineEndVal.Click
 
@@ -1267,8 +1318,8 @@ Public Class MAIN
         HotClickCursorPosition(Lbl_LineEndVal.Tag)
 
     End Sub
-    Private Sub Lbl_RowStartValClick(       ' Standard Control event parms...
-            sender As Object,
+    Private Sub Lbl_RowStartValClick(       ' Clicked on Row Start field of Data Panel
+            sender As Object,               ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Lbl_RowStartVal.Click
 
@@ -1286,8 +1337,8 @@ Public Class MAIN
         HotClickCursorPosition(Lbl_RowStartVal.Tag)
 
     End Sub
-    Private Sub Lbl_RowEndValClick(         ' Standard Control event parms...
-            sender As Object,
+    Private Sub Lbl_RowEndValClick(         ' Clicked on Row End field of Data Panel
+            sender As Object,               ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Lbl_RowEndVal.Click
 
@@ -1305,8 +1356,8 @@ Public Class MAIN
         HotClickCursorPosition(Lbl_RowEndVal.Tag)
 
     End Sub
-    Private Sub Lbl_CursorPosValClick(      ' Standard Control event parms...
-            sender As Object,
+    Private Sub Lbl_CursorPosValClick(      ' Clicked on Caret Position Field of Data Panel
+            sender As Object,               ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Lbl_CursorPosVal.Click
 
@@ -1561,7 +1612,7 @@ Public Class MAIN
         Menu_SectionsA.Enabled = False          ' When done, grey-out the main Menu-Bar entry
 
     End Sub
-    Private Sub CM_XMLOpening(                  ' Right-clicked in XML Row, init CM Menu
+    Private Sub CM_XMLOpening(                  ' Right-clicked in XML Row, init the CM Menu
             sender As Object,                   ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles CM_XML.Opening
@@ -1580,7 +1631,7 @@ Public Class MAIN
 
     End Sub
     Private Sub CM_XMLCopyClick(                    ' CM Copy or Ctrl-C in XML Row Area
-            sender As Object,                           ' Standard Event Parameters for a Control
+            sender As Object,                       ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles CM_XMLCopy.Click
 
