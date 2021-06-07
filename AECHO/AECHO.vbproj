@@ -54,14 +54,10 @@
     <PackageReleaseNotes>Added Printing</PackageReleaseNotes>
     <AssemblyName>Aecho</AssemblyName>
     <RootNamespace>Aecho</RootNamespace>
-    <ApplicationIcon>Icon_Color_Pipe_Organ.ico</ApplicationIcon>
+    <ApplicationIcon>Organ.ico</ApplicationIcon>
     <PackageIcon>Icon_Color_Pipe_Organ.ico</PackageIcon>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
-  <ItemGroup>
-    <None Remove="Icon_BW_Pipe_Organ.ico" />
-    <None Remove="Icon_Color_Pipe_Organ.ico" />
-  </ItemGroup>
   <ItemGroup>
     <Reference Update="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -140,8 +136,6 @@
     <Content Include="DATA\WindCompartment.rtf" />
     <Content Include="DATA\windcompartmentlinkage.rtf" />
     <Content Include="DATA\_General.rtf" />
-    <Content Include="Icon_BW_Pipe_Organ.ico" />
-    <Content Include="Icon_Color_Pipe_Organ.ico" />
     <None Update="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
