@@ -58,6 +58,11 @@ Public Class MAIN
     '   Git:        ArrowKeys
     '   Summary:    Treat Up, Down, Left, and Right arrow keys as single-mouse clicks at new Cursor position, updating locatio info.
 
+    '   1.060.10    June 6, 2021 Bob Hehmann
+    '   Git:        AdjustDTFonts
+    '   Summary:    Add Font command to Descriptive Text Area's Context Menu. Call Font Dialog, allows changing the RTB's current
+    '               default font/color, or that of selected text.
+
     Dim M_FoundStart As Integer = -1    ' <1.060.2> When a text-search succeeds, this becomes index of start of located text
     Dim M_FoundEnd As Integer = 0       ' <1.060.2> Defines the end of located text; when 0, there is no located text defined.
     Dim M_FirstChar As Integer          ' <1.060.2> Current position in print-stream, between page calls
@@ -1771,6 +1776,7 @@ Public Class MAIN
         ' Side Effects: <None>
         ' Notes:        <None>
         ' Updates:      <1.060.8> First implementation
+        '               <1.060.10> Added Font Dialog
 
         Const lclProcName As String =           ' Routine's name for message handling
             "CM_DescOpening"
@@ -1783,6 +1789,7 @@ Public Class MAIN
             (Rtb_DescText.SelectionLength > 0)
         CM_DescCut.Enabled =                    ' Cut has same criteria as Copy
             CM_DescCopy.Enabled
+        CM_DescFont.Enabled = True              ' Always allow: if text is selected, changes text, else changes RTB default
         CM_DescPrint.Enabled =                  ' Print enabled if there is text
             (Rtb_DescText.TextLength > 0)
         CM_DescPaste.Enabled =                  ' Paste allowed if Clipboard has any Text or Image content
@@ -1913,6 +1920,68 @@ Public Class MAIN
         If Rtb_DescText.TextLength > 0 Then     ' Something in RTB to print
             PrintDT()                           ' Call common print handler
         End If
+
+    End Sub
+    Private Sub CM_DescFontClick(                                   ' CM Font command in Descriptive Text Area
+            sender As Object,                                       ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles CM_DescFont.Click
+
+        ' Purpose:      Invokes Font dialog to change selected text's font attributes,
+        '               or the RTB's default attributes.
+        ' Process:      If text is selected, load dialog with Font & Color attributes of
+        '               the selection, and open with "Apply" enabled. If user chooses OK,
+        '               save the attributes back to the selection. Apply triggers the Apply
+        '               Event, making changes immediately without closing the dialog. If no
+        '               text is selected, set initial values to those of the RTB itself,
+        '               and do not display "Apply". Ok moddifies the RTB's values to those
+        '               chosen in the dialog.
+        ' Called By:    CM_DescFont Click Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.10> First implementation
+
+        Dim lclProcName As String =                                 ' Routine's name for message handling
+            "CM_DescFontClick"
+
+        If Rtb_DescText.SelectionLength > 0 Then                    ' Text selected, get selection's attributes
+            FntDial_Desc.Font = Rtb_DescText.SelectionFont          ' Make those attributes the initial dialog state
+            FntDial_Desc.Color = Rtb_DescText.SelectionColor
+            FntDial_Desc.ShowApply = True                           ' Enable Apply to allow background changes
+            If FntDial_Desc.ShowDialog = DialogResult.OK Then       ' Did user choose OK?
+                Rtb_DescText.SelectionFont = FntDial_Desc.Font      ' Yes, set selected text to Font & Color choices
+                Rtb_DescText.SelectionColor = FntDial_Desc.Color
+            End If
+        Else                                                        ' No selection, operate on the RTB itself
+            FntDial_Desc.Font = Rtb_DescText.Font                   ' Load dialog with RTB's present settings
+            FntDial_Desc.Color = Rtb_DescText.ForeColor
+            FntDial_Desc.ShowApply = False                          ' No backgroud Apply command
+            If FntDial_Desc.ShowDialog = DialogResult.OK Then       ' Did user choose OK?
+                Rtb_DescText.Font = FntDial_Desc.Font               ' Yes, apply attribute choices to the RTB's defaults
+                Rtb_DescText.ForeColor = FntDial_Desc.Color
+            End If
+        End If
+
+    End Sub
+    Private Sub FntDial_DescApply(                          ' Event Handler for Apply command
+            sender As Object,                               ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles FntDial_Desc.Apply
+
+        ' Purpose:      Immediately apply the Dialog's settings to the selection, while
+        '               remaining in the Dialog - useful to try out changes.
+        ' Process:      Just set the attributes of the selection to their partner's
+        '               values from the Font Dialog.
+        ' Called By:    FntDial_Desc Apply Event
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.10> First implementation
+
+        Dim lclProcName As String =                         ' Routine's name for message handling
+            "FntDial_DescApply"
+
+        Rtb_DescText.SelectionFont = FntDial_Desc.Font      ' Apply settings of Font Dialog to the selection
+        Rtb_DescText.SelectionColor = FntDial_Desc.Color
 
     End Sub
     Private Sub CM_ODFOpening(                  ' Right-clicked in ODF Area, init CM Menu

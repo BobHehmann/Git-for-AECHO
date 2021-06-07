@@ -86,6 +86,8 @@ Partial Class MAIN
         Me.CM_DescPaste = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator()
         Me.CM_DescPrint = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator7 = New System.Windows.Forms.ToolStripSeparator()
+        Me.CM_DescFont = New System.Windows.Forms.ToolStripMenuItem()
         Me.Rtb_XMLRow = New System.Windows.Forms.RichTextBox()
         Me.Btn_SaveDescText = New System.Windows.Forms.Button()
         Me.Pnl_Tags = New System.Windows.Forms.Panel()
@@ -188,6 +190,7 @@ Partial Class MAIN
         Me.Btn_Prev100Lines = New System.Windows.Forms.Button()
         Me.PrintDialog1 = New System.Windows.Forms.PrintDialog()
         Me.PrintDocument1 = New System.Drawing.Printing.PrintDocument()
+        Me.FntDial_Desc = New System.Windows.Forms.FontDialog()
         Me.Menu_Strip.SuspendLayout()
         Me.CM_ODF.SuspendLayout()
         Me.CM_XML.SuspendLayout()
@@ -483,14 +486,14 @@ Partial Class MAIN
         '
         Me.CM_XML.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CM_XMLCopy})
         Me.CM_XML.Name = "CM_XML"
-        Me.CM_XML.Size = New System.Drawing.Size(181, 48)
+        Me.CM_XML.Size = New System.Drawing.Size(113, 26)
         '
         'CM_XMLCopy
         '
         Me.CM_XMLCopy.Name = "CM_XMLCopy"
         Me.CM_XMLCopy.ShortcutKeyDisplayString = " "
         Me.CM_XMLCopy.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
-        Me.CM_XMLCopy.Size = New System.Drawing.Size(180, 22)
+        Me.CM_XMLCopy.Size = New System.Drawing.Size(112, 22)
         Me.CM_XMLCopy.Text = "Copy"
         Me.CM_XMLCopy.ToolTipText = "Copy text from the XML Row/Record Area"
         '
@@ -682,9 +685,9 @@ Partial Class MAIN
         '
         'CM_Desc
         '
-        Me.CM_Desc.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CM_DescUndo, Me.CM_DescRedo, Me.ToolStripSeparator2, Me.CM_DescCut, Me.CM_DescCopy, Me.CM_DescPaste, Me.ToolStripSeparator3, Me.CM_DescPrint})
+        Me.CM_Desc.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CM_DescUndo, Me.CM_DescRedo, Me.ToolStripSeparator2, Me.CM_DescCut, Me.CM_DescCopy, Me.CM_DescPaste, Me.ToolStripSeparator3, Me.CM_DescPrint, Me.ToolStripSeparator7, Me.CM_DescFont})
         Me.CM_Desc.Name = "CM_Desc"
-        Me.CM_Desc.Size = New System.Drawing.Size(119, 148)
+        Me.CM_Desc.Size = New System.Drawing.Size(119, 176)
         '
         'CM_DescUndo
         '
@@ -749,6 +752,17 @@ Partial Class MAIN
         Me.CM_DescPrint.Size = New System.Drawing.Size(118, 22)
         Me.CM_DescPrint.Text = "Print..."
         Me.CM_DescPrint.ToolTipText = "Print the Descriptive Text Area"
+        '
+        'ToolStripSeparator7
+        '
+        Me.ToolStripSeparator7.Name = "ToolStripSeparator7"
+        Me.ToolStripSeparator7.Size = New System.Drawing.Size(115, 6)
+        '
+        'CM_DescFont
+        '
+        Me.CM_DescFont.Name = "CM_DescFont"
+        Me.CM_DescFont.Size = New System.Drawing.Size(118, 22)
+        Me.CM_DescFont.Text = "Font"
         '
         'Rtb_XMLRow
         '
@@ -1987,6 +2001,11 @@ Partial Class MAIN
         '
         Me.PrintDocument1.DocumentName = "AECHODescText"
         '
+        'FntDial_Desc
+        '
+        Me.FntDial_Desc.ShowApply = True
+        Me.FntDial_Desc.ShowColor = True
+        '
         'MAIN
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 15.0!)
@@ -2211,4 +2230,7 @@ Partial Class MAIN
     Friend WithEvents CM_ODFEditMode As Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripSeparator6 As Windows.Forms.ToolStripSeparator
     Friend WithEvents CM_ODFRecompute As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator7 As Windows.Forms.ToolStripSeparator
+    Friend WithEvents CM_DescFont As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents FntDial_Desc As Windows.Forms.FontDialog
 End Class

@@ -427,6 +427,20 @@
                 data, plus the Data Panel location Fields, to meatch the new location. Note - arrows (and single-
                 clicks) do not update Section data.
 
+1.060.10    June 6, 2021 Bob Hehmann
+    Git:        AdjustDTFonts
+    Summary:    Provide Context-Menu (right-click) commands for the Descriptive Text Area, to allow modification
+                of Font-Face, size, type, effects, and color of selected text. Most editing can then be done in-place,
+                without resorting to an external text editor.
+    Details:    If text is selected, then user is presented with three dialog buttons: Ok, Cancel, and Apply. OK
+                commits the change and closes the dialog; Cancel abandons the change and closes the dialog; Apply
+                makes the change in the background so the user can see it in action, but stays in the dialog, with
+                the same text range still implicitly selected. Changes made are eligible for Undo/Redo commands.
+                The dialog opens with its values set to that of the selected text. If opened without any text
+                selected, the dialog takes on the current values of the textbox, and can alter those values by
+                accepting "OK". Nothing is immediately changed, but new text addtions will be made using the
+                new background setting. The Apply option does not appear when operating on the background settings.
+
 Routines relocated from various forms over to SharedCode.vb (or new routines created in SharedCode.vb):
 
 Friend              Constant Declarations / Init    <Relocated from MAIN form>
