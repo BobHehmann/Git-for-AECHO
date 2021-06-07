@@ -63,6 +63,10 @@ Public Class MAIN
     '   Summary:    Add Font command to Descriptive Text Area's Context Menu. Call Font Dialog, allows changing the RTB's current
     '               default font/color, or that of selected text.
 
+    '   1.060.11    June 7, 2021 Bob Hehmann
+    '   Git:        RemoveSettings
+    '   Summary:    Revoce Settings.Settings, app.config due to VStudio Bug - this feature cannot be configured, produces XML format error.
+
     Dim M_FoundStart As Integer = -1    ' <1.060.2> When a text-search succeeds, this becomes index of start of located text
     Dim M_FoundEnd As Integer = 0       ' <1.060.2> Defines the end of located text; when 0, there is no located text defined.
     Dim M_FirstChar As Integer          ' <1.060.2> Current position in print-stream, between page calls

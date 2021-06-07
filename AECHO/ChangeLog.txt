@@ -441,6 +441,13 @@
                 accepting "OK". Nothing is immediately changed, but new text addtions will be made using the
                 new background setting. The Apply option does not appear when operating on the background settings.
 
+1.060.11    June 7, 2021 Bob Hehmann
+    Git:    RemoveSettings
+    Summary:    Eliminate Settings related components: Settings.Settings; app.config; Resources...
+    Details:    Found bug in VStudio, that causes IDE to issue warnings about corrupt XML in app.config file, and
+                errors in Settings - triggered when adding both Application & User Settings. Can be replicated
+                in a fresh project. Removed all residual modules that were introduced in early experiments.
+
 Routines relocated from various forms over to SharedCode.vb (or new routines created in SharedCode.vb):
 
 Friend              Constant Declarations / Init    <Relocated from MAIN form>
