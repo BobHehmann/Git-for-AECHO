@@ -67,6 +67,10 @@ Public Class MAIN
     '   Git:        RemoveSettings
     '   Summary:    Revoce Settings.Settings, app.config due to VStudio Bug - this feature cannot be configured, produces XML format error.
 
+    '   1.060.12    June 8, 2021 Bob Hehmann
+    '   Git:        MRUFileList
+    '   Summary:    Add recently used file list to menu > File: load at start, update on successful Open or Save As.
+
     Dim M_FoundStart As Integer = -1    ' <1.060.2> When a text-search succeeds, this becomes index of start of located text
     Dim M_FoundEnd As Integer = 0       ' <1.060.2> Defines the end of located text; when 0, there is no located text defined.
     Dim M_FirstChar As Integer          ' <1.060.2> Current position in print-stream, between page calls
@@ -94,6 +98,7 @@ Public Class MAIN
         '               global G_AppPath.
         '               <1.060.3> Create hidden instance (Rtb_DText) of printing-enhanced RTB, placed behind the Tags panel. Work around
         '               15 year-old RTB bug re AutoWordSelection.
+        '               <1.060.12> Initialize Most-Recently-User (MRU) File List in menu > File.
 
         Const lclProcName As String =                           ' <1.060.2> Routine's name for message handling
             "MAIN_Load"
@@ -116,7 +121,10 @@ Public Class MAIN
             G_HelpFilePath = ""                                 ' <1.060.2> Help loader will check this: when null, use old-style help
         End If
 
-        G_ODFLibPath = GetODFLibPath(G_DataPath, conInitialDir) ' <1.060.2> Modified to function call: Establishes G_ODFLibPath as (possible) location of HW's ODF files
+        G_ODFLibPath = GetODFLibPath(G_DataPath,                ' <1.060.2> Modified to function call: Establishes G_ODFLibPath as (possible) location of HW's ODF files
+                                     conInitialDir)
+        G_MRUFile = Path.Combine(G_DataPath,                    ' <1.060.12> Creat the fully qualified Path/Filename to user's MRU backing file
+                                 conMRUFileName)
         G_Registered = IsRegistered(G_DataPath,
                                     conLicenseFileName)         ' Savoir si version enregistre ou non; detect if this version is registered or not - as of 1.057, always "Registered"
         If G_Registered = False Then                            ' Restriction si unRegistered; <1.060.2> Moved disabling-code here from IsRegistered()
@@ -137,7 +145,9 @@ Public Class MAIN
         ResetToNoODF()                                          ' <1.060.2> Initalize state when there is no ODF file loaded - general init routine
 
         With Rtb_DText                                          ' <1.060.3> To support WYSIWYG printing, create hidden instance of enhanced RTB
-            .Font = New Font("Verdana", 10.0!, FontStyle.Regular, GraphicsUnit.Point)
+            .Font = New Font("Verdana", 10.0!,
+                             FontStyle.Regular,
+                             GraphicsUnit.Point)
             .Location = New Point(50, 451)                      ' <1.060.3> Behind the Tags Panel
             .Margin = New Padding(4, 3, 4, 3)                   ' Same parameters as Rtb_DescText, so layout will be the same
             .Name = "Rtb_DText"
@@ -167,6 +177,10 @@ Public Class MAIN
                                      conDefODFFontSize,
                                      FontStyle.Bold)
 
+        Menu_Recent.DropDownItems.Clear()                       ' <1.060.12> Delete any prior entries from MRU Dropdown List
+        ModifyMRU("")                                            ' <1.060.12> "" -> Add nothing to top of MRU, load it from the MRU backing file
+        Menu_Recent.Enabled =
+            (Menu_Recent.DropDownItems.Count > 0)               ' <1.060.12> Enable MRU Menu only if there are items in the Dropdown List
 
     End Sub
 
@@ -351,31 +365,17 @@ Public Class MAIN
             e As EventArgs
             ) Handles Menu_OpenHauptwerkOrgan.Click
 
-        ' Purpose:      Choose and load an ODF File into Rtb_ODF, and buid the S_Section array to assist in navigation.
-        '               If the open in cancelled, AECHO's state remains unchanged. Note that if the path specified by
-        '               G_ODFLibPath does not exist, then Windows will default to the last-known succesful path,
-        '               stored in a Registry Key.
-        ' Process:		Use the standard dialog to select the file to open. Check its length, enforcing a
-        '               1MB limit if unregistered (all AECHO's are registered as of 1.057.0). Enable the menus
-        '               and clear the Child Elements panel. Open and read the file into memory
-        '               (Rtb_ODF). Parse the Sections, building the S_Section array, and updaing the screen.
+        ' Purpose:      Open and load an ODF chosen by the user.
+        ' Process:		ask the use to choose a file: if the do, pass its
+        '               name to OpenODF() to do the heavy-lifting.
         ' Called By:    Menu_OpenHauptwerkOrgan Click Event
-        ' Side Effects: Updates various globals, loads file into Rtb_ODF.
-        ' Notes:        Change max file length allowed, Title-bar text to Constants.
-        '               used in Properties. Make file-open more robust, fielding exceptions. Only process the
-        '               other functions if the file is loaded with error.
-        ' Updates:      <1.059.0> Modified loading of ODF data to correctly decode UTF8
-        '               <1.060.2> Added exception handler, reordered logic to reset things if ODF fails to load, only enabling
-        '               after the load completes. Replaced parsing routines, calling EnumerateSectionsSetFont() to both
-        '               list the Sections in the Descriptive Text Area, and set the initial Font and Section Title emphasis.
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.12> Moved mostof the logic from here to OpenODF(), passing
+        '               OpenODF() the name of the file to open, if one was chosen.
 
-        Const lclProcName As String = "Menu_OpenHauptwerkOrganClick"        ' <1.060.2> Routine's name for message handling
-        Const conDemoMaxODFBytes As Integer = 1024000                       ' <1.060.2> Max allowable ODF file size when in Demo mode
-
-        Dim sizeInBytes As Integer                                          ' Length of ODF file that is to be opened
-        Dim file As FileInfo                                                ' FileInfo object used to determine file length
-
-        CheckUnloadODF(G_OrganFile, G_ODFModSinceSaved)                     ' <1.060.2> Ask about saving a changed ODF before overwriting it with a new one?
+        Const lclProcName As String =                                       ' <1.060.2> Routine's name for message handling
+            "Menu_OpenHauptwerkOrganClick"
 
         OpenFileDialog.RestoreDirectory = True                              ' Use Windows standard open-file: restore to initial directory when done
         OpenFileDialog.InitialDirectory = G_ODFLibPath                      ' "C:\HAUPTWERK\HauptwerkSampleSetsAndComponents\OrganDefinitions" is default
@@ -385,67 +385,110 @@ Public Class MAIN
             "organ files (*.Organ_Hauptwerk_xml)|*.Organ_Hauptwerk_xml"     ' <1.059.0> added the closing ) from 1.058b
         OpenFileDialog.FileName = ""                                        ' MODIF V058
 
-        If OpenFileDialog.ShowDialog() = DialogResult.OK Then               ' <1.059.0> extraneous System.Windows.Forms reference removed; User selected a file
+        If OpenFileDialog.ShowDialog() = DialogResult.OK Then               ' <1.059.0> extraneous System.Windows.Forms reference
+            OpenODF(OpenFileDialog.FileName)                                ' <1.060.12> Call OpenODF passing the chosen filename, OpenODF uses original logic
+        End If
+        OpenFileDialog.Dispose()                                            ' <1.060.12> Take out the garbage
 
-            G_OrganFile = OpenFileDialog.FileName                           ' Save the name of the file
-            OpenFileDialog.Dispose()                                        ' Clean up
+    End Sub
+    Friend Sub OpenODF(fileName As String)
 
-            file = New FileInfo(G_OrganFile)                                ' tester longueur du fichier; test if file is longer than allowed for unregistered AECHO
-            sizeInBytes = file.Length                                       ' As of 1.057.0, AECHO is freeware, so file length will not matter
-            ' DispMsg(lclProcName, MsgBoxStyle.Information,
-            '        "ODF File size: " &
-            '       sizeInBytes.ToString("N0") & " bytes long.")             ' <1.060.2> Debug
-            If (Not G_Registered) And (sizeInBytes > conDemoMaxODFBytes) Then
-                DispMsg("", conMsgInfo,
-                        "DEMO VERSION " & vbCrLf &                          ' Max allowable when not regsistered is 1MB
+        ' Purpose:      Load an ODF File into Rtb_ODF, and build the Sections dropdown menu to aid navigation.
+        '               Note that if the path specified by G_ODFLibPath does not exist,  Windows will default
+        '               to the last-known succesful path, invisibly stored in a Registry Key.
+        ' Process:		Check the ODF's length, enforcing a 1MB limit if unregistered (all AECHO's are registered
+        '               as of 1.057.0). Enable the menus and clear the Tags panel. Open and read the
+        '               ODF file into memory (Rtb_ODF). Parse the Sections, building the Sections menu, and
+        '               update the Screen, Menus, and Status-Bar.
+        ' Called By:    Menu_OpenHauptwerkOrganClick(); MRUClick()
+        ' Side Effects: Updates various globals, loads the ODF file into Rtb_ODF.
+        ' Notes:        <None>
+        ' Updates:      <1.059.0> Modified loading of ODF data to correctly decode UTF8
+        '               <1.060.2> Added exception handler, reordered logic to reset things if ODF fails to load, only enabling
+        '               after the load completes. Replaced parsing routines, calling EnumerateSectionsSetFont() to both
+        '               list the Sections in the Descriptive Text Area, and set the initial Font and Section Title emphasis.
+        '               <1.060.12> If open completes, add the ODF's file path/name to top of the MRU. Moved logic to here from
+        '               Menu_OpenHauptwerkOrganClick(), so open can be called from multiple locations, and either ask the user
+        '               to choose the file, or use the name passed into OpenODF().
+
+        Const lclProcName As String =                       ' <1.060.2> Routine's name for message handling
+            "OpenODF"
+
+        Const conDemoMaxODFBytes As Integer = 1024000       ' <1.060.2> Max allowable ODF file size when in Demo mode
+
+        Dim sizeInBytes As Integer                          ' Length of ODF file that is to be opened
+        Dim fInfo As FileInfo                               ' FileInfo object used to determine file length
+
+        CheckUnloadODF(G_OrganFile, G_ODFModSinceSaved)     ' <1.060.2> Ask about saving a changed ODF before overwriting it with a new one?
+
+
+        If File.Exists(fileName) Then                       ' <1.060.12> If file doesn't exist (invalid MRU likely), bypass the open
+            Try                                             ' <1.060.12> Protect the attempt to read file data
+                fInfo = New FileInfo(fileName)              ' tester longueur du fichier; test if file is longer than allowed for unregistered AECHO
+                sizeInBytes = fInfo.Length                  ' As of 1.057.0, AECHO is freeware, so file length will not matter
+                If (Not G_Registered) And
+                    (sizeInBytes > conDemoMaxODFBytes) Then
+                    DispMsg("", conMsgInfo,
+                        "DEMO VERSION " & vbCrLf &          ' Max allowable when not regsistered is 1MB
                         "Only an ODF smaller than " &
                         conDemoMaxODFBytes.ToString("N0") &
                         " bytes can be opened with this version." & vbCrLf &
                         "Your file is: " &
                          sizeInBytes.ToString("N0") & " bytes long.")
-                Exit Sub
-            End If
+                    Exit Sub
+                End If
+            Catch ex As Exception
+                DispMsg(lclProcName, conMsgCrit,
+                        "General Exception while attempting to get ODF File Attributes" & vbCrLf &
+                        "Exception Code is: " & vbCrLf & ex.ToString)
+                Return
+            End Try
 
-            ResetToNoODF()                                                  ' <1.060.2> Initialize, no data, most menus off,...
+            G_OrganFile = fileName                          ' <1.060.12> Save the name of the file
+            ResetToNoODF()                                  ' <1.060.2> Initialize, no data, most menus off,...
 
-            Try                                                             ' <1.060.2> Add Try/Catch in case we can't read the ODF file
-                Rtb_ODF.Text = My.Computer.FileSystem.ReadAllText(          ' Copier dans la RichTextBox
-                G_OrganFile, System.Text.Encoding.UTF8)                     ' <1.059.0> Load Rtb_ODF, reading ODF file forcing UTF-8 decoding
-            Catch ex As Exception                                           ' <1.060.2> If error, display message, clear box, reset Menus, exit
+            Try                                             ' <1.060.2> Add Try/Catch in case we can't read the ODF file
+                Rtb_ODF.Text =
+                    My.Computer.FileSystem.ReadAllText(     ' Copier dans la RichTextBox
+                    G_OrganFile, System.Text.Encoding.UTF8) ' <1.059.0> Load Rtb_ODF, reading ODF file forcing UTF-8 decoding
+            Catch ex As Exception                           ' <1.060.2> If error, display message, clear box, reset Menus, exit
                 DispMsg(lclProcName, conMsgCrit,
                     "General Exception while attempting to read ODF File" & vbCrLf &
                     "Exception Code is: " & vbCrLf & ex.ToString)
                 Return
             End Try
             ' <1.060.2> ODF now exists in memory
+            ModifyMRU(G_OrganFile)                           ' <1.060.12> Add (or move) the file path/name to top of the MRU
             G_NoODF = False
             Text = conMainTitle & My.Application.Info.Version.ToString &
-                ", Current ODF is " & G_OrganFile                           ' Update the Windows Title Bar. <1.059.0> changed text to "Compiled" <1.060.2> Setup for "Close file" in Menu Bar
+                ", Current ODF is " & G_OrganFile           ' Update the Windows Title Bar. <1.059.0> changed text to "Compiled" <1.060.2> Setup for "Close file" in Menu Bar
 
-            Menu_CloseODF.Enabled = True                                    ' <1.060.2> New menu choice, close the current ODF (with option to save if content changed)
-            Menu_SaveAs.Enabled = True                                      ' <1.060.2> File is loaded, so now we can save it
+            Menu_CloseODF.Enabled = True                    ' <1.060.2> New menu choice, close the current ODF (with option to save if content changed)
+            Menu_SaveAs.Enabled = True                      ' <1.060.2> File is loaded, so now we can save it
             Menu_EditMode.Enabled = True
-            Menu_EditModeStart.Checked = False                              ' <1.060.2> Ensure "ODF Editing Enabled" is unchecked and enabled
+            Menu_EditModeStart.Checked = False              ' <1.060.2> Ensure "ODF Editing Enabled" is unchecked and enabled
             Menu_EditModeStart.Enabled = True
-            Menu_EditModeExit.Checked = True                                ' <1.060.2> And set "ODF Editing Disabled" to checked but disabled
+            Menu_EditModeExit.Checked = True                ' <1.060.2> And set "ODF Editing Disabled" to checked but disabled
             Menu_EditModeExit.Enabled = False
             Menu_EditMode.BackColor =
-                Color.Gainsboro                                             ' Reset Main Menu text background color
+                Color.Gainsboro                             ' Reset Main Menu text background color
             Menu_Tools.Enabled = True
             Menu_FollowASample.Enabled = True
-            Status_LinesVal.Text = Rtb_ODF.Lines.Count().ToString(conIntFmt)
-            Status_CharsVal.Text = Rtb_ODF.TextLength().ToString(conIntFmt) ' <1.060.4> Display initial length in Lines and Characters
+            Status_LinesVal.Text =                          ' <1.060.4> Display initial length in Lines and Characters
+                Rtb_ODF.Lines.Length.ToString(conIntFmt)
+            Status_CharsVal.Text =
+                Rtb_ODF.TextLength().ToString(conIntFmt)
 
-            SetODFButtons(True)                                             ' <1.060.2> Enable Controls that required ODF Text e.g. Search, Next/Prev, Markers...
+            SetODFButtons(True)                             ' <1.060.2> Enable Controls that required ODF Text e.g. Search, Next/Prev, Markers...
 
-            EnumerateSectionsSetFont(Rtb_ODF,                               ' <1.060.2> List all Sections, displaying resulting data in the Descriptive Text Area
+            EnumerateSectionsSetFont(Rtb_ODF,               ' <1.060.2> List all Sections, displaying resulting data in the Descriptive Text Area
                                      Num_ODFFontSize.Value,
                                      G_NoODF,
-                                     True,                                  ' <1.060.2> True -> display Section parsing results
+                                     True,                  ' <1.060.2> True -> display Section parsing results
                                      True)
-            PositionToSectionByName("DisplayPage", False)                   ' <1.060.2> Position to the initial Section; False -> Don't display/parse a row, do not alter Descriptive Box
+            PositionToSectionByName("DisplayPage", False)   ' <1.060.2> Position to the initial Section; False -> Don't display/parse a row, do not alter Descriptive Box
 
-            Lbl_LineNumVal.Enabled = True                                   ' <1.060.2.> Now that ODF is loaded and these fields are updated, enable them to permit hot-linking
+            Lbl_LineNumVal.Enabled = True                   ' <1.060.2.> Now that ODF is loaded and these fields are updated, enable them to permit hot-linking
             Lbl_SecStartVal.Enabled = True
             Lbl_SecEndVal.Enabled = True
             Lbl_LineStartVal.Enabled = True
@@ -454,14 +497,36 @@ Public Class MAIN
             Lbl_RowEndVal.Enabled = True
             Lbl_CursorPosVal.Enabled = True
 
-            G_ODFModSinceSaved = False                                      ' <1.060.2> Introduced to track if ODF is modified, and we should prompt to save it before discarding.
-            Status_FileDirtyVal.BackColor = Color.LightGreen                ' <1.060.2> Clean file loaded, update Status-Bar
-            G_PackagePath = GetPackagePath(G_OrganFile)                     ' trouver le path pour OrganInstallationPackages; Location of Packages: sounds, image files...
+            G_ODFModSinceSaved = False                      ' <1.060.2> Introduced to track if ODF is modified, and we should prompt to save it before discarding.
+            Status_FileDirtyVal.BackColor =                 ' <1.060.2> Clean file loaded, update Status-Bar
+                Color.LightGreen
+            G_PackagePath = GetPackagePath(G_OrganFile)     ' trouver le path pour OrganInstallationPackages; Location of Packages: sounds, image files...
+        Else
+            DispMsg("", conMsgInfo,                         ' <1.060.12> MRU entries may no longer be valid (file was moved or deleted since placed on MRU)
+                    "Selected ODF no longer exists: " & fileName)
+            ModifyMRU(fileName, True)                       ' <1.060.12> Attempt to remove a possibly "bad" MRU entry from the menu and the backing file
         End If
 
     End Sub
+    Friend Sub MRUClick(                    ' Handles all MRU dropdown clicks
+           sender As Object,                ' Standard Event Parameters for a Control
+           e As EventArgs)
+
+        ' Purpose:      Attempt to open the ODF File chosen from the MRU dropdown menu
+        ' Process:		Call OpenODF, passing it the name to open
+        ' Called By:    MRU Dropdown Click Events
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.12> First implementation
+
+        Const lclProcName As String =       ' Routine's name for message handling
+            "MRUClick"
+
+        OpenODF(sender.name)                ' Let OpenODF() do the hard work
+
+    End Sub
     Private Sub Menu_SaveAsClick(           ' menu > File > Save As...
-            sender As Object,               ' Standard Event Parameters for a Control
+            sender As Object,
             e As EventArgs
             ) Handles Menu_SaveAs.Click
 

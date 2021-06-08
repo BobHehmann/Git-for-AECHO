@@ -7,17 +7,19 @@ Module SharedCode
     ' Purpose:      Declarations and initialization of Globals; repository for general routines
     ' Notes:        As time permits, relocate Subroutines and Functions from the Main Form to here.
     ' Updates:      <1.060.2> Created module. Moved delcaration and initialization of Global
-    '                   Constants and Variables from the Main Form to here. Started populating
-    '                   with supporting routines. Coding new routines here.
+    '               Constants and Variables from the Main Form to here. Started populating
+    '               with supporting routines. Coding new routines here.
 
     ' Global Constants      <1.060.2> Moved many Global Constant declarations from Main Form to here, and
     '                       narrowed their scope from "Public" to "Friend".
     '                       <1.060.2> Minor changes to optimize Printing
     '                       <1.060.7> Added constant for Section Menu group size (22)
+    '                       <1.060.12> Added constants for MRU max size (10) and MRU backing-file name.
 
     Friend Const conHTMLHelpDir As String = "AECHOHelpFiles"                ' <1.060.2> Location of HTML Help Files with \DATA dir
     Friend Const conHTMLHelpFile As String = "AECHOMain.HTM"                ' <1.060.2> Top level HTML Help File
     Friend Const conRTFHelpFile As String = "help.rtf"                      ' <1.060.2> Original style Help File, fallback
+    Friend Const conMRUFileName As String = "MRUList.txt"                   ' <1.060.12> Backing-store for user's MRU List
 
     Friend Const conMsgCrit As MsgBoxStyle = MsgBoxStyle.Critical           ' <1.060.2> These three message criticality levels are used
     Friend Const conMsgExcl As MsgBoxStyle = MsgBoxStyle.Exclamation
@@ -65,6 +67,7 @@ Module SharedCode
     Friend conTitleColor As Color = Color.Blue                              ' <1.060.2> Color to apply to Section Titles in the ODF, when emphasizing their display
     Friend Const conTitleFontInc As Integer = 1                             ' <1.060.2> # of points to increase an emphasized Section Title, over the present display default
     Friend Const conSecMenuGroupSize As Integer = 22                        ' <1.060.7> Max # of Section entries per Section Menu Group
+    Friend Const conMaxMRUEntries As Integer = 10                           ' <1.060.12> Trim length for MRU - retain up to the last "n" entries
 
     Friend Const conRowTypeODFStart As String = "ODF Start-Tag"             ' <1.060.2> The constants are the recognized Line/Row types, displayed in the Status-Bar
     Friend Const conRowTypeODFEnd As String = "ODF End-Tag"
@@ -145,6 +148,7 @@ Module SharedCode
 
     Friend G_DataPath As String             ' repertoire data; location of the local \DATA directory, presently \DATA at the top of AppPath: contains all the static .rtf files
     Friend G_HelpFilePath As String         ' <1.060.2> Path to HTML Help Files: currently \DATA\AECHOHelpFiles: inside the DataPath
+    Friend G_MRUFile As String              ' <1.060.12> Path/Filename of users MRU list, built at initialization
     Friend G_ODFLibPath As String           ' Def Dir when locating an ODF file. From prior use, or \DATA\initial.txt, or hardcoded default. <1.060.2> changed var name from G_InitialDir
     Friend G_OrganFile As String            ' Complete path/filename of the current ODF
     Friend G_PackagePath As String          ' HauptwerkSampleSetsAndComponents\OrganInstallationPackages
@@ -159,9 +163,10 @@ Module SharedCode
     Friend G_InitTagPanelWidth As Integer   ' <1.060.2> Starting width of the Tags Panel, to restore original size when cancelling an Image Display
     Friend G_MinPanelHeights As Integer     ' <1.060.2> Height of the Tags Panel and Descriptive Text box: these are the same now. Prep for dynamic resizing.
 
-    Friend Sub DispMsg(caller As String,            ' Calling procedure's name (self-supplied)
-                       severity As MsgBoxStyle,     ' Severity of error, using standard VB levels e.g. .Critical
-                       txt As String)               ' Text to display
+    Friend Sub DispMsg(                             ' Display a warning or error message
+            caller As String,                       ' Calling procedure's name (self-supplied)
+            severity As MsgBoxStyle,                ' Severity of error, using standard VB levels e.g. .Critical
+            txt As String)                          ' Text to display
 
         ' Purpose:      Common message processor for AECHO. Displays calling routine's name,
         '               severity, and supplied message text.
@@ -192,14 +197,15 @@ Module SharedCode
                 txt, severity, "Internal AECHO Message")
 
     End Sub
-    Friend Function IsRegistered(dataPath As String,            ' Path to \DATA directory
-                                 licenseFName As String         ' <1.060.2> Name of license file to look for
-                                 ) As Boolean                   ' Savoir si version enregistre ou non; modifié pour passer en freeware à partir de v1-0-57
+    Friend Function IsRegistered(                       ' Software Registration Check
+            dataPath As String,                         ' Path to \DATA directory
+            licenseFName As String                      ' <1.060.2> Name of license file to look for
+            ) As Boolean                                ' Savoir si version enregistre ou non; modifié pour passer en freeware à partir de v1-0-57
 
         ' Purpose:      Determine if the application is Registered (paid-for) or not.
         ' Process:      As of V1.057, became Freeware, so always return True i.e. "Registered". Previously,
-        '               looked for presence of a license file.
-        ' Called By:    MAIN_Load(), once upon application start
+        '               looked for presence of a license file. Called once at application startup.
+        ' Called By:    MAIN_Load()
         ' Side Effects: <None>
         ' Notes:        <None>
         ' Updates:      <1.060.2> Changed to function, to minimize side-effect changes to global variables. Changed
@@ -208,31 +214,35 @@ Module SharedCode
         '               Relocated from MAIN form to here. Passed License File Name in as parm from caller. Renamed from
         '               RegisteredUnregistered() to IsRegistered().
 
-        Const lclProcName As String = "IsRegistered"            ' <1.060.2> Function's name for message handling
+        Const lclProcName As String =                   ' <1.060.2> Function's name for message handling
+            "IsRegistered"
 
-        Dim verpeaux_File As String                             ' <1.060.2> Path to key file
-        Dim reponse As MsgBoxResult                             ' <1.060.2>
+        Dim verpeaux_File As String                     ' <1.060.2> Path to key file
+        Dim reponse As MsgBoxResult                     ' <1.060.2>
 
-        Return (True)                                           ' As of V1.057, always treat as Registered / Freeware
+        Return (True)                                   ' As of V1.057, always treat as Registered / Freeware
 
-        If dataPath = "" Then Return (False)                    ' If null, return False. Need guard check, as Path.Combine can error if element is null.
+        If dataPath = "" Then Return (False)            ' If null, return False. Need guard check, as Path.Combine can error if element is null.
 
-        verpeaux_File = Path.Combine(dataPath, licenseFName)    ' re V1.057 detection code begins here... <1.060.2> use Path.Combine() to create valid path for any OS
-        If Not File.Exists(verpeaux_File) Then                  ' <1.060.2> Changed Method to File.Exists
-            Return (False)                                      ' me donner le choix; detect existance of license file - if not found, we are unregistered
+        verpeaux_File =                                 ' re V1.057 detection code begins here... <1.060.2> use Path.Combine() to create valid path for any OS
+            Path.Combine(dataPath, licenseFName)
+        If Not File.Exists(verpeaux_File) Then          ' <1.060.2> Changed Method to File.Exists
+            Return (False)                              ' me donner le choix; detect existance of license file - if not found, we are unregistered
         End If
-        reponse = MsgBox("Veux-tu émuler la version demo ?",
-                         MsgBoxStyle.YesNo,
-                         "OPTION PERSO (vpx_file présent)")
-        If reponse = vbYes Then Return (False)                  ' Is registered, ask user if code should emulate non-registered: If Yes, return False
+        reponse =
+            MsgBox("Veux-tu émuler la version demo ?",
+                   MsgBoxStyle.YesNo,
+                   "OPTION PERSO (vpx_file présent)")
+        If reponse = vbYes Then Return (False)          ' Is registered, ask user if code should emulate non-registered: If Yes, return False
 
-        Return (True)                                           ' Proceed as Registered
+        Return (True)                                   ' Proceed as Registered
 
     End Function
-    Friend Function CenterLbl(ByRef item As Control,    ' Control with Text, to center between margins
-                              leftMargin As Integer,    ' Left Margin of centering region
-                              rightMargin As Integer    ' Right Margin of centering region
-                              ) As Boolean              ' True -> Positioned Control; False -> Error, did not position
+    Friend Function CenterLbl(                          ' Center Label Text between margins
+            ByRef item As Control,                      ' Text Control to be centered
+            leftMargin As Integer,                      ' Left Margin of centering region
+            rightMargin As Integer                      ' Right Margin of centering region
+            ) As Boolean                                ' True -> Positioned Control; False -> Error, did not position
 
         ' Purpose:      Center a variable-width object (normally a Label Control containing text) in
         '               the region between two margins. Note that positioning is relative to the MAIN
@@ -245,9 +255,11 @@ Module SharedCode
         ' Notes:        <None>
         ' Updates:		<1.060.2> First implementation
 
-        Const lclProcName As String = "CenterLbl"       ' <1.060.2> Function's name for DispMsg calls
+        Const lclProcName As String =                   ' <1.060.2> Function's name for DispMsg calls
+            "CenterLbl"
 
-        If (leftMargin < conLeftMargin) Or (rightMargin > MAIN.Right) Then
+        If (leftMargin < conLeftMargin) Or              ' <1.060.2> Guard conditions, ensure bounds are legit
+            (rightMargin > MAIN.Right) Then
             DispMsg(lclProcName, conMsgExcl,
                     "Requested Margin is out-of bounds" & vbCrLf &
                     " Left Min: " & conLeftMargin & vbCrLf &
@@ -256,6 +268,7 @@ Module SharedCode
                     " Right Requested: " & rightMargin & vbCr)
             Return False
         End If
+
         If (leftMargin >= rightMargin) Then
             DispMsg(lclProcName, conMsgExcl,
                     "Requested Left Margin must be less than the Right Margin" & vbCrLf &
@@ -263,6 +276,7 @@ Module SharedCode
                     " Right Margin: " & rightMargin)
             Return False
         End If
+
         If (item.Width >= (rightMargin - leftMargin) - 1) Then
             DispMsg(lclProcName, conMsgExcl,
                     "Text is too long to fit within the requested margins" & vbCrLf &
@@ -279,11 +293,12 @@ Module SharedCode
         Return True
 
     End Function
-    Friend Function CenterText(txtToCenter As String,       ' Text String to place into the Control [field]
-                               ByRef field As Control,      ' Control to receive txtToCenter, and then be centered
-                               leftMargin As Integer,       ' Left margin of the region within which to center the text
-                               rightMargin As Integer       ' Right margin of the centering region
-                               ) As Boolean                 ' -> Assigned text and centered; Fales -> Error, did not position
+    Friend Function CenterText(         ' Center text in a Control
+            txtToCenter As String,      ' Text String to place into the Control [field]
+            ByRef field As Control,     ' Control to receive txtToCenter, and then be centered
+            leftMargin As Integer,      ' Left margin of the region within which to center the text
+            rightMargin As Integer      ' Right margin of the centering region
+            ) As Boolean                ' -> Assigned text and centered; Fales -> Error, did not position
 
         ' Purpose:      Place text into a Control's (usually a Label) text, then center it between margins.
         ' Process:		Save the Control's original text, insert the new, and call CenterLbl() to position it.
@@ -293,15 +308,16 @@ Module SharedCode
         ' Notes:        <None>
         ' Updates:		<1.060.2> First implementation
 
-        Const lclProcName As String = "CenterText"          ' Function's name for message handling
+        Const lclProcName As String =   ' Function's name for message handling
+            "CenterText"
 
-        Dim oldText As String                               ' Control's original Text, to be restored if centering the new text fails
+        Dim oldText As String           ' Control's original Text, to be restored if centering the new text fails
 
-        oldText = field.Text                                ' Save current text
+        oldText = field.Text            ' Save current text
         field.Text = txtToCenter
         If CenterLbl(field, leftMargin, rightMargin) Then
-            Return True                                     ' Succeeded, just return
-        Else                                                ' Centering operation returned an error, restore original text
+            Return True                 ' Succeeded, just return
+        Else                            ' Centering operation returned an error, restore original text
             field.Text = oldText
             Return False
         End If
@@ -573,7 +589,6 @@ Module SharedCode
             SetODFButtons(False)                            ' <1.060.2> Disable Controls that require presence of ODF text, such as Search, Marker, and Next/Prev
 
             Trace.Close()                                   ' <1.060.2> Close Sample Trace form - note, no error if Trace is not open.
-
         End With
 
         MAIN.Refresh()                                      ' Update screen now, before loading ODF
@@ -639,6 +654,7 @@ Module SharedCode
         ' Updates:      <1.060.2> Moved code from Menu function, so it can be called from multiple locations.
         '               Add exception trapping to output operation. Converted to a Function that returns
         '               True if file was safely written, False if user chose not to save, or if save failed.
+        '               <1.060.12> Add filename of saved ODF to top of MRU, if write succeeds
 
         Const lclProcName As String = "SaveODFAs"                                   ' <1.060.2> Routine's name for message handling
 
@@ -659,6 +675,7 @@ Module SharedCode
                 My.Computer.FileSystem.WriteAllText(saveFileDialog.FileName,
                                                     MAIN.Rtb_ODF.Text, False, UTF8NoBOM)
                 SaveODFAs = True                                                    ' <1.060.2> Safely written, update status to True
+                ModifyMRU(saveFileDialog.FileName)                                   ' <1.060.12> Having written the ODF, add the filename to top of MRU
             Catch ex As Exception                                                   ' <1.060.2> I/O blew up, display exception message, return default False
                 DispMsg(lclProcName, conMsgCrit,
                     "General Exception while attempting to write ODF File" & vbCrLf &
@@ -2069,8 +2086,9 @@ Module SharedCode
         Return ""                                           ' All or part of the Tag wasn't found
 
     End Function
-    Friend Sub TraceSample(sampleID As Integer,                     ' <1.060.2> Sample to Trace
-                           tb As RTBPrint)                          ' <1.060.3> Append output here - a printable RTB
+    Friend Sub TraceSample(                             ' <1.060.2> Expand all Fields related to a Sample
+            sampleID As Integer,                        ' <1.060.2> SampleID of Sample to Trace
+            tb As RTBPrint)                             ' <1.060.3> Append output here - a printable RTB
 
         ' SUIT UN SAMPLE DANS LES DIFFERENTES SECTIONS QU'IL UTILISE
 
@@ -2103,37 +2121,38 @@ Module SharedCode
         '               line between Traces, for visual separation. Use AppendTxt() to control font size, style, and color as
         '               text is appended into the enhanced RTB.
 
-        Const lclProcName As String = "TraceSample"                 ' <1.060.2> Routine's name for message handling
+        Const lclProcName As String =                       ' <1.060.2> Routine's name for message handling
+            "TraceSample"
 
-        Dim rowStartTag As Integer                                  ' <1.060.2> Position of Start-of-Row Tag "<o>", starting point for locating specific Fields in the Record
-        Dim rowEndTag As Integer                                    ' <1.060.2> Position of End-of-Row Tag, "</o>" to limit searches for Fields within a Record
-        Dim sec As Str_Section                                      ' <1.060.2> IamgeSet Section data, filled in by call to GetSectionDataByName()
-        Dim retStatus As Integer                                    ' <1.060.2> Return from Record lookup: 1 -> Sec & Rec OK; 0 -> Sec OK, no Rec; -1 -> Sec OK, Rec error; -2 -> No Sec
-        Dim reqInstID As String = ""                                ' <1.060.2> Installation Package ID of Sample, if found and Tag exists, "" otherwise
+        Dim rowStartTag As Integer                          ' <1.060.2> Position of Start-of-Row Tag "<o>", starting point for locating specific Fields in the Record
+        Dim rowEndTag As Integer                            ' <1.060.2> Position of End-of-Row Tag, "</o>" to limit searches for Fields within a Record
+        Dim sec As Str_Section                              ' <1.060.2> IamgeSet Section data, filled in by call to GetSectionDataByName()
+        Dim retStatus As Integer                            ' <1.060.2> Return from Record lookup: 1 -> Sec & Rec OK; 0 -> Sec OK, no Rec; -1 -> Sec OK, Rec error; -2 -> No Sec
+        Dim reqInstID As String = ""                        ' <1.060.2> Installation Package ID of Sample, if found and Tag exists, "" otherwise
 
         ' SECTION SAMPLE
-        sec.name = ""                                               ' <1.060.2> Allocate instance of the Section info structure
-        retStatus = LocateRecRowByKey(conSample,                    ' <1.060.2> Searching the Sample Section
-                                      "a",                          ' <1.060.2> Its Primary Key is an "a" tag (SampleID)
-                                      sampleID.ToString,            ' <1.060.2> This is the Primary Key Value we want to find
-                                      sec,                          ' <1.060.2> Return Section data here
-                                      rowStartTag,                  ' <1.060.2> Return position of (found) Record's Start-Tag here
-                                      rowEndTag)                    ' <1.060.2> Return position of (found) Record's End-Tag here
-        If retStatus = -2 Then                                      ' <1.060.2> Nothing found, there were errors in ODF
+        sec.name = ""                                       ' <1.060.2> Allocate instance of the Section info structure
+        retStatus = LocateRecRowByKey(conSample,            ' <1.060.2> Searching the Sample Section
+                                      "a",                  ' <1.060.2> Its Primary Key is an "a" tag (SampleID)
+                                      sampleID.ToString,    ' <1.060.2> This is the Primary Key Value we want to find
+                                      sec,                  ' <1.060.2> Return Section data here
+                                      rowStartTag,          ' <1.060.2> Return position of (found) Record's Start-Tag here
+                                      rowEndTag)            ' <1.060.2> Return position of (found) Record's End-Tag here
+        If retStatus = -2 Then                              ' <1.060.2> Nothing found, there were errors in ODF
             Return
         End If
         If tb.Text.Length > 0 Then
-            AppendTxt(tb, fnt_Fields, Color.Black, vbCrLf)          ' <1.060.3> Add a blank line before a Trace for visual seperation, except for first Trace
+            AppendTxt(tb, fnt_Fields, Color.Black, vbCrLf)  ' <1.060.3> Add a blank line before a Trace for visual seperation, except for first Trace
         End If
 
-        Trace.MenuTSPrint.Enabled = True                            ' <1.060.3> Something printable, so enable the Print menu choice
-        If retStatus > -2 Then                                      ' <1.060.2> Though not everything was located, the Section was, so output its record
-            TraceAddSection(tb, "", sec)                            ' <1.060.3> Output the Section header: for Sample, no prefix
+        Trace.MenuTSPrint.Enabled = True                    ' <1.060.3> Something printable, so enable the Print menu choice
+        If retStatus > -2 Then                              ' <1.060.2> Though not everything was located, the Section was, so output its record
+            TraceAddSection(tb, "", sec)                    ' <1.060.3> Output the Section header: for Sample, no prefix
         End If
-        If retStatus = -1 Then                                      ' <1.060.2> The search errored while looking for Record, already displayed dialog
-            Return                                                  ' <1.060.2> So just return, can't continue with Record processing
+        If retStatus = -1 Then                              ' <1.060.2> The search errored while looking for Record, already displayed dialog
+            Return                                          ' <1.060.2> So just return, can't continue with Record processing
         End If
-        If retStatus = 0 Then                                       ' <1.060.2> We found the Sample Section, but not the requested Record. Append notice and return.
+        If retStatus = 0 Then                               ' <1.060.2> We found the Sample Section, but not the requested Record. Append notice and return.
             AppendTxt(tb, fnt_Fields, Color.Red,
                       "    No " & sec.name & " Record located with Key " & conFieldSID & " (<a>) = '" & sampleID.ToString & "'" & vbCrLf)
             Return                                                  ' <1.060.2> No errors, but no Record to process - also don't need to continue with other Sections
@@ -2150,23 +2169,23 @@ Module SharedCode
 
         ' SOUND ENGINE 01 ATTACK; see if this section exists
 
-        sec.name = ""                                               ' <1.060.2> New Section
-        retStatus = LocateRecRowByKey(conPipe01Attack,              ' <1.060.2> Get the Attack Section
-                                      "c",                          ' <1.060.2> This section uses the "c" Tag as a foreign key from Sample
+        sec.name = ""                                       ' <1.060.2> New Section
+        retStatus = LocateRecRowByKey(conPipe01Attack,      ' <1.060.2> Get the Attack Section
+                                      "c",                  ' <1.060.2> This section uses the "c" Tag as a foreign key from Sample
                                       sampleID.ToString,
                                       sec,
                                       rowStartTag,
                                       rowEndTag)
-        If retStatus = -2 Then                                      ' <1.060.2> Nothing found, there were errors in ODF
+        If retStatus = -2 Then                              ' <1.060.2> Nothing found, there were errors in ODF
             Return
         End If
-        If retStatus > -2 Then                                      ' <1.060.2> Though not everything was located, the Attack Section was, so output its record
-            TraceAddSection(tb, "  ", sec)                          ' <1.060.3> Insert the Section Header, indent by 2
+        If retStatus > -2 Then                              ' <1.060.2> Though not everything was located, the Attack Section was, so output its record
+            TraceAddSection(tb, "  ", sec)                  ' <1.060.3> Insert the Section Header, indent by 2
         End If
-        If retStatus = -1 Then                                      ' <1.060.2> The search errored while looking for Record, already displayed dialog
-            Return                                                  ' <1.060.2> So just return, can't continue with Record processing
+        If retStatus = -1 Then                              ' <1.060.2> The search errored while looking for Record, already displayed dialog
+            Return                                          ' <1.060.2> So just return, can't continue with Record processing
         End If
-        If retStatus = 0 Then                                       ' <1.060.2> We found the Attack Section, but not the requested Record. Append notice and continue with next Section.
+        If retStatus = 0 Then                               ' <1.060.2> We found the Attack Section, but not the requested Record. Append notice and continue with next Section.
             AppendTxt(tb, fnt_Fields, Color.Red,
                       "    No " & sec.name & " Record located with Key " & conFieldSID & " (<c>) = '" & sampleID.ToString & "'" & vbCrLf)
         Else                                                                            ' <1.060.2> Got the Record, display all present and non-present Fields
@@ -2185,23 +2204,23 @@ Module SharedCode
 
         ' SOUND ENGINE 01 RELEASE; see if this section exists
 
-        sec.name = ""                                               ' <1.060.2> New Section
-        retStatus = LocateRecRowByKey(conPipe01Release,             ' <1.060.2> Get the Release Section
-                                      "c",                          ' <1.060.2> This section uses the "c" Tag as a foreign key from Sample
+        sec.name = ""                                       ' <1.060.2> New Section
+        retStatus = LocateRecRowByKey(conPipe01Release,     ' <1.060.2> Get the Release Section
+                                      "c",                  ' <1.060.2> This section uses the "c" Tag as a foreign key from Sample
                                       sampleID.ToString,
                                       sec,
                                       rowStartTag,
                                       rowEndTag)
-        If retStatus = -2 Then                                      ' <1.060.2> Nothing found, there were errors in ODF
+        If retStatus = -2 Then                              ' <1.060.2> Nothing found, there were errors in ODF
             Return
         End If
-        If retStatus > -2 Then                                      ' <1.060.2> Though not everything was located, the Release Section was, so output its record
-            TraceAddSection(tb, "  ", sec)                          ' <1.060.3> Insert the Section Header, indent by 2
+        If retStatus > -2 Then                              ' <1.060.2> Though not everything was located, the Release Section was, so output its record
+            TraceAddSection(tb, "  ", sec)                  ' <1.060.3> Insert the Section Header, indent by 2
         End If
-        If retStatus = -1 Then                                      ' <1.060.2> The search errored while looking for Record, already displayed dialog
-            Return                                                  ' <1.060.2> So just return, can't continue with Record processing
+        If retStatus = -1 Then                              ' <1.060.2> The search errored while looking for Record, already displayed dialog
+            Return                                          ' <1.060.2> So just return, can't continue with Record processing
         End If
-        If retStatus = 0 Then                                       ' <1.060.2> We found the Release Section, but not the requested Record. Append notice and continue with next Section.
+        If retStatus = 0 Then                               ' <1.060.2> We found the Release Section, but not the requested Record. Append notice and continue with next Section.
             AppendTxt(tb, fnt_Fields, Color.Red,
                       "    No " & sec.name & " Record located with Key " & conFieldSID & " (<c>) = '" & sampleID.ToString & "'" & vbCrLf)
         Else                                                                            ' <1.060.2> Got the Record, display all present and non-present Fields
@@ -2227,23 +2246,23 @@ Module SharedCode
 
         ' Tremulant Waveform; see if this section exists
 
-        sec.name = ""                                               ' <1.060.2> New Section
-        retStatus = LocateRecRowByKey(conTremWave,                  ' <1.060.2> Get the TremulantWaveform Section
-                                      "d",                          ' <1.060.2> This section uses the "d" Tag as a foreign key from Sample
+        sec.name = ""                                       ' <1.060.2> New Section
+        retStatus = LocateRecRowByKey(conTremWave,          ' <1.060.2> Get the TremulantWaveform Section
+                                      "d",                  ' <1.060.2> This section uses the "d" Tag as a foreign key from Sample
                                       sampleID.ToString,
                                       sec,
                                       rowStartTag,
                                       rowEndTag)
-        If retStatus = -2 Then                                      ' <1.060.2> Nothing found, there were errors in ODF
+        If retStatus = -2 Then                              ' <1.060.2> Nothing found, there were errors in ODF
             Return
         End If
-        If retStatus > -2 Then                                      ' <1.060.2> Though not everything was located, the TremulantWaveform Section was, so output its record
-            TraceAddSection(tb, "  ", sec)                          ' <1.060.3> Insert the Section Header, indent by 2
+        If retStatus > -2 Then                              ' <1.060.2> Though not everything was located, the TremulantWaveform Section was, so output its record
+            TraceAddSection(tb, "  ", sec)                  ' <1.060.3> Insert the Section Header, indent by 2
         End If
-        If retStatus = -1 Then                                      ' <1.060.2> The search errored while looking for Record, already displayed dialog
-            Return                                                  ' <1.060.2> So just return, can't continue with Record processing
+        If retStatus = -1 Then                              ' <1.060.2> The search errored while looking for Record, already displayed dialog
+            Return                                          ' <1.060.2> So just return, can't continue with Record processing
         End If
-        If retStatus = 0 Then                                       ' <1.060.2> We found the Section, but not the requested Record. Append notice and continue with next Section.
+        If retStatus = 0 Then                               ' <1.060.2> We found the Section, but not the requested Record. Append notice and continue with next Section.
             AppendTxt(tb, fnt_Fields, Color.Red,
                       "    No " & sec.name & " Record located with Foreign-Key " & conFieldPAF & " (<d>) = '" & sampleID.ToString & "'" & vbCrLf)
         Else                                                        ' <1.060.2> Got the Record, display all present and non-present Fields
@@ -2257,23 +2276,23 @@ Module SharedCode
             ReadAndDisplayTag("g", rowStartTag, rowEndTag, conFieldPOC, "", tb)         ' <1.060.2> Search for Tag "<g>...</g>", (PitchOutputContinuousControlID Field)
         End If
 
-        sec.name = ""                                               ' <1.060.2> New Section - this time we're searching an alternate Foreign-key
-        retStatus = LocateRecRowByKey(conTremWave,                  ' <1.060.2> Get the TremulantWaveform Section
-                                      "e",                          ' <1.060.2> This section uses the "e" Tag as a foreign key from Sample
+        sec.name = ""                                       ' <1.060.2> New Section - this time we're searching an alternate Foreign-key
+        retStatus = LocateRecRowByKey(conTremWave,          ' <1.060.2> Get the TremulantWaveform Section
+                                      "e",                  ' <1.060.2> This section uses the "e" Tag as a foreign key from Sample
                                       sampleID.ToString,
                                       sec,
                                       rowStartTag,
                                       rowEndTag)
-        If retStatus = -2 Then                                      ' <1.060.2> Nothing found, there were errors in ODF
+        If retStatus = -2 Then                              ' <1.060.2> Nothing found, there were errors in ODF
             Return
         End If
-        If retStatus > -2 Then                                      ' <1.060.2> Though not everything was located, the Section was, so output its record
-            TraceAddSection(tb, "  ", sec)                          ' <1.060.3> Insert the Section Header, indent by 2
+        If retStatus > -2 Then                              ' <1.060.2> Though not everything was located, the Section was, so output its record
+            TraceAddSection(tb, "  ", sec)                  ' <1.060.3> Insert the Section Header, indent by 2
         End If
-        If retStatus = -1 Then                                      ' <1.060.2> The search errored while looking for Record, already displayed dialog
-            Return                                                  ' <1.060.2> So just return, can't continue with Record processing
+        If retStatus = -1 Then                              ' <1.060.2> The search errored while looking for Record, already displayed dialog
+            Return                                          ' <1.060.2> So just return, can't continue with Record processing
         End If
-        If retStatus = 0 Then                                       ' <1.060.2> We found the Section, but not the requested Record. Append notice and continue with next Section.
+        If retStatus = 0 Then                               ' <1.060.2> We found the Section, but not the requested Record. Append notice and continue with next Section.
             AppendTxt(tb, fnt_Fields, Color.Red,
                       "    No " & sec.name & " Record located with Foreign-Key " & conFieldTHW & " (<e>) = '" & sampleID.ToString & "'" & vbCrLf)
         Else                                                        ' <1.060.2> Got the Record, display all present and non-present Fields
@@ -2292,23 +2311,23 @@ Module SharedCode
                       "  Sample does not have a Primary-Key Value for InstallationPackageID." & vbCrLf)
             Return
         End If
-        sec.name = ""                                               ' <1.060.2> New Section
-        retStatus = LocateRecRowByKey(conReqInstPckg,               ' <1.060.2> Get the RequiredInstallationPackage Section
-                                      "a",                          ' <1.060.2> This section uses the "e" Tag as a Primary key from Sample
-                                      reqInstID,                    ' <1.060.2> Originally retrieved from the Sample Record up top
+        sec.name = ""                                       ' <1.060.2> New Section
+        retStatus = LocateRecRowByKey(conReqInstPckg,       ' <1.060.2> Get the RequiredInstallationPackage Section
+                                      "a",                  ' <1.060.2> This section uses the "e" Tag as a Primary key from Sample
+                                      reqInstID,            ' <1.060.2> Originally retrieved from the Sample Record up top
                                       sec,
                                       rowStartTag,
                                       rowEndTag)
-        If retStatus = -2 Then                                      ' <1.060.2> Nothing found, there were errors in ODF
+        If retStatus = -2 Then                              ' <1.060.2> Nothing found, there were errors in ODF
             Return
         End If
-        If retStatus > -2 Then                                      ' <1.060.2> Though not everything was located, the Section was, so output its record
-            TraceAddSection(tb, "  ", sec)                          ' <1.060.3> Insert the Section Header, indent by 2
+        If retStatus > -2 Then                              ' <1.060.2> Though not everything was located, the Section was, so output its record
+            TraceAddSection(tb, "  ", sec)                  ' <1.060.3> Insert the Section Header, indent by 2
         End If
-        If retStatus = -1 Then                                      ' <1.060.2> The search errored while looking for Record, already displayed dialog
-            Return                                                  ' <1.060.2> So just return, can't continue with Record processing
+        If retStatus = -1 Then                              ' <1.060.2> The search errored while looking for Record, already displayed dialog
+            Return                                          ' <1.060.2> So just return, can't continue with Record processing
         End If
-        If retStatus = 0 Then                                       ' <1.060.2> We found the Section, but not the requested Record. Append notice and continue with next Section.
+        If retStatus = 0 Then                               ' <1.060.2> We found the Section, but not the requested Record. Append notice and continue with next Section.
             AppendTxt(tb, fnt_Fields, Color.Red,
                       "    No " & sec.name & " Record located with Key " & conFieldInPkId & " (<a>) = '" & reqInstID & "'" & vbCrLf)
         Else                                                                            ' <1.060.2> Got the Record, display all present and non-present Fields
@@ -2323,9 +2342,10 @@ Module SharedCode
         End If
 
     End Sub
-    Private Sub TraceAddSection(oBox As RTBPrint,                   ' Direct output to this enhanced RTB
-            prefix As String,                                       ' Prepend output with this string, "" for Sample, otherwise has blanks to force indent
-            sec As Str_Section)                                     ' Structure containing Section data: Name, StartPos, EndPos are needed here
+    Private Sub TraceAddSection(
+            oBox As RTBPrint,               ' Direct output to this enhanced RTB
+            prefix As String,               ' Prepend output with this string, "" for Sample, otherwise has blanks to force indent
+            sec As Str_Section)             ' Structure containing Section data: Name, StartPos, EndPos are needed here
 
         ' Purpose:      Append a Section Header to the output of a Sample Trace, prefacing with the [prefix]
         '               string, which sets the indent.
@@ -2335,35 +2355,41 @@ Module SharedCode
         ' Notes:        <None>
         ' Updates:		<1.060.3> New code. Abstracted repeated code in TraceSample, placed it here.
 
-        Const lclProcName As String = "TraceAddSection"             ' Function's name for message handling
+        Const lclProcName As String =       ' Function's name for message handling
+            "TraceAddSection"
 
-        Dim sLine As Integer                                        ' Section Starting Line #
-        Dim eLine As Integer                                        ' Section Ending Line #
-        Dim hdrColor As Color                                       ' Color, based on Section Type: Sample is Blue, others Dark Green
+        Dim sLine As Integer                ' Section Starting Line #
+        Dim eLine As Integer                ' Section Ending Line #
+        Dim hdrColor As Color               ' Color, based on Section Type: Sample is Blue, others Dark Green
 
-        If prefix = "" Then                                         ' Decode color based on prefix: no prefix is for Sample Section -> Blue
+        If prefix = "" Then                 ' Decode color based on prefix: no prefix is for Sample Section -> Blue
             hdrColor = Color.Blue
-        Else                                                        ' All other Sections are indented by [prefix], and colored Dark Green
+        Else                                ' All other Sections are indented by [prefix], and colored Dark Green
             hdrColor = Color.DarkGreen
         End If
 
-        sLine = MAIN.Rtb_ODF.GetLineFromCharIndex(sec.startPos) + 1
-        eLine = MAIN.Rtb_ODF.GetLineFromCharIndex(sec.endPos) + 1   ' Translate the Start/End positions to Line Numbers, +1 to convert from zero-based internal numbering
+        sLine =                             ' Translate the Start/End positions to Line Numbers, +1 to convert from zero-based internal numbering
+            MAIN.Rtb_ODF.GetLineFromCharIndex(sec.startPos) + 1
+        eLine =
+            MAIN.Rtb_ODF.GetLineFromCharIndex(sec.endPos) + 1
 
-        AppendTxt(oBox, fnt_Section, hdrColor,
-                  prefix & "Section '" & sec.name &                 ' Append to output the Name and Line-Range of the Section defined by [sec]
+        AppendTxt(oBox,                     ' Append to output the Name and Line-Range of the Section defined by [sec]
+                  fnt_Section,
+                  hdrColor,
+                  prefix & "Section '" & sec.name &
                   "' (Starts at Line " & sLine.ToString(conIntFmt) &
                   ",  ends at " & eLine.ToString(conIntFmt) & ")" & vbCrLf)
         Return
 
     End Sub
-    Friend Function LocateRecRowByKey(secName As String,                ' Name of Section containing Record we want
-                                      fieldTag As String,               ' Tag the defines the Key Field, without the "<>" brackets
-                                      recKey As String,                 ' Key Value to look for
-                                      ByRef sec As Str_Section,         ' If the Section is located, return data block here; sec.name = "" if not located
-                                      ByRef rowStart As Integer,        ' If Record is located, return its starting position here
-                                      ByRef rowEnd As Integer           ' If Record is located, return index of its End-Tag ("</fieldTag>")
-                                      ) As Integer                      ' 1 -> Sec & Rec found; 0 -> Sec found, no Rec, no error; -1 -> Sec found, Rec error; -2 -> Sec not Found
+    Friend Function LocateRecRowByKey(
+            secName As String,                ' Name of Section containing Record we want
+            fieldTag As String,               ' Tag the defines the Key Field, without the "<>" brackets
+            recKey As String,                 ' Key Value to look for
+            ByRef sec As Str_Section,         ' If the Section is located, return data block here; sec.name = "" if not located
+            ByRef rowStart As Integer,        ' If Record is located, return its starting position here
+            ByRef rowEnd As Integer           ' If Record is located, return index of its End-Tag ("</fieldTag>")
+            ) As Integer                      ' 1 -> Sec & Rec found; 0 -> Sec found, no Rec, no error; -1 -> Sec found, Rec error; -2 -> Sec not Found
 
         ' Purpose:      Locate a specific Record-Row within a named Section, searching for a Primary Key match. Return a
         '               Section data-block and the located Row's Start/End positions.
@@ -2373,7 +2399,8 @@ Module SharedCode
         ' Notes:        <None>
         ' Updates:		<1.060.2> New. Abstracted search logic from the original TraceSample code, generalized it here.
 
-        Const lclProcName As String = "LocateRecRowByKey"               ' Function's name for message handling
+        Const lclProcName As String =                                   ' Function's name for message handling
+            "LocateRecRowByKey"
 
         Dim recPos As Integer                                           ' Position of located KeyField, if the requested Record is found
         Dim keyTag As String                                            ' Assemble the complete Key in this var
@@ -2381,12 +2408,14 @@ Module SharedCode
         sec.name = ""                                                   ' Init as "Section Not Found"
         If Not GotSectionDataByName(secName, sec) Then                  ' Didn't find the requested Section
             DispMsg(lclProcName, conMsgExcl,
-                    "Could not locate the " & secName & " Section. This may be an ill-formed ODF.")
+                    "Could not locate the " & secName &
+                    " Section. This may be an ill-formed ODF.")
             Return -2                                                   ' Error return, nothing was found, no good data returned
         End If
 
         recPos = sec.startPos + sec.titleLen                            ' recPos points to first char of first line following the Section Start-Tag: should be first Record Row
-        keyTag = "<" & fieldTag & ">" & recKey & "</" & fieldTag & ">"  ' Assemble the KeyTag: "<fieldTag>recKey</fieldTag>" e.g., "<a>123</a> to find "123" in Field "a"
+        keyTag =                                                        ' Assemble the KeyTag: "<fieldTag>recKey</fieldTag>" e.g., "<a>123</a> to find "123" in Field "a"
+            "<" & fieldTag & ">" & recKey & "</" & fieldTag & ">"
 
         recPos = MAIN.Rtb_ODF.Find(keyTag,                              ' Assembled Tag with embedded Value, look for it
                                    recPos,                              ' Start search for Record just after the Section's Start-Tag
@@ -2420,10 +2449,11 @@ Module SharedCode
         Return 1                                                        ' Found Section, Key, and Record boundaries, we're good
 
     End Function
-    Friend Sub AppendTxt(oBox As RTBPrint,              ' Append text to this Control
-           txtFont As Font,                             ' Set it to this font
-           txtColor As Color,                           ' And this color
-           txtVal As String)                            ' Text to add
+    Friend Sub AppendTxt(                       ' Append text to an RTBPrint Control
+            oBox As RTBPrint,                   ' Control to be modified
+            txtFont As Font,                    ' Set it to this font
+            txtColor As Color,                  ' And this color
+            txtVal As String)                   ' Text to add
 
         ' Purpose:      Append the text to any enhanced RTB control, setting it to the
         '               desired font and color; leave positioned after appended text.
@@ -2433,29 +2463,31 @@ Module SharedCode
         ' Notes:        <None>
         ' Updates:      <1.060.3> First implemented for printing Sample Trace
 
-        Const lclProcName As String = "AppendTxt"       ' Routine's name for message handling
+        Const lclProcName As String =                   ' Routine's name for message handling
+            "AppendTxt"
 
-        oBox.Select(oBox.Text.Length, 0)                ' Select last position, will append here
-        oBox.SelectionFont = txtFont                    ' Set the font
-        oBox.SelectionColor = txtColor                  ' Set the Color
-        oBox.AppendText(txtVal)                         ' Append the text with these values
-        oBox.DeselectAll()                              ' Deselect in prep for next action
+        oBox.Select(oBox.Text.Length, 0)    ' Select last position, will append here
+        oBox.SelectionFont = txtFont        ' Set the font
+        oBox.SelectionColor = txtColor      ' Set the Color
+        oBox.AppendText(txtVal)             ' Append the text with these values
+        oBox.DeselectAll()                  ' Deselect in prep for next action
         Return
 
     End Sub
-
-    Friend Sub AddSecSubMenu(secName As String,         ' Name of Section as it will appear in the menu
-                             secNum As Integer)         ' 1-based counter of Sections as they are added
+    Friend Sub AddSecSubMenu(                           ' Add a new Section
+            secName As String,                          ' Name of Section as it will appear in the menu
+            secNum As Integer)                          ' 1-based counter of Sections as they are added
 
         ' Purpose:      Adds a new Section (secName) to the Sections Menu.
         ' Process:      If this starts a new group of 22, add the Group entry first,
         '               then add the new Section as the last entry of the last group.
         ' Called By:    EnumerateSectionsSetFont()
-        ' Side Effects: <None>
+        ' Side Effects: Updates menu > Sections
         ' Notes:        <None>
-        ' Updates:      <1.060.7> First implemented, for dynamic Section Menus
+        ' Updates:      <1.060.7> First implementation
 
-        Dim lclProcName As String = "AddSecSubMenu"
+        Dim lclProcName As String =                     ' Routine's name for message handling
+            "AddSecSubMenu"
 
         Dim lastMenu As Integer
         Dim i As ToolStripMenuItem
@@ -2469,6 +2501,86 @@ Module SharedCode
         i =                                             ' i -> last Group entry
             MAIN.Menu_SectionsA.DropDownItems.Item(lastMenu)
         i.DropDownItems.Add(secName)                    ' Add the new Section Name to the last Group entry
+
+    End Sub
+    Friend Sub ModifyMRU(                                       ' Init MRU, or Add/Remove an entry
+            newMRUEntry As String,                              ' ""-> Init; else text of entry to Add/Remove
+            Optional removeEntry As Boolean = False)            ' If True, we Remove, else this is an Add
+
+        ' Purpose:      Either initializes the MRU, adds a new filename to the top, or remove
+        '               an entry.
+        ' Process:      If <newMRUEntry> is null, initialize menu from the backing file's
+        '               contents. If not null, and <removeEntry> is False, add to top of list,
+        '               filling in remaining dropdown slots with contents of backing file, skipping an entry
+        '               from the file if it matches the new item. If not null and <removeEntry>
+        '               is True, make same pass without adding the entry first: this will cause
+        '               the list to be rebuilt without the entry. Then rewrite the backing
+        '               file to match the newly constructed dropdown list.
+        ' Called By:    MAIN_Load(); OpenODF(); SaveODFAs()
+        ' Side Effects: Updates MRU dropdown in menu > File; updates MRU backing file
+        ' Notes:        <None>
+        ' Updates:      <1.060.12> First implementation
+
+        Const lclProcName As String =                           ' Routine's name for message handling
+            "ModifyMRU"
+
+        Dim MRUList(conMaxMRUEntries) As String                 ' Build our (modified) list here, so we can rewrite it back to the file
+        Dim idxCnt As Integer                                   ' Counter/Index as we build the MRUList
+        Dim idxMRU As Integer                                   ' Index var when reading the now-built MRUList
+        Dim mruLine As String                                   ' Buffer for lines read from the MRU backing file
+
+        If newMRUEntry = "" Or removeEntry Then                 ' If null, build list from file; if removing, just leave off the intial list
+            idxCnt = 0                                          ' Enter MRU File load loop at beginning of the list
+        Else                                                    ' newMRUEntry is not null, add as first item, then append backing file's contents
+            MRUList(1) = newMRUEntry                            ' Add the new entry as the first item (1-based), begin appending at the next slot
+            idxCnt = 1
+        End If
+
+        Try                                                     ' Protection for opening/reading the current MRU file
+            If File.Exists(G_MRUFile) Then                      ' Check if it exists before opening
+                Dim mruStream As New StreamReader(G_MRUFile)    ' Create reader
+                mruLine = mruStream.ReadLine()                  ' Get the first line from the MRU file
+                While mruLine <> "" And                         ' Read through file until no more lines
+                    idxCnt < conMaxMRUEntries                   ' Also terminate if the list is now full
+                    If mruLine <> newMRUEntry Then              ' Ignore line from the file if it matches the new entry
+                        idxCnt += 1                             ' Update the counter/index, add the line from the file to the list
+                        MRUList(idxCnt) = mruLine
+                    End If
+                    mruLine = mruStream.ReadLine()              ' Read the next line from the backing file
+                End While
+                mruStream.Close()                               ' All done reading, close the file
+            End If
+        Catch ex As Exception                                   ' Ignore exceptions and move on
+        End Try
+
+        MAIN.Menu_Recent.DropDownItems.Clear()                  ' Clear the onscreen MRU List
+        For idxMRU = 1 To idxCnt                                ' Loop through all (if any) entries in the newly constructred MRU List
+            Dim fileMRU As New ToolStripMenuItem                ' This var will become the actual Menu entry
+            fileMRU.Name = MRUList(idxMRU)                      ' Set .Name and .Text properties both to supplied value
+            fileMRU.Text = MRUList(idxMRU)
+            fileMRU.Enabled = True                              ' Ensure it is enabled
+            AddHandler fileMRU.Click,                           ' Point handler to MRUClick() for all entries
+            AddressOf MAIN.MRUClick
+            MAIN.Menu_Recent.DropDownItems.Add(fileMRU)         ' Add entry to the menu dropdown list
+        Next
+        MAIN.Menu_Recent.Enabled =                              ' Adjust the enablement of the menu, enable if there is at least 1 item
+            (MAIN.Menu_Recent.DropDownItems.Count > 0)
+
+        If newMRUEntry <> "" Then                               ' Only rewrite if we added something, bypass if this was initialization call
+            Try                                                 ' Write back to the backing file
+                Dim mruStream As New StreamWriter(G_MRUFile)    ' This is seperate from the previous loop, so a file error doesn't affect building the menu
+                For idxMRU = 1 To idxCnt                        ' Loop through each entry in the MRUList and write it out to the backing file.
+                    mruStream.WriteLine(MRUList(idxMRU))
+                Next
+                mruStream.Flush()                               ' Clean up and close
+                mruStream.Close()
+            Catch ex As Exception                               ' Problem writing the backing file
+                DispMsg(lclProcName, conMsgCrit,
+                        "Error writing the MRU backing file." & vbCrLf &
+                        "Filename is: " & G_MRUFile & vbCrLf &
+                        ex.Message)
+            End Try
+        End If
 
     End Sub
 

@@ -27,6 +27,7 @@ Partial Class MAIN
         Me.Menu_Strip = New System.Windows.Forms.MenuStrip()
         Me.Menu_File = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_OpenHauptwerkOrgan = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Menu_Recent = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_CloseODF = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_SaveAs = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_Sep2 = New System.Windows.Forms.ToolStripSeparator()
@@ -217,11 +218,10 @@ Partial Class MAIN
         'Menu_File
         '
         Me.Menu_File.AutoToolTip = True
-        Me.Menu_File.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Menu_OpenHauptwerkOrgan, Me.Menu_CloseODF, Me.Menu_SaveAs, Me.Menu_Sep2, Me.Menu_PrintDT, Me.Menu_Sep3, Me.Menu_Quit})
+        Me.Menu_File.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Menu_OpenHauptwerkOrgan, Me.Menu_Recent, Me.Menu_CloseODF, Me.Menu_SaveAs, Me.Menu_Sep2, Me.Menu_PrintDT, Me.Menu_Sep3, Me.Menu_Quit})
         Me.Menu_File.Name = "Menu_File"
         Me.Menu_File.Size = New System.Drawing.Size(37, 20)
         Me.Menu_File.Text = "&File"
-        Me.Menu_File.ToolTipText = "File Open, Close, & Save"
         '
         'Menu_OpenHauptwerkOrgan
         '
@@ -230,6 +230,12 @@ Partial Class MAIN
         Me.Menu_OpenHauptwerkOrgan.Size = New System.Drawing.Size(252, 22)
         Me.Menu_OpenHauptwerkOrgan.Text = "&Open Hauptwerk Organ..."
         Me.Menu_OpenHauptwerkOrgan.ToolTipText = resources.GetString("Menu_OpenHauptwerkOrgan.ToolTipText")
+        '
+        'Menu_Recent
+        '
+        Me.Menu_Recent.Name = "Menu_Recent"
+        Me.Menu_Recent.Size = New System.Drawing.Size(252, 22)
+        Me.Menu_Recent.Text = "Open a Recent ODF..."
         '
         'Menu_CloseODF
         '
@@ -295,8 +301,6 @@ Partial Class MAIN
         Me.Menu_EditMode.Name = "Menu_EditMode"
         Me.Menu_EditMode.Size = New System.Drawing.Size(73, 20)
         Me.Menu_EditMode.Text = "&Edit Mode"
-        Me.Menu_EditMode.ToolTipText = "Enables/Disable editing of the loaded ODF. When" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "first loaded, the ODF is read-on" &
-    "ly."
         '
         'Menu_EditModeStart
         '
@@ -332,7 +336,6 @@ Partial Class MAIN
         Me.Menu_Tools.Name = "Menu_Tools"
         Me.Menu_Tools.Size = New System.Drawing.Size(46, 20)
         Me.Menu_Tools.Text = "&Tools"
-        Me.Menu_Tools.ToolTipText = "Clear Marker; Encode/Decode Coupler-Codes;" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Trace Samples"
         '
         'Menu_ClearMarkers
         '
@@ -368,7 +371,6 @@ Partial Class MAIN
         Me.Menu_HelpAbout.Name = "Menu_HelpAbout"
         Me.Menu_HelpAbout.Size = New System.Drawing.Size(24, 20)
         Me.Menu_HelpAbout.Text = "&?"
-        Me.Menu_HelpAbout.ToolTipText = "Help & About Menu Items"
         '
         'Menu_Help
         '
@@ -2233,4 +2235,5 @@ Partial Class MAIN
     Friend WithEvents ToolStripSeparator7 As Windows.Forms.ToolStripSeparator
     Friend WithEvents CM_DescFont As Windows.Forms.ToolStripMenuItem
     Friend WithEvents FntDial_Desc As Windows.Forms.FontDialog
+    Friend WithEvents Menu_Recent As Windows.Forms.ToolStripMenuItem
 End Class

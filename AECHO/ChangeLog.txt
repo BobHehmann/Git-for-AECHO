@@ -442,56 +442,67 @@
                 new background setting. The Apply option does not appear when operating on the background settings.
 
 1.060.11    June 7, 2021 Bob Hehmann
-    Git:    RemoveSettings
+    Git:        RemoveSettings
     Summary:    Eliminate Settings related components: Settings.Settings; app.config; Resources...
     Details:    Found bug in VStudio, that causes IDE to issue warnings about corrupt XML in app.config file, and
                 errors in Settings - triggered when adding both Application & User Settings. Can be replicated
                 in a fresh project. Removed all residual modules that were introduced in early experiments.
 
+1.060.12    June 8, 2021 Bob Hehmann
+    Git:        MRUFileList
+    Summary:    Add recently used ODF files list to menu > File > Open Recent Files....
+    Details:    Implements an MRU list with a max size. Upon startup, populates this list with the contents of
+                the MRU backing file MRUList.txt, stored in the \DATA directory. This file may be missing or
+                empty. Whenever an ODF file is successfully loaded or saved, it's full pathname is added or moved
+                to the top the the MRU list, and the list is immediately written back to the backing file (which
+                is created if it does not exist.) If an attempt to open a file off the MRU list fails, that
+                entry is removed from the menu and the backing file.
+
 Routines relocated from various forms over to SharedCode.vb (or new routines created in SharedCode.vb):
 
-Friend              Constant Declarations / Init    <Relocated from MAIN form>
-Friend              Global Variable Declarations    <Relocated from MAIN form>
-Friend              Structure Definition(s)         <Relocated from MAIN form>
-Friend Sub          DispMsg()                       <New - Debug, Informational, and Error Message central routine>
-Friend Function     IsRegistered()                  <Relocated from MAIN form; renamed from RegisteredUnregistered()>
-Friend Function     CenterLbl()                     <New - to center label/text presentation within margins>
-Friend Function     CenterText()                    <New, insert new text into a Control, and center it between margins>
-Friend Function     GetDataPath()                   <New, moved inline code from MAIN form>
-Friend Function     GetODFLibPath()                 <Relocated from MAIN form; changed from Sub to Func, renamed from ReadInitialDir()>
-Friend Function     GetPackagePath()                <Relocated from MAIN form; changed from Sub to Func>
-Friend Sub          TagsPanelVisible()              <Relocated from MAIN form; renamed from ClearTagsPanel()>
-Friend Sub          ResetToNoODF()                  <New, initializes Menus, Variables, and Controls to the "No ODF Loaded" state>
-Friend Sub          ClearMarkers()                  <New, clears Markers and sets their default color>
-Friend Sub          CheckUnloadODF()                <New, check if there is a dirty ODF loaded, offer to SaveAs>
-Friend Function     SaveODFAs()                     <New, moved code from Menu SaveAs, to make reusable>
-Friend Sub          PositionToSectionByName()       <Relocated from MAIN form; renamed from GetSectionFromMenu()>
-Friend Function     CountTags()                     <Relocated from MAIN form; rewrote: changed semantics, simplified>
-Friend Function     FindText()                      <Relocated from MAIN form; Combined functions of FindMyText() & FindMyTag(); simplified.>
-Friend Sub          DisplayXMLRow()                 <Relocated from MAIN form; renamed from DisplayObject()>
-Friend Function     LoadRTFFile()                   <Relocated from MAIN form; changed from Sub to Func>
-Friend Sub          DisplayTagText()                <Relocated from MAIN form>
-Friend Function     ReadTag()                       <Relocated from MAIN form>
-Friend Sub          FindButtonsProc()               <Relocated from MAIN form; renamed from NextLineCommun()>
-Friend Sub          EnumerateSectionsSetFont()      <New, moved code from MAIN form event handler to fix bug, renamed from SetODFFontSize>
-Friend Sub          DisplayImage()                  <Relocated from MAIN form>
-Friend Function     FindImagePackageID()            <Relocated from MAIN form; changed from Sub to Func>
-Friend Sub          SetRTBDescButtons()             <New, to enable/disable "Set Font" and "Save Description" Controls>
-Friend Sub          SetODFButtons()                 <New, to enable/disable Controls that operate on ODF Text e.g. Search...>
-Friend Function     GetSectionFromIndex()           <Relocated from MAIN form; changed from Sub to Func>
-Friend Sub          GetRowFromIndex()               <Relocated from MAIN form; changed from Sub to Func; renamed from GetLineFromIndex()>
-Friend Function     FindReverse()                   <Relocated from MAIN form>
-Friend Function     MoveToPosition()                <New, move to cursor position, update Data, return Row's text; optionally extend selection>
-Friend Function     GotSectionDataByName()          <New, dynamically calculates the data previsously stored in the Sections array, for 1 named Section>
-Friend Sub          HotClickCursorPosition()        <New, Position to an index value, updating all screen fields using single-click semantics>
-Friend Function     ReadAndDisplayTag()             <New, combines old Find_A_Tag() & Read_A_Tag() from Trace, plus logic to append to screen>
-Friend Sub          TraceSample()                   <Relocated from Follow Form>
-Private Sub         TraceAddSection                 <New, abstracts repeated code from TraceSample()>
-Friend Function     LocateRecRowByKey()             <New, modified logic from old TraceSample, now generalized for reuse>
-Friend Sub          AppendTxt()                     <New, appends text to any enhanced RTB, allowing choice of Font and Color>
-Friend Sub          AddSEcSubMenu()                 <New, processes addition of Section Names to the Sections Menu hierarchy>
+Friend              Constant Declarations / Init    Relocated from MAIN form
+Friend              Global Variable Declarations    Relocated from MAIN form
+Friend              Structure Definition(s)         Relocated from MAIN form
+Friend Sub          DispMsg()                       New - Debug, Informational, and Error Message central routine
+Friend Function     IsRegistered()                  Relocated from MAIN form; renamed from RegisteredUnregistered()
+Friend Function     CenterLbl()                     New - to center label/text presentation within margins
+Friend Function     CenterText()                    New, insert new text into a Control, and center it between margins
+Friend Function     GetDataPath()                   New, moved inline code from MAIN form
+Friend Function     GetODFLibPath()                 Relocated from MAIN form; changed from Sub to Func, renamed from ReadInitialDir()
+Friend Function     GetPackagePath()                Relocated from MAIN form; changed from Sub to Func
+Friend Sub          TagsPanelVisible()              Relocated from MAIN form; renamed from ClearTagsPanel()
+Friend Sub          ResetToNoODF()                  New, initializes Menus, Variables, and Controls to the "No ODF Loaded" state
+Friend Sub          ClearMarkers()                  New, clears Markers and sets their default color
+Friend Sub          CheckUnloadODF()                New, check if there is a dirty ODF loaded, offer to SaveAs
+Friend Function     SaveODFAs()                     New, moved code from Menu SaveAs, to make reusable
+Friend Sub          PositionToSectionByName()       Relocated from MAIN form; renamed from GetSectionFromMenu()
+Friend Function     CountTags()                     Relocated from MAIN form; rewrote: changed semantics, simplified
+Friend Function     FindText()                      Relocated from MAIN form; Combined functions of FindMyText() & FindMyTag(); simplified.
+Friend Sub          DisplayXMLRow()                 Relocated from MAIN form; renamed from DisplayObject()
+Friend Function     LoadRTFFile()                   Relocated from MAIN form; changed from Sub to Func
+Friend Sub          DisplayTagText()                Relocated from MAIN form
+Friend Function     ReadTag()                       Relocated from MAIN form
+Friend Sub          FindButtonsProc()               Relocated from MAIN form; renamed from NextLineCommun()
+Friend Sub          EnumerateSectionsSetFont()      New, moved code from MAIN form event handler to fix bug, renamed from SetODFFontSize
+Friend Sub          DisplayImage()                  Relocated from MAIN form
+Friend Function     FindImagePackageID()            Relocated from MAIN form; changed from Sub to Func
+Friend Sub          SetRTBDescButtons()             New, to enable/disable "Set Font" and "Save Description" Controls
+Friend Sub          SetODFButtons()                 New, to enable/disable Controls that operate on ODF Text e.g. Search...
+Friend Function     GetSectionFromIndex()           Relocated from MAIN form; changed from Sub to Func
+Friend Sub          GetRowFromIndex()               Relocated from MAIN form; changed from Sub to Func; renamed from GetLineFromIndex()
+Friend Function     FindReverse()                   Relocated from MAIN form
+Friend Function     MoveToPosition()                New, move to cursor position, update Data, return Row's text; optionally extend selection
+Friend Function     GotSectionDataByName()          New, dynamically calculates the data previsously stored in the Sections array, for 1 named Section
+Friend Sub          HotClickCursorPosition()        New, Position to an index value, updating all screen fields using single-click semantics
+Friend Function     ReadAndDisplayTag()             New, combines old Find_A_Tag() & Read_A_Tag() from Trace, plus logic to append to screen
+Friend Sub          TraceSample()                   Relocated from Follow Form
+Private Sub         TraceAddSection                 New, abstracts repeated code from TraceSample()
+Friend Function     LocateRecRowByKey()             New, modified logic from old TraceSample, now generalized for reuse
+Friend Sub          AppendTxt()                     New, appends text to any enhanced RTB, allowing choice of Font and Color
+Friend Sub          AddSecSubMenu()                 New, processes addition of Section Names to the Sections Menu hierarchy
+Friend Sub          ModifyMRU()                     New, either initializes MRU to backing file contents, or adds/removes an MRU entry
 
-Private Sub         ColorSectionTitles()            <Deprecated, no longer used>
-Friend Sub          GetSectionsInfos()              <Deprecated, not needed with elimination of ReCompute & S_Sections array>
-Friend Sub          RemoveImage()                   <Deprecated, not needed with Image Display on its own form>
+Private Sub         ColorSectionTitles()            Deprecated, no longer used
+Friend Sub          GetSectionsInfos()              Deprecated, not needed with elimination of ReCompute & S_Sections array
+Friend Sub          RemoveImage()                   Deprecated, not needed with Image Display on its own form
 
