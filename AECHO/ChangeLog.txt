@@ -519,6 +519,13 @@
         Titles centered over their respective controls as those controls change size in response to resizing the
         main form. Set minimum size of form to its design default, 1500x900.
 
+2.0.1.0     June 12, 2001   Bob Hehmann
+    Git:        V2Release
+    Summary:    Release Version
+    Details:    Functionally complete; QA; internal documentation and organization; optimization. Complete HTML Help.
+
+    1)
+
 Routines relocated from various forms over to SharedCode.vb (or new routines created in SharedCode.vb):
 
 Friend              Constant Declarations / Init    Relocated from MAIN form
