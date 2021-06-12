@@ -33,12 +33,12 @@ Partial Class Trace
         Me.PrintDialogTrace = New System.Windows.Forms.PrintDialog()
         Me.PrintDocumentTrace = New System.Drawing.Printing.PrintDocument()
         Me.CM_SampleTrace = New System.Windows.Forms.ContextMenuStrip(Me.components)
-        Me.CM_TraceCut = New System.Windows.Forms.ToolStripMenuItem()
-        Me.CM_TraceCopy = New System.Windows.Forms.ToolStripMenuItem()
-        Me.CM_TracePaste = New System.Windows.Forms.ToolStripMenuItem()
         Me.CM_TraceUndo = New System.Windows.Forms.ToolStripMenuItem()
         Me.CM_TraceRedo = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
+        Me.CM_TraceCut = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CM_TraceCopy = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CM_TracePaste = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_SampleTrace.SuspendLayout()
         Me.CM_SampleTrace.SuspendLayout()
         Me.SuspendLayout()
@@ -122,38 +122,14 @@ Partial Class Trace
         '
         Me.CM_SampleTrace.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CM_TraceUndo, Me.CM_TraceRedo, Me.ToolStripSeparator1, Me.CM_TraceCut, Me.CM_TraceCopy, Me.CM_TracePaste})
         Me.CM_SampleTrace.Name = "ContextMenuStrip1"
-        Me.CM_SampleTrace.Size = New System.Drawing.Size(181, 142)
-        '
-        'CM_TraceCut
-        '
-        Me.CM_TraceCut.Name = "CM_TraceCut"
-        Me.CM_TraceCut.ShortcutKeyDisplayString = " "
-        Me.CM_TraceCut.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.X), System.Windows.Forms.Keys)
-        Me.CM_TraceCut.Size = New System.Drawing.Size(180, 22)
-        Me.CM_TraceCut.Text = "Cut"
-        '
-        'CM_TraceCopy
-        '
-        Me.CM_TraceCopy.Name = "CM_TraceCopy"
-        Me.CM_TraceCopy.ShortcutKeyDisplayString = " "
-        Me.CM_TraceCopy.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
-        Me.CM_TraceCopy.Size = New System.Drawing.Size(180, 22)
-        Me.CM_TraceCopy.Text = "Copy"
-        '
-        'CM_TracePaste
-        '
-        Me.CM_TracePaste.Name = "CM_TracePaste"
-        Me.CM_TracePaste.ShortcutKeyDisplayString = " "
-        Me.CM_TracePaste.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.V), System.Windows.Forms.Keys)
-        Me.CM_TracePaste.Size = New System.Drawing.Size(180, 22)
-        Me.CM_TracePaste.Text = "Paste"
+        Me.CM_SampleTrace.Size = New System.Drawing.Size(114, 120)
         '
         'CM_TraceUndo
         '
         Me.CM_TraceUndo.Name = "CM_TraceUndo"
         Me.CM_TraceUndo.ShortcutKeyDisplayString = " "
         Me.CM_TraceUndo.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Z), System.Windows.Forms.Keys)
-        Me.CM_TraceUndo.Size = New System.Drawing.Size(180, 22)
+        Me.CM_TraceUndo.Size = New System.Drawing.Size(113, 22)
         Me.CM_TraceUndo.Text = "Undo"
         '
         'CM_TraceRedo
@@ -161,13 +137,37 @@ Partial Class Trace
         Me.CM_TraceRedo.Name = "CM_TraceRedo"
         Me.CM_TraceRedo.ShortcutKeyDisplayString = " "
         Me.CM_TraceRedo.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Y), System.Windows.Forms.Keys)
-        Me.CM_TraceRedo.Size = New System.Drawing.Size(180, 22)
+        Me.CM_TraceRedo.Size = New System.Drawing.Size(113, 22)
         Me.CM_TraceRedo.Text = "Redo"
         '
         'ToolStripSeparator1
         '
         Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
-        Me.ToolStripSeparator1.Size = New System.Drawing.Size(177, 6)
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(110, 6)
+        '
+        'CM_TraceCut
+        '
+        Me.CM_TraceCut.Name = "CM_TraceCut"
+        Me.CM_TraceCut.ShortcutKeyDisplayString = " "
+        Me.CM_TraceCut.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.X), System.Windows.Forms.Keys)
+        Me.CM_TraceCut.Size = New System.Drawing.Size(113, 22)
+        Me.CM_TraceCut.Text = "Cut"
+        '
+        'CM_TraceCopy
+        '
+        Me.CM_TraceCopy.Name = "CM_TraceCopy"
+        Me.CM_TraceCopy.ShortcutKeyDisplayString = " "
+        Me.CM_TraceCopy.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
+        Me.CM_TraceCopy.Size = New System.Drawing.Size(113, 22)
+        Me.CM_TraceCopy.Text = "Copy"
+        '
+        'CM_TracePaste
+        '
+        Me.CM_TracePaste.Name = "CM_TracePaste"
+        Me.CM_TracePaste.ShortcutKeyDisplayString = " "
+        Me.CM_TracePaste.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.V), System.Windows.Forms.Keys)
+        Me.CM_TracePaste.Size = New System.Drawing.Size(113, 22)
+        Me.CM_TracePaste.Text = "Paste"
         '
         'Trace
         '

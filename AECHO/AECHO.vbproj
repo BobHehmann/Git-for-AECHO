@@ -57,6 +57,7 @@
     <ApplicationIcon>Organ.ico</ApplicationIcon>
     <PackageIcon>Icon_Color_Pipe_Organ.ico</PackageIcon>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Authors>Jean-Paul Verpeaux; Bob Hehmann</Authors>
   </PropertyGroup>
   <ItemGroup>
     <Reference Update="System.Core">

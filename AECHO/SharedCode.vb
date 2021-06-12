@@ -57,7 +57,7 @@ Module SharedCode
     Friend Const conSample As String = "Sample"                             ' <1.060.2> When we need to find the Sample Section e.g. in Trace-a-Sample
     Friend Const conPipe01Attack As String = "Pipe_SoundEngine01_AttackSample"
     Friend Const conPipe01Release As String = "Pipe_SoundEngine01_ReleaseSample"
-    Friend Const conTremWave As String = "TremulantWaveForm"
+    Friend Const conTremWave As String = "TremulantWaveform"
     Friend Const conReqInstPckg As String = "RequiredInstallationPackage"
 
     Friend Const conIntFmt As String = "###,##0"                            ' <1.060.2> Standard format for displayed integers: thousands demarcation, no leading zeros
@@ -125,12 +125,16 @@ Module SharedCode
         Friend name As String               ' rien que le nom; Section Name, without the XML overhead e.g. 'TextInstance' (without the single-quotes)
         Friend startPos As Integer          ' Index within Rtb_ODF to the starting character of this Section, opening "<" of "<ObjectList...>"
         Friend endPos As Integer            ' Index within RTB_ODF to the last character of this Section, the CrLF following the closing ">" of "</ObjectList>"
-        Friend titleLen As Integer          ' Length of Section Element, from Start-Tag "<" to End-Tag">"
+        Friend titleLen As Integer          ' Length of Section Title Element, from Start-Tag "<" to End-Tag">"
         Friend firstRowStart As Integer     ' debut de la premiere ligne; index of opening "<" of "<o>..." of first content Row. If Empty, then =-1, else = Title-End+1 <1.060.2> renamed from firstLineStartPos
         Friend firstRowLen As Integer       ' <1.060.2> Length of first data ("<o>...</o>") Row, if it exists. Set to 0 if it doesn't, replacing isEmpty Property
     End Structure
 
     ' Global Variables                      <1.060.2> Relocated here from Main Form, narrowed naming scope from Public to Friend
+
+    Friend SecTable(100) As Str_Section     ' <1.060.13> Static Section array, we'll ignore (0), start with (1), where index = SecNum.
+    Friend G_InitComplete As Boolean = False
+    Friend G_DTATitle2NoCenter As Boolean
 
     Friend fnt_Fname As Font                ' Font types useful for the Trace display: File Name
     Friend fnt_Title As Font                ' Top-of-display Title
@@ -140,11 +144,12 @@ Module SharedCode
     Friend G_Registered As Boolean          ' version payante ou demo; set to True if copy of AECHO is registered (now Freeware, always set True at initialization
     Friend G_EditMode As Boolean            ' true si actif; True if Edit Mode is active - allows modifications to ODF copy in Rtb_ODF
     Friend G_ODFModSinceSaved As Boolean    ' <1.060.2> False when freshly loaded, set to True when modified. Used to determine if we should prompt to save modified ODF.
+    Friend G_ODFModSinceRecomp As Boolean   ' <1.060.13> False when Section Table is valid, set to True when modified. Used to determine if Recompute is useful.
     Friend G_NoODF As Boolean = True        ' True -> No ODF loaded; False -> ODF in memory, Section Table is loaded
 
     Friend G_LineIndex As Integer           ' Rtb_ODF Line Number of the present / selected line
-
     Friend G_SectionName As String          ' The standard name for the ODF Section we are presently positioned at
+    Friend G_SectionCount As Integer        ' Number of Sections as currently reflected in the SecTable and Sections Menu dropdown list
 
     Friend G_DataPath As String             ' repertoire data; location of the local \DATA directory, presently \DATA at the top of AppPath: contains all the static .rtf files
     Friend G_HelpFilePath As String         ' <1.060.2> Path to HTML Help Files: currently \DATA\AECHOHelpFiles: inside the DataPath
@@ -524,6 +529,8 @@ Module SharedCode
         '               <1.060.4> Add Line & Char counts to the Status-Bar
         '               <1.060.5> Remove call to RemoveImage(), made Titles visible here
         '               <1.060.6> Init Display Panel position field's Tags to "NA"
+        '               <1.060.7> Build Dynamic Section Menus from ODF XML
+        '               <1.060.13> Section modified dirty-bit and Status-Bar initialization
 
         Const lclProcName As String = "ResetToNoODF"        ' Routine's name for message handling
 
@@ -531,16 +538,17 @@ Module SharedCode
 
         G_EditMode = False                                  ' Set all useful Global Vars to 0/Empty: NEVER initialize global App File Paths here!
         G_ODFModSinceSaved = False
+        G_ODFModSinceRecomp = False                         ' <1.060.13> Reset dirty bits
         G_NoODF = True
         G_LineIndex = 0
         G_PackagePath = "" : G_PackageID = ""
-        G_SectionName = ""
+        G_SectionName = "" : G_SectionCount = 0              ' <1.060.13> Added G_SectionCount, init to 0 when no ODF.
         G_PreviousRTFFile = ""
         G_ImageFile = "" : G_ImageSet = ""
 
         TagsPanelVisible(False)                             ' Hide all controls in the Tags Panel
         ClearMarkers()                                      ' Reset Markers
-        MAIN.ClearSecMenus()
+        MAIN.ClearSecMenus()                                ' <1.060.7> Remove Section Menu dropdown entries, if any
 
         With MAIN                                           ' Need MAIN reference to access these Controls
             .Text = conMainTitle &                          ' Reset Title Bar to basic program name/info - we'll add the ODF filename when we've got one open
@@ -559,6 +567,7 @@ Module SharedCode
                        .Lbl_TextBoxTitle2,
                        .Rtb_DescText.Left,
                        .Rtb_DescText.Right)
+            G_DTATitle2NoCenter = False                     ' <1.060.13> This title should be dynamically recentered
             .Lbl_TextBoxTitle2.Visible = True               ' <1.060.5> Make sure it is visible (this use to be in now-deprecated RemoveImage()
             .Txt_SearchText.Clear()                         ' Clear Search Box Text
             .Lbl_SecStartVal.Text = "NA" : .Lbl_SecStartVal.Tag = "NA" : .Lbl_SecStartVal.Enabled = False
@@ -572,6 +581,7 @@ Module SharedCode
             .Lbl_NumTagsVal.Text = "0"
             .Status_RowTypeVal.Text = "<NA>"                ' <1.060.2> Status Bar, initialize Row Type to unknown
             .Status_FileDirtyVal.BackColor = Color.DarkOrange
+            .Status_SecDirtyVal.BackColor = Color.DarkOrange
             .Btn_Led.BackColor = Color.DarkOrange           ' Orange when nothing is happening; Red is ODF-parsing; Green is ODF-loaded and parsed.
             .Status_LinesVal.Text = "NA"                    ' <1.060.4> Status-Bar Line & Char counts are undefined until ODF is loaded
             .Status_CharsVal.Text = "NA"
@@ -587,7 +597,6 @@ Module SharedCode
 
             SetRTBDescButtons(False)                        ' <1.060.2> Only enable the Section Set/Save Buttons when usable e.g. when a Section's text is loaded
             SetODFButtons(False)                            ' <1.060.2> Disable Controls that require presence of ODF text, such as Search, Marker, and Next/Prev
-
             Trace.Close()                                   ' <1.060.2> Close Sample Trace form - note, no error if Trace is not open.
         End With
 
@@ -687,18 +696,20 @@ Module SharedCode
         saveFileDialog.Dispose()                                                    ' <1.060.2> Clean up memory alloc
 
     End Function
-    Friend Sub PositionToSectionByName(secName As String,                   ' Name of Section to move to
-                                       loadFirstRow As Boolean)             ' <1.060.2> if True, update Description Box, otherwise leave it alone
+    Friend Sub PositionToSectionByName(                                     ' Position to Sec Title, optionally update Descriptive Text
+            secName As String,                                              ' Name of Section to move to
+            loadFirstRow As Boolean,                                        ' <1.060.2> if True, update Description Box, otherwise leave it alone
+            Optional secNum As Integer = 0)                                 ' <1.060.13> Optional direct-index into Section Table       
 
         ' TROUVER UNE SECTION DE L'ORGUE A PARTIR DU MENU
 
-        ' Purpose:      Processes a Menu Section click, positioning the ODF to the beginning of the desired Section.
-        '               Loading of First Row (should it exists), and the related display of Descriptive Text, is optional.
-        ' Process:      Locate the Section by name using GotSectionDataByName. When found, position Rtb_ODF
+        ' Purpose:      Position the ODF to the beginning of the desired Section. Loading of First Row (should it exist),
+        '               and the related display of Descriptive Text, is optional.
+        ' Process:      Locate the Section by name/number using GotSectionDataByName. When found, position Rtb_ODF
         '               to the Section, and update screen fields relating to Section/Line/Row/Cursor. If Section is not empty,
         '               and <loadFirstRow> is True, extract the Section's first Row into Rtb_XMLRow, parse it,
         '               update the Tag Count for this XML row, and display the Descriptive Text file.
-        ' Called By:    Menu_SectionChoice(); Menu_OpenHauptwerkOrgan_Click(); Menu_ReComputeSections_Click()
+        ' Called By:    Menu_SectionChoice(); OpenODF()
         ' Side Effects: Alters Global Variables. Populates Rtb_XMLRow. Positions in Rtb_ODF. Updates MAIN form fields.
         ' Notes:        <None>
         ' Updates:      <1.060.2> Removed redundant checks for IsEmpty(), and redundant setting of Focus and scrolling
@@ -711,6 +722,7 @@ Module SharedCode
         '               G_CaretPos with local var cursorPos. Replace search through Sections array with a call to GotSectionDataByName() -
         '               which dynamically returns the same data elements as previsouly held in the static array.
         '               <1.060.6> Assign character-based positions to the .Tag properties of position fields.
+        '               <1.060.13> Fast Sections. If the Section Index is dirty, rebuild it.
 
         Const lclProcName As String = "PositionToSectionByName"             ' <1.060.2> Routine's Name for message handling
 
@@ -718,9 +730,13 @@ Module SharedCode
         Dim sec As Str_Section                                              ' <1.060.2> Data structure to represent 1 section, replacing array of 44 Sections
         Dim secEndLine As Integer                                           ' <1.060.6> Section's Last Line, derived from Last Char
 
+        If G_ODFModSinceRecomp Then                                         ' <1.060.6> Rebuild the index if it is dirty.
+            BuildSectionIndex(MAIN.Rtb_ODF, G_NoODF)
+        End If
+
         sec.name = ""                                                       ' <1.060.2> Need to allocate instance of the structure.
 
-        If Not GotSectionDataByName(secName, sec) Then                      ' <1.060.2> True -> Found secName, its data is now in structure sec
+        If Not GotSectionDataByName(secName, sec, secNum) Then              ' <1.060.2> True -> Found secName/secNum, its data is now in structure sec
             DispMsg(lclProcName, conMsgCrit,                                ' <1.060.2> False -> Whoops, didn't find it, alert and return.
                 "Unable to locate Section named """ & secName & """ " & vbCrLf &
                 "Could be either an ill-formed ODF, or an internal AECHO error.")
@@ -748,7 +764,7 @@ Module SharedCode
 
             .Rtb_ODF.Focus()                                                ' scroller de façon a avoir le titre de la section en haut de Rtb_ODF; return focus to the ODF
             .Rtb_ODF.Select(sec.startPos, 0)                                ' Scroll the Section Header's Start-Tag to the top of the Rtb_ODF display; positions cursor at the Section Title
-            .Rtb_ODF.ScrollToCaret()                                        ' Make sure cursor is onscreen
+            '.Rtb_ODF.ScrollToCaret()                                        ' Make sure cursor is onscreen <1.060.13> Commented out, reduces flicker
             cursorPos = .Rtb_ODF.SelectionStart
             G_LineIndex =
                         .Rtb_ODF.GetLineFromCharIndex(cursorPos) + 1        ' caalculer et afficher n° dee ligne; Get the line number. Add 1 because this Method is 0-based
@@ -777,7 +793,7 @@ Module SharedCode
             .Status_RowTypeVal.Text = "Sec Start-Tag"
         End With
 
-        Return                                                          ' <1.060.2> We found it, we displayed it, we're done
+        Return                                                              ' <1.060.2> We found it, we displayed it, we're done
 
     End Sub
     Friend Function CountTags(startPos As Integer,          ' Start of range to search within srcText, zero based
@@ -972,6 +988,7 @@ Module SharedCode
         '               that resets the Font to Verdana 10, as this also removes other Style attributes, such as
         '               Bolding & Underlining. "Set Font" can still be used to force the Font. Removed references to
         '               globals. Added exception handler. Rewrote as a function that returns the path of the loaded file.
+        '               <1.060.13> Set Title2NoCenter bit, so we don't dynamically recenter the left-justified Title2
 
         Const lclProcName As String = "LoadRTFFile"                         ' <1.060.2> Funciton's name for message handling
 
@@ -990,6 +1007,7 @@ Module SharedCode
                    .Rtb_DescText.Right)
             .Lbl_TextBoxTitle2.Left = .Rtb_DescText.Left                    ' <1.060.2> Place column titles on the Bottom Title Line
             .Lbl_TextBoxTitle2.Text = conTextBoxTitle2_Desc
+            G_DTATitle2NoCenter = True                                      ' <1.060.13> Do not dynamically recenter this title if the display changes size
             Try
                 If File.Exists(pathToRTFFile) Then                          ' Ensure Section File exists <1.060.2> Changed Method to File.Exists
                     .Rtb_DescText.LoadFile(pathToRTFFile)                   ' It does, so display it.
@@ -1217,20 +1235,24 @@ Module SharedCode
             If srchPos = foundEnd Then                      ' <1.060.2> Forward search, if cursor is still at end of last successful search,
                 srchPos = foundStart + 1                    ' <1.060.2>   begin this search 1 char past start of last found text, otherwise search from cursor
             End If
-            startPos = Clamp(srchPos,
-                         0,                                 ' <1.060.2> Limit start of search to be within ODF bounds
-                         MAIN.Rtb_ODF.TextLength - 1)
-            foundStart = FindText(MAIN.Txt_SearchText.Text,
-                            startPos,                       ' <1.060.2> FindText validates parameters, returns -1 for null or illegal values.
-                            MAIN.Rtb_ODF)                   ' Search forward
+            startPos =
+                Clamp(srchPos,                              ' <1.060.2> Limit start of search to be within ODF bounds
+                      0,
+                      MAIN.Rtb_ODF.TextLength - 1)
+            foundStart =
+                FindText(MAIN.Txt_SearchText.Text,          ' <1.060.2> FindText validates parameters, returns -1 for null or illegal values.
+                         startPos,
+                         MAIN.Rtb_ODF)                      ' Search forward
         Else
             If srchPos = foundEnd Then                      ' <1.060.2> Backwards search, if cursor is still at end of prior search
                 srchPos = srchPos - 1                       ' <1.060.2>   backup start by 1, otherwise search from cursor
             End If
-            startPos = Clamp(srchPos,
-                             0,                             ' <1.060.2> Limit start of search to be within ODF bounds
-                             MAIN.Rtb_ODF.TextLength - 1)
-            foundStart = FindReverse(MAIN.Txt_SearchText.Text,
+            startPos =
+                Clamp(srchPos,
+                      0,                                    ' <1.060.2> Limit start of search to be within ODF bounds
+                      MAIN.Rtb_ODF.TextLength - 1)
+            foundStart =
+                FindReverse(MAIN.Txt_SearchText.Text,
                             startPos,                       ' <1.060.2> FindReverse validates parameters, returns -1 for null or illegal values.
                             MAIN.Rtb_ODF)                   ' Search backward
         End If
@@ -1248,7 +1270,8 @@ Module SharedCode
             Return
         End If
 
-        foundEnd = foundStart + MAIN.Txt_SearchText.TextLength
+        foundEnd =
+            foundStart + MAIN.Txt_SearchText.TextLength
         MoveToPosition(foundEnd,                            ' Fetch the Row - this updates Line#, Line Start, Line End, Row Start, and Row End on screen
                        G_LineIndex,                         ' <1.060.2> Returns Line Number, 0-based
                        lineStart,                           ' <1.060.2> Returns start of Line
@@ -1258,153 +1281,207 @@ Module SharedCode
                             MAIN.Txt_SearchText.TextLength)
 
     End Sub
-    Friend Sub EnumerateSectionsSetFont(srcRTB As RichTextBox,      ' Object to resize (must be an RTB)
-                                        newSize As Integer,         ' New font size in points
-                                        noODF As Boolean,           ' True -> ODF not yet loaded, ignore Title resizing
-                                        enumSecs As Boolean,        ' True -> List Section Inventory in Descriptive Text Area, like old "ReCompute"
-                                        resizeTitles As Boolean)    ' True -> Scan Rtb_ODF for Title Lines, rescale them; False -> Leave ODF Title Lines alone
+    Friend Sub BuildSectionIndex(       ' Build SecTable Index, Section Menus, and adjust Fonts & SecTitle emphasis
+            srcRTB As RichTextBox,      ' Object to resize (must be an RTB)
+            noODF As Boolean)           ' True -> ODF not yet loaded, ignore Title resizing
 
-        ' Purpose:      Set the contents of a designated RTB Control to a designated size, forcing the font face and emphasis to
-        '               the defaults. Optionally, readjust the emphasis (upsizing/bold) for Section Titles - used when changing the
-        '               font size in the Rtb_ODF display. If enumSecs is True, also display the Section position data in the
-        '               Display Text Area, as Section Titles are located.
-        ' Process:		Regardless of Title handling, first set the entire RTB Control to the standard font at the specified size.
-        '               If re-emphasizing Section Titles, sequentially scan the Section Title Start-Tags, and when found,
-        '               apply the emphasis. Additionally, if enumerating the Sections, set up the display areas and headers,
-        '               clear the Record-Row, Parsed Tags, and Descriptive Area, and isolate the Section's Name and End-Tag
-        '               position, displaying it in the Descriptive Text Area as each Section is located.
-        ' Called By:    Num_ODFFontSize_ValueChanged(); Menu_OpenHauptwerkOrganClick();
-        '               Menu_RecomputeSectionsClick(); CM_ODFRecomputeClick()
+        ' Purpose:      Set the ODF font size to that specified by the FontSize Control, and (re)build the Section Index Table,
+        '               emphasizing the Section Title lines in the same pass.
+        ' Process:		Set the entire RTB Control to the standard font at the specified size. Scan for the Section Title
+        '               Start-Tags, and when found, apply the emphasis. Build the Section data & Section Menus, init the
+        '               display areas and headers, clear the Record-Row, Parsed Tags, and Descriptive Text Area.
+        ' Called By:    Num_ODFFontSize_ValueChanged(); OpenODF(); DisableEditing()
+        '               Btn_LedClick(); PositionToSectionByName();
         ' Side Effects: Alters the designated Control's properties.
         ' Notes:        <None>
         ' Updates:		New with <1.060.2>.
         '               <1.060.5> Removed ref to RemoveImage(), moved code to make Title1/2 visible here.
         '               <1.060.6> Changed from .Text to .Tag property when retrieving Cursor's position
         '               <1.060.7> Dynamically create a hierarchical Sections Menu based on actual SectionNames as parsed
+        '               <1.060.13> Update Section Dirty-bit global and Status-Bar's Section Dirty Indicator; Build Section Table.
+        '               Renamed from EnumerateSectionsSetFont() to BuildSectionIndex(), moved "List" functionality out to its own
+        '               routine ListSections(), removed conditional logic for resizing Titles, always resize. Removed font-size parm,
+        '               always take size from the FontSize control. Removed enumeration parameter. Set ODF to read-only during
+        '               rebuild (for speed), then return it to its prior state when done.
 
-        Const lclProcName As String = "EnumerateSectionsSetFont"    ' Routine's name for message handling
+        Const lclProcName As String =                       ' Routine's name for message handling
+            "BuildSectionIndex"
 
-        Dim srchPos As Integer                                      ' Current position in ODF, as we search for Section Start-Tags
-        Dim eTag As Integer                                         ' Position of end of a Start Tag, the ">" character
-        Dim secNum As Integer                                       ' Ordinal number of Sections as they are located in order, 1-based
-        Dim secNameStart As Integer                                 ' Start of Section Name, found in Attribute Value
-        Dim secNameEnd As Integer                                   ' End of Section Name, closing '"' -1
-        Dim secName As String                                       ' Extracted Section Name
-        Dim secEnd As Integer                                       ' Section End-Tag location, start of "</ObjectList>"
-        Dim secMenuCount As Integer                                 ' <1.060.7> Keeps count of Sections as they are added to the Menu
+        Dim srchPos As Integer                              ' Current position in ODF, as we search for Section Start-Tags
+        Dim eTag As Integer                                 ' Position of end of a Start Tag, the ">" character
+        Dim secNum As Integer                               ' Ordinal number of Sections as they are located in order, 1-based
+        Dim secNameStart As Integer                         ' Start of Section Name, found in Attribute Value
+        Dim secNameEnd As Integer                           ' End of Section Name, closing '"' -1
+        Dim secName As String                               ' Extracted Section Name
+        Dim secEnd As Integer                               ' Section End-Tag location, start of "</ObjectList>"
+        Dim secMenuCount As Integer                         ' <1.060.7> Keeps count of Sections as they are added to the Menu
+        Dim initialReadOnly As Boolean                      ' <1.060.13> EditMode setting at start, so we can reset to this when finished.
 
-        srcRTB.SelectAll()                                          ' Affects all text in target RTB
-        srcRTB.SelectionFont = New Font(conFont,                    ' Set entire RTB to default (Arial), selected font-size, Regular stlye
-                                         newSize,
-                                         FontStyle.Regular)
+        srcRTB.SelectAll()                                  ' Affects all text in target RTB
+        srcRTB.SelectionFont =
+            New Font(conFont,                               ' Set entire RTB to default (Arial), selected font-size, Regular stlye
+                     MAIN.Num_ODFFontSize.Value,
+                     FontStyle.Regular)
+        srcRTB.DeselectAll()
 
-        If resizeTitles AndAlso (Not noODF) Then                    ' Only do this loop if asked, and we have an ODF present
-            secNum = 0                                              ' Section counter starts at 0
-            secMenuCount = 0                                        ' <1.060.7> No Sections added to Menu yet
-            If enumSecs Then
-                TagsPanelVisible(False)                             ' Hide all controls in the PackageID Panel
-                ClearMarkers()                                      ' Reset Markers
-                MAIN.ClearSecMenus()                                ' <1.060.7> Removes all Section Sub-Menu Entries
-                MAIN.Rtb_DescText.Clear()                           ' vider Rtb_DescText; clear the control that displays descriptive/help text
-                G_PreviousRTFFile = ""                              ' To enforce re-display of Section Text if menu-clicking on the present Section
-                SetRTBDescButtons(False)                            ' Disable "Set Font" and "Save Description" buttons, no Section content to work with
-                MAIN.Rtb_XMLRow.Clear()                             ' Reset Record-Row display
-                CenterText(conTextBoxTitle_ODFLoad,                 ' Display "Section Locations" Title over Display Text Area
-                    MAIN.Lbl_TextBoxTitle1,                         ' Center text on the Top Title Line
-                    MAIN.Rtb_DescText.Left,
-                    MAIN.Rtb_DescText.Right)
-                MAIN.Lbl_TextBoxTitle2.Left =
-                    MAIN.Rtb_DescText.Left                          ' Place legend text on the left of the Bottom Title Line
-                MAIN.Lbl_TextBoxTitle2.Text = conTextBoxTitle_List
-                MAIN.Rtb_DescText.SelectAll()                       ' Set tab locations to approximate columnar alignment
-                MAIN.Rtb_DescText.SelectionTabs = New Integer() {60, 130, 160, 260, 350, 380, 470}
-                MAIN.Lbl_TextBoxTitle1.Visible = True               ' <1.060.5> Moved here from deprecated call to RemoveImage()
-                MAIN.Lbl_TextBoxTitle2.Visible = True               ' <1.060.5> Moved here from deprecated call to RemoveImage()
-                MAIN.Lbl_TextBoxTitle1.Refresh()
-                MAIN.Lbl_TextBoxTitle2.Refresh()
+        If noODF Then Return                                ' Only scan if an ODF is present
+
+        initialReadOnly = MAIN.Rtb_ODF.ReadOnly             ' <1.060.13> Retain initial state.
+        MAIN.Rtb_ODF.ReadOnly = True                        ' <1.060.13> Set to readonly while we process the rebuild
+        G_EditMode = False                                  ' <1.060.13> Supresses uneeded code as text is changed, triggering ODF Change Events.
+        ClearMarkers()                                      ' Reset Markers
+        MAIN.ClearSecMenus()                                ' <1.060.7> Removes all Section Sub-Menu Entries
+        MAIN.Btn_Led.BackColor = Color.Red                  ' At the start, change Btn_Led to Red, then back to Green when done
+        MAIN.Btn_Led.Refresh()
+
+        secNum = 0                                          ' Section counter starts at 0
+        secMenuCount = 0                                    ' <1.060.7> No Sections added to Menu yet
+        srchPos = srcRTB.Find(conSecStartTag, 0,            ' Find location of the first Section Start-Tag '<ObjectList ObjectType='
+                              conQuickNoH)
+
+        While (srchPos > 0)                                 ' We found a Section Start-Tag
+            secNum += 1                                     ' Found next Section
+            If secNum >= SecTable.Length Then               ' <1.060.13> We've hit the allocation limit
+                DispMsg(lclProcName, conMsgExcl,
+                        "Section Index Table size limit has been reached, a max of " & vbCrLf &
+                        SecTable.Length - 1 & " entries are allowed.")
+                secNum -= 1                                 ' <1.060.13> Backup to the last good entry, stop parsing
+                Exit While
             End If
-
-            MAIN.Btn_Led.BackColor = Color.Red                      ' At the start, change Btn_Led to Red, then back to Green when done
-            MAIN.Btn_Led.Refresh()
-
-            srchPos = srcRTB.Find(conSecStartTag, 0,                ' Find location of the first Section Start-Tag '<ObjectList ObjectType='
-                                  conQuickNoH)
-
-            While (srchPos > 0)                                     ' We found a Section Start-Tag
-                secNum += 1                                         ' Found next Section
-                eTag = srcRTB.Find(">",                             ' Set eTag to be its ending ">" character
-                                   srchPos + conSecStartTag.Length,
-                                   conQuickNoH)
-                If eTag < 0 Then                                    ' No closing ">"?
-                    DispMsg(lclProcName, conMsgCrit,
-                            "Failed to locate closing '>' of Section Start-Tag from position " & srchPos & vbCrLf &
-                            "Possible ill-formed ODF")
-                Else
-                    srcRTB.Select(srchPos,                          ' Select the Section Title
-                                (eTag - srchPos) + 1)
-                    srcRTB.SelectionFont =                          ' Make Title's font-size relative to present normal size.
+            eTag =   ' Set eTag to be its ending ">" character
+                srcRTB.Find(">",
+                            srchPos + conSecStartTag.Length,
+                            conQuickNoH)
+            If eTag < 0 Then                                ' No closing ">"?
+                DispMsg(lclProcName, conMsgCrit,
+                        "Failed to locate closing '>' of Section Start-Tag from position " & srchPos & vbCrLf &
+                        "Possible ill-formed ODF")
+                SecTable(secNum).titleLen = 0
+            Else
+                SecTable(secNum).titleLen =
+                    (eTag - srchPos) + 1
+                srcRTB.Select(srchPos,                      ' Select the Section Title
+                              (eTag - srchPos) + 1)
+                srcRTB.SelectionFont =                      ' Make Title's font-size relative to present normal size.
                         New Font(conFont,
                                  MAIN.Num_ODFFontSize.Value + conTitleFontInc,
                                  FontStyle.Bold)
-                    srcRTB.SelectionColor = conTitleColor           ' And set its color to teh Title Color
-                    srcRTB.DeselectAll()                            ' Deselect the Title Text
-                End If
-
-                If enumSecs Then                                    ' verif dans Rtb_DescText; if enumerating, add a Section Info Line to Rtb_DescText
-                    secNameStart =
-                        srchPos + conSecStartTag.Length + 1         ' First char after 'ObjectType="', i.e. start of the Section Name
-                    secNameEnd = srcRTB.Find("""",                  ' Closing double-quote is end of Attribute Value
-                                             secNameStart,          ' Begin search from opening char of Section Name
-                                             conQuickNoH)
-                    If secNameEnd < 0 Then
-                        DispMsg(lclProcName, conMsgExcl,
-                                "Did not find closing quotes at end of Section Name. Search began at position: " & secNameStart & vbCrLf &
-                                "Possible ill-formed ODF.")
-                        secName = ""
-                    Else                                            ' Found the Name, extract it
-                        secName = srcRTB.Text.Substring(secNameStart,
-                                                        (secNameEnd - secNameStart))
-                    End If
-
-                    secEnd = srcRTB.Find(conSecEndTag,              ' Find the Section End-Tag "</ObjectList>"
-                                         secNameStart,
-                                         conQuickNoH)
-                    If secEnd < 0 Then                              ' Did not find it, warn
-                        DispMsg(lclProcName, conMsgExcl,
-                                "Did not find Section End-Tag. Search began at position: " & secNameStart & vbCrLf &
-                                "Possible ill-formed ODF.")
-                        secEnd = 0
-                    Else
-                        secEnd += conSecEndTag.Length               ' Add length of Tag to get position of closing <CR>
-                    End If
-
-                    MAIN.Rtb_DescText.Text +=                       ' Use tabs to left align content; String.Format to format & embed values
-                            String.Format("{0,5:N0}{1,1}{2,-1:N0}{3,1}{4,2}{5,1}{6,-1:N0}{7,1}{8,-1:N0}{9,1}{10,1}{11,1}{12,-1:N0}{13,1}{14,-1}",
-                                          secNum, vbTab,
-                                          srcRTB.GetLineFromCharIndex(srchPos) + 1, vbTab, "to", vbTab,
-                                          srcRTB.GetLineFromCharIndex(secEnd) + 1, vbTab,
-                                          srchPos, vbTab, "to", vbTab, secEnd, vbTab, secName) & vbCrLf
-                    MAIN.Rtb_DescText.Refresh()                     ' Repaint the progress description
-                    secMenuCount += 1                               ' <1.060.7> 1-based index of the Sections being added to the Sections Menu
-                    AddSecSubMenu(secName, secMenuCount)            ' <1.060.7> Add this Section Name to the Sections Menu
-                    eTag = Max(eTag, secEnd)                        ' Begin search for next section from farthest known location in previous one
-                End If
-                If eTag >= srcRTB.TextLength - 1 Then               ' <1.080.8> Sometime Find wraps at EOF - check if we're already there
-                    srchPos = -1                                    ' <1.080.8> Yes, terminate search
-                Else
-                    srchPos = srcRTB.Find(conSecStartTag, eTag,     ' Starting from the end of the present Title, find the next one
-                                      conQuickNoH)
-                End If
-            End While
-
-            MAIN.BuildSecMenus()                                    ' <1.060.7> Add the .Tag and Event Handlers to the new Sub-Menus
-            HotClickCursorPosition(MAIN.Lbl_CursorPosVal.Tag)       ' <1.060.6> Reposition to original cursor position, as text was scrolled by this routine: use .Tag
-            MAIN.Btn_Led.BackColor = Color.LightGreen               ' Set Led color to Green to indicate completion of enumeration
-            MAIN.Btn_Led.Refresh()
-            If enumSecs Then                                        ' If we listed Sections in Descriptive Text, enable Print Menu
-                MAIN.Menu_PrintDT.Enabled = True
+                srcRTB.SelectionColor = conTitleColor       ' And set its color to the Title Color
+                srcRTB.DeselectAll()                        ' Deselect the Title Text
             End If
+
+            secNameStart =                                  ' First char after 'ObjectType="', i.e. start of the Section Name
+                        srchPos + conSecStartTag.Length + 1
+            secNameEnd = srcRTB.Find("""",                  ' Closing double-quote is end of Attribute Value
+                                     secNameStart,          ' Begin search from opening char of Section Name
+                                     conQuickNoH)
+            If secNameEnd < 0 Then
+                DispMsg(lclProcName, conMsgExcl,
+                            "Did not find closing quotes at end of Section Name. Search began at position: " & secNameStart & vbCrLf &
+                            "Possible ill-formed ODF.")
+                secName = ""
+            Else                                            ' Found the Name, extract it
+                secName =
+                    srcRTB.Text.Substring(secNameStart,
+                                          secNameEnd - secNameStart)
+            End If
+
+            SecTable(secNum).name = secName                 ' <1.060.13> Assign Name into table
+            secEnd = srcRTB.Find(conSecEndTag,              ' Find the Section End-Tag "</ObjectList>"
+                                 secNameStart,
+                                 conQuickNoH)
+            If secEnd < 0 Then                              ' Did not find it, warn
+                DispMsg(lclProcName, conMsgExcl,
+                        "Did not find Section End-Tag. Search began at position: " & secNameStart & vbCrLf &
+                        "Possible ill-formed ODF.")
+                secEnd = 0
+            Else
+                secEnd += conSecEndTag.Length               ' Add length of Tag to get position of closing <CR>
+            End If
+
+            SecTable(secNum).startPos = srchPos             ' <1.060.13> Fill in the Start/End chars
+            SecTable(secNum).endPos = secEnd                ' <1.060.13> From these, Start/End Lines can be computed
+            secMenuCount += 1                               ' <1.060.7> 1-based index of the Sections being added to the Sections Menu
+            AddSecSubMenu(secName, secMenuCount)            ' <1.060.7> Add this Section Name to the Sections Menu
+            eTag = Max(eTag, secEnd)                        ' Begin search for next section from farthest known location in previous one
+
+            If eTag >= srcRTB.TextLength - 1 Then           ' <1.080.8> Sometime Find wraps at EOF - check if we're already there
+                srchPos = -1                                ' <1.080.8> Yes, terminate search
+            Else
+                srchPos =                                   ' Starting from the end of the present Title, find the next one
+                    srcRTB.Find(conSecStartTag,
+                                eTag,
+                                conQuickNoH)
+            End If
+        End While
+
+        G_SectionCount = secNum                             ' <1.060.13> Save established count of Sections
+        MAIN.BuildSecMenus()                                ' <1.060.7> Add the .Tag and Event Handlers to the new Sub-Menus
+        HotClickCursorPosition(MAIN.Lbl_CursorPosVal.Tag)   ' <1.060.6> Reposition to original cursor position, as text was scrolled by this routine: use .Tag
+        MAIN.Btn_Led.BackColor = Color.LightGreen           ' Set Led color to Green to indicate completion of enumeration
+        MAIN.Btn_Led.Refresh()
+        MAIN.Status_SecDirtyVal.BackColor =                 ' <1.060.13> Set Status-Bar Sec Dirty Indicator to Green
+            Color.LightGreen
+        G_ODFModSinceRecomp = False                         ' <1.060.13> And clear the global Section Dirty-bit
+        MAIN.Rtb_ODF.ReadOnly = initialReadOnly             ' <1.060.13> Restore the initial read-only state
+        G_EditMode = Not initialReadOnly                    ' <1.060.13> Restore EditMode indicator
+
+    End Sub
+    Friend Sub ListSections(srcRTB As RichTextBox, destRTB As RichTextBox, noODF As Boolean)
+
+        ' Purpose:      Display the List of Sections in the Descriptive Text Area, rebuilding the Section Index first
+        '               iff it is dirty.
+        ' Process:		Check if dirty: if so, rebuild Section Index before proceeding. Clear the XML Row, Tags Panel,
+        '               and Descriptive Text; set up new Titles. Iterate through the Section Table, displaying a line
+        '               for each entry; enable printing for the Descriptive Text Area.
+        ' Called By:    OpenODF(); Menu_RecomputeSectionsClick()
+        ' Side Effects: Alters the designated Control's properties.
+        ' Notes:        <None>
+        ' Updates:		New with <1.060.13> Moved "List" functionality out from BuildSectionIndex() to here.
+        '               Added call to BuildSectionIndex() if it is dirty upon entry.
+        '               <1.060.13> Set Title2NoCenter bit to supress dynamic recentering of left-justified Title2 text.
+
+        Const lclProcName As String =           ' Routine's name for message handling
+            "ListSections"
+
+        If G_ODFModSinceRecomp Then             ' If dirty, rebuild, then continue with the now accurate data
+            BuildSectionIndex(srcRTB, noODF)
         End If
+
+        TagsPanelVisible(False)                 ' Hide all controls in the PackageID Panel
+        destRTB.Clear()                         ' vider Rtb_DescText; clear the control that displays descriptive/help text
+        destRTB.SelectAll()                     ' Set tab locations to approximate columnar alignment
+        destRTB.SelectionTabs =
+            New Integer() {60, 130, 160, 260, 350, 380, 470}
+        G_PreviousRTFFile = ""                  ' To enforce re-display of Section Text if menu-clicking on the present Section
+        SetRTBDescButtons(False)                ' Disable "Set Font" and "Save Description" buttons, no Section content to work with
+        MAIN.Rtb_XMLRow.Clear()                 ' Reset Record-Row display
+        CenterText(conTextBoxTitle_ODFLoad,     ' Display "Section Locations" Title over Display Text Area
+                    MAIN.Lbl_TextBoxTitle1,     ' Center text on the Top Title Line
+                    destRTB.Left,
+                    destRTB.Right)
+        MAIN.Lbl_TextBoxTitle2.Left =
+                    destRTB.Left                ' Place legend text on the left of the Bottom Title Line
+        G_DTATitle2NoCenter = True              ' <1.060.13> Don't dynamically recenter this left-justified title when the form changes size
+        MAIN.Lbl_TextBoxTitle2.Text =
+            conTextBoxTitle_List
+        MAIN.Lbl_TextBoxTitle1.Visible = True   ' <1.060.5> Moved here from deprecated call to RemoveImage()
+        MAIN.Lbl_TextBoxTitle2.Visible = True   ' <1.060.5> Moved here from deprecated call to RemoveImage()
+        MAIN.Lbl_TextBoxTitle1.Refresh()
+        MAIN.Lbl_TextBoxTitle2.Refresh()
+
+        For idx = 1 To G_SectionCount           ' <1.060.13> Iterate over Section Table and display contents
+            destRTB.Text +=                     ' Use tabs to left align content; String.Format to format & embed values
+                         String.Format("{0,5:N0}{1,1}{2,-1:N0}{3,1}{4,2}{5,1}{6,-1:N0}{7,1}{8,-1:N0}{9,1}{10,1}{11,1}{12,-1:N0}{13,1}{14,-1}",
+                                       idx, vbTab,
+                                       srcRTB.GetLineFromCharIndex(SecTable(idx).startPos) + 1, vbTab, "to", vbTab,
+                                       srcRTB.GetLineFromCharIndex(SecTable(idx).endPos) + 1, vbTab,
+                                       SecTable(idx).startPos, vbTab, "to", vbTab,
+                                       SecTable(idx).endPos, vbTab,
+                                       SecTable(idx).name) & vbCrLf
+        Next
+        destRTB.Refresh()
+        MAIN.Menu_PrintDT.Enabled = True
 
     End Sub
     Friend Sub TakeRowAction(packagePath As String,         ' <1.060.2> Main directory where all organ packages are located
@@ -1623,20 +1700,22 @@ Module SharedCode
         MAIN.Btn_Led.Enabled = enabled              ' <1.060.2>
 
     End Sub
-    Friend Function GetSectionFromIndex(index As Integer,           ' TROUVE LA SECTION DANS LAQUELLE SE TROUVE LE CARET; location in ODF
-                                        ByRef secStart As Integer,  ' <1.060.2> Return dynamic Section Start/End indices
-                                        ByRef secEnd As Integer,
-                                        ByRef secStartLine As Integer,
-                                        ByRef secEndLine As Integer
-                                        ) As String                 ' <1.060.2> Return the Section Name as the function result
+    Friend Function GetSectionFromIndex(
+            index As Integer,                   ' TROUVE LA SECTION DANS LAQUELLE SE TROUVE LE CARET; location in ODF
+            ByRef secStart As Integer,          ' <1.060.2> Return dynamic Section Start/End indices
+            ByRef secEnd As Integer,
+            ByRef secStartLine As Integer,      ' <1.060.2> Return the Start/End Lines also (1-based)
+            ByRef secEndLine As Integer
+            ) As String                         ' <1.060.2> Return the Section Name as the function result
 
         ' Purpose:      Retrieve Section info of the Section containing the character at [index] in the ODF:
         '               Section Name, Start, and End.
         ' Process:      Interogate the Status-Bar to determine if the Row-Type is extra-Sectional. If so
         '               set the name to "None" and set Start and End to the immediate extra-Sectional text. If not,
+        '               determine if Section Index is valid: if not, search ODF for Section Start/End -
         '               starting from position [index] in Rtb_ODF, search backwards for the Section's Start-Tag,
         '               and extract the Section's Name from the Attribute. Determine its Start/End positions by
-        '               scanning.
+        '               scanning. Howevr, if Index is clean, do a reverse-lookup in the Table to locate the Section.
         ' Called By:    Rtb_ODF_MouseDoubleClick(); Btn_NextLine_Click();
         '               OldGetSectionFroMenu() (deprecated)
         ' Side Effects: <None>
@@ -1648,12 +1727,17 @@ Module SharedCode
         '               the Section Start-Tag Line.) Added code to hangle positioning in the XML-Header, and the
         '               ODF Start/End Tags.
         '               <1.060.6> Added returning of Starting & Ending Lines, in 1-based form
+        '               <1.060.13> Fast Sections - added Section Index reverse lookup, used when Index is clean.
+        '               If Index is dirty, use ODF text search to locate Section Start/End.
 
         Const lclProcName As String =                               ' <1.060.2> Routine's name for message handling
             "GetSectionFromIndex"
 
         Dim sLen As Integer = conSecStartTag.Length                 ' <1.060.2> Length of Start-Tag leadin text
         Dim belongend As Integer                                    ' XML Section Start-Tag's ending character position
+        Dim fndIDX As Integer                                       ' <1.060.13> When searching in Index Table, SecID if/when found
+        Dim secName As String                                       ' <1.060.13> Name of located Section
+        Dim rowType As String                                       ' <1.060.13> Current row type from the Status-Bar
 
         If MAIN.Rtb_ODF.TextLength = 0 Then
             secStart = 0
@@ -1662,59 +1746,96 @@ Module SharedCode
             secEndLine = 0
             Return conDefSectionName                                ' MODIF V058; if no ODF text at all, just exit
         End If
-        If MAIN.Status_RowTypeVal.Text = conRowTypeODFEnd Then      ' <1.060.2> In final </Hauptwerk> tag
-            secStart = MAIN.Rtb_ODF.GetFirstCharIndexOfCurrentLine  ' <1.060.2> Start is first char of this line
+
+        rowType = MAIN.Status_RowTypeVal.Text                       ' <1.060.13> Grab the type from the Staus-Bar
+        If rowType = conRowTypeODFEnd Then                          ' <1.060.2> In final </Hauptwerk> tag
+            secStart =                                              ' <1.060.2> Start is first char of this line
+                MAIN.Rtb_ODF.GetFirstCharIndexOfCurrentLine
             secStartLine =                                          ' <1.060.6> Convert to Line #
                 MAIN.Rtb_ODF.GetLineFromCharIndex(secStart) + 1
             secEnd = MAIN.Rtb_ODF.TextLength - 1                    ' <1.060.2> End is end-of-ODF
-            secEndLine = MAIN.Rtb_ODF.Lines.Count().ToString(conIntFmt)
+            secEndLine =
+                MAIN.Rtb_ODF.Lines.Count().ToString(conIntFmt)
             Return conDefSectionName                                ' <1.060.2> Section is "None"
         End If
-        If (MAIN.Status_RowTypeVal.Text = conRowTypeXMSHdr) Or      ' <1.060.2> In XML-Header or ODF Start-Tag
-            (MAIN.Status_RowTypeVal.Text = conRowTypeODFStart) Then
+
+        If (rowType = conRowTypeXMSHdr) Or                          ' <1.060.2> In XML-Header or ODF Start-Tag
+            (rowType = conRowTypeODFStart) Then
             secStart = 0                                            ' <1.060.2> Start is first char of ODF
             secStartLine = 1                                        ' <1.060.6> And this is also the first Line (one-based)
-            secEnd = FindText(conSecStartTag, 1, MAIN.Rtb_ODF) - 1  ' <1.060.2> End is just before start of first regular Section
+            secEnd =                                                ' <1.060.2> End is just before start of first regular Section
+                FindText(conSecStartTag,
+                         1,
+                         MAIN.Rtb_ODF) - 1
             secEndLine =                                            ' <1.060.6> Calculate Last Line from Last Char
                 MAIN.Rtb_ODF.GetLineFromCharIndex(secEnd) + 1
             Return conDefSectionName                                ' <1.060.2> Section is none
         End If
 
-
-        If ((MAIN.Rtb_ODF.TextLength - index) >= sLen) AndAlso
+        If G_ODFModSinceRecomp Then                                 ' <1.060.13> If Index is dirty, do a search of the ODF
+            If ((MAIN.Rtb_ODF.TextLength - index) >= sLen) AndAlso
             (MAIN.Rtb_ODF.Text.Substring(index, sLen) = conSecStartTag) Then
-            secStart = index                                        ' <1.060.2> We are precisely on top of the Tag, don't search back for it
-        Else
-            secStart = FindReverse(conSecStartTag,                  ' retrouver la section auquel il appartient; search backwards for Section Start-Tag, we are inside the Section
-                                      index,
-                                      MAIN.Rtb_ODF)                 ' <1.060.2> Added source of text to be searched as a parameter) 
+                secStart = index                                    ' <1.060.2> We are precisely on top of the Tag, don't search back for it
+            Else
+                secStart =                                          ' retrouver la section auquel il appartient; search backwards for Section Start-Tag, we are inside the Section
+                    FindReverse(conSecStartTag,
+                                index,
+                                MAIN.Rtb_ODF)                       ' <1.060.2> Added source of text to be searched as a parameter) 
+            End If
+
+            If secStart = -1 Then                                   ' Did not find any Section Start-Tag, return default
+                secStart = 0                                        ' <1.060.2> When not found, set Start/End to zero
+                secEnd = 0
+                secStartLine = 0                                    ' <1.060.6> Added line nums to return
+                secEndLine = 0
+                Return conDefSectionName
+            End If
+
+            belongend = FindText(">", secStart, MAIN.Rtb_ODF)       ' Locate end of Start-Tag <1.060.2> Changed FindMyText to FindText
+            secEnd =
+                FindText(conSecEndTag,                              ' <1.060.2> Find Section End-Tag, add length of Tag to get End of Section
+                         belongend + 1,
+                         MAIN.Rtb_ODF) + conSecEndTag.Length
+            secName =                                               ' <1.060.2> Extract the Section's Name
+                MAIN.Rtb_ODF.Text.Substring(secStart + sLen + 1,
+                                           (belongend - secStart) - (sLen + 2))
+        Else                                                        ' <1.060.13> If Index is Clean, do a reverse-lookup in the Section Table
+            fndIDX = 0
+            For i = 1 To G_SectionCount
+                If (index >= SecTable(i).startPos) And (index <= SecTable(i).endPos) Then
+                    fndIDX = i
+                    Exit For
+                End If
+            Next
+
+            If fndIDX = 0 Then                                      ' <1.060.13> No section range in table matched current position
+                DispMsg(lclProcName, conMsgExcl,                    ' <1.060.13> Display Warning
+                        "Did not locate Section by reverse-lookup of position: " & index)
+                secStart = 0                                        ' <1.060.13> Return null results
+                secEnd = 0
+                secStartLine = 0
+                secEndLine = 0
+                Return conDefSectionName
+            Else                                                    ' Found it in a Section's range
+                secStart = SecTable(fndIDX).startPos                ' Take info from the Section Index
+                secEnd = SecTable(fndIDX).endPos
+                secName = SecTable(fndIDX).name
+            End If
         End If
 
-        If secStart = -1 Then                                       ' Did not find any Section Start-Tag, return default
-            secStart = 0                                            ' <1.060.2> When not found, set Start/End to zero
-            secEnd = 0
-            secStartLine = 0                                        ' <1.060.6> Added line nums to return
-            secEndLine = 0
-            Return conDefSectionName
-        End If
-
-        belongend = FindText(">", secStart, MAIN.Rtb_ODF)           ' Locate end of Start-Tag <1.060.2> Changed FindMyText to FindText
-        secEnd = FindText(conSecEndTag,                             ' <1.060.2> Find Section End-Tag, add length of Tag to get End of Section
-                          belongend + 1,
-                          MAIN.Rtb_ODF) + conSecEndTag.Length
         secStartLine =                                              ' <1.060.6> Convert to Line #
                 MAIN.Rtb_ODF.GetLineFromCharIndex(secStart) + 1
         secEndLine =                                                ' <1.060.6> Calculate Last Line from Last Char
                 MAIN.Rtb_ODF.GetLineFromCharIndex(secEnd) + 1
-        Return MAIN.Rtb_ODF.Text.Substring(secStart + sLen + 1,     ' <1.060.2> Extract the Section's Name
-                                           (belongend - secStart) - (sLen + 2))
+        Return secName
 
     End Function
-    Friend Function GetRowFromIndex(index As Integer,                   ' Position within ODF
-                                    ByRef lineNum As Integer,           ' <1.060.2> Return Line Number, 0-based
-                                    ByRef lineStart As Integer,         ' <1.060.2> Return Start of Line
-                                    expandSelectionToRow As Boolean     ' <1.060.2> If true, select/highlight entire row; otherwise leave as user chose
-                                    ) As String                         ' <a.060.2> Text comprising the Row, "" if not located
+    Friend Function GetRowFromIndex(            ' Extract an entire Row from an Index position
+            index As Integer,                   ' Position within ODF
+            ByRef lineNum As Integer,           ' <1.060.2> Return Line Number, 0-based
+            ByRef lineStart As Integer,         ' <1.060.2> Return Start of Line
+            expandSelectionToRow As Boolean     ' <1.060.2> If true, select/highlight entire row; otherwise leave as user chose
+            ) As String                         ' <1.060.2> Text comprising the Row, "" if not located
 
         ' Purpose:      Extract the Row that contains the character position [index]. This row may consist of multiple
         '               text-lines in Rtb_ODF. Select/Highlight the Row's text.
@@ -1737,42 +1858,52 @@ Module SharedCode
         '               and Text Searches will leave selection as user set it.
         '               <1.060.6> Save character positions in .Tag properties of Position Fields, for repositioning
 
-        Const lclProcName As String = "GetRowFromIndex"                 ' <1.060.2> Function's name for message handling
+        Const lclProcName As String =           ' <1.060.2> Function's name for message handling
+            "GetRowFromIndex"
 
-        Dim rowText As String                                           ' <1.060.2> Store the extracted Row text here
-        Dim rowType As String                                           ' <1.060.2> Description of type of Row the Line is in
-        Dim rowStart As Integer                                         ' <1.060.2> Start of Row
-        Dim rowLineStart As Integer                                     ' <1.060.6> Starting Line of Row, derived from Staring Char
-        Dim rowExtStart As Integer                                      ' <1.060.2> Extended Start of Row, when opening <o> Tagis on a previous Line
-        Dim rowEnd As Integer                                           ' <1.060.2> End of Row
-        Dim rowLineEnd As Integer                                       ' <1.060.6> Ending Line of Row, derived from End Char
-        Dim rowExtEnd As Integer                                        ' <1.060.2> Extended End of Row, when closing </o> Tag is on a subsequent Line
-        Dim lineEnd As Integer                                          ' <1.060.2> End of Line
+        Dim rowText As String                   ' <1.060.2> Store the extracted Row text here
+        Dim rowType As String                   ' <1.060.2> Description of type of Row the Line is in
+        Dim rowStart As Integer                 ' <1.060.2> Start of Row
+        Dim rowLineStart As Integer             ' <1.060.6> Starting Line of Row, derived from Staring Char
+        Dim rowExtStart As Integer              ' <1.060.2> Extended Start of Row, when opening <o> Tagis on a previous Line
+        Dim rowEnd As Integer                   ' <1.060.2> End of Row
+        Dim rowLineEnd As Integer               ' <1.060.6> Ending Line of Row, derived from End Char
+        Dim rowExtEnd As Integer                ' <1.060.2> Extended End of Row, when closing </o> Tag is on a subsequent Line
+        Dim lineEnd As Integer                  ' <1.060.2> End of Line
 
         With MAIN
-            lineNum = .Rtb_ODF.GetLineFromCharIndex(index)              ' Map the character Index to a Line Index (=LineNumber-1)
-            If lineNum >= (.Rtb_ODF.Lines.Count - 1) Then               ' <1.080.8> Bugfix, don't let Line# exceed last line (ignore the final null line)
-                lineNum = .Rtb_ODF.Lines.Count() - 2                    ' <1.080.8) .Count is 1-based, lineNum is 0-based, so compare to -1, decrement -2
+            lineNum = .Rtb_ODF.GetLineFromCharIndex(index)  ' Map the character Index to a Line Index (=LineNumber-1)
+            If lineNum >= (.Rtb_ODF.Lines.Length - 1) Then  ' <1.080.8> Bugfix, don't let Line# exceed last line (ignore the final null line)
+                lineNum = .Rtb_ODF.Lines.Length() - 2       ' <1.080.8) .Count is 1-based, lineNum is 0-based, so compare to -1, decrement -2
             End If
-            lineStart = .Rtb_ODF.GetFirstCharIndexFromLine(             ' Find out where the line starts
-            lineNum)
-            lineEnd = .Rtb_ODF.Find(vbCr,                               ' Locate the end of the line we are presently in 
-                                    lineStart,
-                                    conQuickNoH)
-            If lineEnd < 0 Then                                         ' <1.080.8> If final <Cr> is missing, sub EOF to save exception
-                DispMsg(lclProcName, conMsgExcl, "ODF is missing final <Cr> at EOF")
-                lineEnd = .Rtb_ODF.TextLength - 1                       ' <1.080.8> Sub EOF for missing terminal <Cr>
+            lineNum =
+                Clamp(lineNum, 0,
+                      .Rtb_ODF.Lines.Length() - 1)
+            lineStart =                                     ' Find out where the line starts
+                .Rtb_ODF.GetFirstCharIndexFromLine(lineNum)
+            lineStart =
+                Clamp(lineStart, 0,
+                      .Rtb_ODF.TextLength - 1)
+            lineEnd =                                       ' Locate the end of the line we are presently in 
+                .Rtb_ODF.Find(vbCr,
+                              lineStart,
+                              conQuickNoH)
+            If lineEnd < 0 Then                             ' <1.080.8> If final <Cr> is missing, sub EOF to save exception
+                DispMsg(lclProcName, conMsgExcl,
+                        "ODF is missing final <Cr> at EOF")
+                lineEnd = .Rtb_ODF.TextLength - 1           ' <1.080.8> Sub EOF for missing terminal <Cr>
             End If
-            rowText = .Rtb_ODF.Text.Substring(lineStart,
-                                              (lineEnd - lineStart))    ' <1.060.2> Extract the Line's content, less the terminal <CR>
-            rowStart = lineStart                                        ' <1.060.2> For Lines not part of a Record-Row, Row=Line
+            rowText =
+                .Rtb_ODF.Text.Substring(lineStart,          ' <1.060.2> Extract the Line's content, less the terminal <CR>
+                                        lineEnd - lineStart)
+            rowStart = lineStart                            ' <1.060.2> For Lines not part of a Record-Row, Row=Line
             rowEnd = lineEnd
 
             ' MODIF V058.2
-            If rowText = "</Hauptwerk>" Then                            ' If the text is the End-Tag of the ODF, present informational message
+            If rowText = "</Hauptwerk>" Then                ' If the text is the End-Tag of the ODF, present informational message
                 rowType = conRowTypeODFEnd
-            ElseIf InStr(rowText, "<?XML ", CompareMethod.Text) = 1 Then    ' <1.060.2> Update the Status-Bar with the Row Type
-                rowType = conRowTypeXMSHdr
+            ElseIf InStr(rowText, "<?XML ", CompareMethod.Text) = 1 Then
+                rowType = conRowTypeXMSHdr                  ' <1.060.2> Update the Status-Bar with the Row Type
             ElseIf InStr(rowText, "<Hauptwerk ", CompareMethod.Text) = 1 Then
                 rowType = conRowTypeODFStart
             ElseIf InStr(rowText, "<ObjectList ", CompareMethod.Text) = 1 Then
@@ -1782,56 +1913,66 @@ Module SharedCode
             ElseIf InStr(rowText, vbTab, CompareMethod.Text) = 1 Then
                 rowType = conRowTypeGenData
             Else
-                rowType = conRowTypeRecord                              ' <1.060.2> If we get here, we need to check for possible multiple-Lines comprising the Row
-                '                                                         l'objet <0> ... </o> peut etre sur 2 lignes; logic to handle one Row split across two lines
+                rowType = conRowTypeRecord                  ' <1.060.2> If we get here, we need to check for possible multiple-Lines comprising the Row
+                '                                             l'objet <0> ... </o> peut etre sur 2 lignes; logic to handle one Row split across two lines
                 Dim line_Ending = rowText.Substring(
-            Len(rowText) - 4, 4)                                        ' recherche </o>; grab the End-Tag on this line
-                Dim line_starting = rowText.Substring(0, 3)             ' recherche <o>; grab the Start-Tag on this line
+            Len(rowText) - 4, 4)                            ' recherche </o>; grab the End-Tag on this line
+                Dim line_starting = rowText.Substring(0, 3) ' recherche <o>; grab the Start-Tag on this line
 
-                If line_Ending <> conRowEndTag Then                     ' trouver fin de ligne; this Row extends to other Lines
-                    rowExtEnd = FindText(conRowEndTag,                  ' <1.060.2> Search for </o> closing Tag
+                If line_Ending <> conRowEndTag Then         ' trouver fin de ligne; this Row extends to other Lines
+                    rowExtEnd = FindText(conRowEndTag,      ' <1.060.2> Search for </o> closing Tag
                                      rowEnd + 1,
                                      .Rtb_ODF)
-                    If rowExtEnd < 0 Then                               ' <1.060.2> Never found it, just keep Row ending on this Line
+                    If rowExtEnd < 0 Then                   ' <1.060.2> Never found it, just keep Row ending on this Line
                         DispMsg(lclProcName, conMsgExcl,
                             "Did not find subsequent closing </o> tag, will not extend this Line.")
-                    Else                                                ' <1.060.2> We did find it, add in the closing Tag, that's our new Row End
+                    Else                                    ' <1.060.2> We did find it, add in the closing Tag, that's our new Row End
                         rowEnd = rowExtEnd + conRowEndTag.Length
                     End If
                 End If
 
-                If line_starting <> conRowStartTag Then                 ' The beginning of the row ("<o>" Start-Tag) is in a prior line, need to move the start back
-                    rowExtStart = FindReverse(conRowStartTag,           ' <1.060.2> Search backwards for opening <o> Tag, starting from present beginning of Line
-                                          rowStart,
-                                          .Rtb_ODF)
-                    If rowExtStart < 0 Then                             ' <1.060.2> Never found a prior opening Tag, just use the Line Start we have
+                If line_starting <> conRowStartTag Then     ' The beginning of the row ("<o>" Start-Tag) is in a prior line, need to move the start back
+                    rowExtStart =                           ' <1.060.2> Search backwards for opening <o> Tag, starting from present beginning of Line
+                        FindReverse(conRowStartTag,
+                                    rowStart,
+                                    .Rtb_ODF)
+                    If rowExtStart < 0 Then                 ' <1.060.2> Never found a prior opening Tag, just use the Line Start we have
                         DispMsg(lclProcName, conMsgExcl,
                             "Did not find prior opening <o> Tag, will not extend this Line.")
                     Else
-                        rowStart = rowExtStart                          ' <1.060.2> Found it, index already points to start of the Tag
+                        rowStart = rowExtStart              ' <1.060.2> Found it, index already points to start of the Tag
                     End If
                 End If
-                rowText = .Rtb_ODF.Text.Substring(rowStart,             ' <1.060.2> Extract the extended text
-                                                  (rowEnd - rowStart))
+                rowText =                                   ' <1.060.2> Extract the extended text
+                    .Rtb_ODF.Text.Substring(rowStart,
+                                            rowEnd - rowStart)
             End If
 
             .Status_RowTypeVal.Text = rowType
-            .Lbl_LineNumVal.Text = (lineNum + 1).ToString(conIntFmt)    ' afficher les positions; <1.060.2> add 1, Internal Line #s are 0-based
-            .Lbl_LineNumVal.Tag = lineStart                             ' <1.060.6> Save raw character position in .Tag property
-            rowLineStart = .Rtb_ODF.GetLineFromCharIndex(rowStart) + 1  ' <1.060.6> Determine the Starting/Ending Lines for the Row from the S/E Chars
-            rowLineEnd = .Rtb_ODF.GetLineFromCharIndex(rowEnd) + 1
-            .Lbl_RowStartVal.Text = rowLineStart.ToString(conIntFmt) &  ' <1.060.6> Added Line Number component
-                " / " & rowStart.ToString(conIntFmt)                    ' Format & update fields for Line & Row Start & End
+            .Lbl_LineNumVal.Text =                          ' afficher les positions; <1.060.2> add 1, Internal Line #s are 0-based
+                (lineNum + 1).ToString(conIntFmt)
+            .Lbl_LineNumVal.Tag = lineStart                 ' <1.060.6> Save raw character position in .Tag property
+            rowLineStart =                                  ' <1.060.6> Determine the Starting/Ending Lines for the Row from the S/E Chars
+                .Rtb_ODF.GetLineFromCharIndex(rowStart) + 1
+            rowLineEnd =
+                .Rtb_ODF.GetLineFromCharIndex(rowEnd) + 1
+            .Lbl_RowStartVal.Text =                         ' <1.060.6> Added Line Number component
+                rowLineStart.ToString(conIntFmt) &
+                " / " & rowStart.ToString(conIntFmt)        ' Format & update fields for Line & Row Start & End
             .Lbl_RowStartVal.Tag = rowStart
-            .Lbl_RowEndVal.Text = rowLineEnd.ToString(conIntFmt) &      ' <1.060.6> Added Line Number component
+            .Lbl_RowEndVal.Text =                           ' <1.060.6> Added Line Number component
+                rowLineEnd.ToString(conIntFmt) &
                 " / " & rowEnd.ToString(conIntFmt)
             .Lbl_RowEndVal.Tag = rowEnd
-            .Lbl_LineStartVal.Text = lineStart.ToString(conIntFmt)
+            .Lbl_LineStartVal.Text =
+                lineStart.ToString(conIntFmt)
             .Lbl_LineStartVal.Tag = lineStart
-            .Lbl_LineEndVal.Text = lineEnd.ToString(conIntFmt)
+            .Lbl_LineEndVal.Text =
+                lineEnd.ToString(conIntFmt)
             .Lbl_LineEndVal.Tag = lineEnd
-            If expandSelectionToRow Then                                ' <1.060.2> if False (single-click and Find/Next/Prev) leave user's selection alone
-                .Rtb_ODF.Select(rowStart, rowEnd - rowStart)            ' <1.060.2> Select entire row, used for double-click and Next/Prev 1/10/100 Lines
+            If expandSelectionToRow Then                    ' <1.060.2> if False (single-click and Find/Next/Prev) leave user's selection alone
+                .Rtb_ODF.Select(rowStart,                   ' <1.060.2> Select entire row, used for double-click and Next/Prev 1/10/100 Lines
+                                rowEnd - rowStart)
             End If
 
             Return rowText
@@ -1886,12 +2027,13 @@ Module SharedCode
         End If
 
     End Function
-    Friend Function MoveToPosition(curPos As Integer,               ' Move cursor to this position
-                                   ByRef lineIndex As Integer,      ' Return the new internal Line Number
-                                   ByRef lineStart As Integer,      ' Return the start of the new Line
-                                   notMouseClick As Boolean,        ' True -> was Mouse click, do not position cursor (that would erase a select)
-                                   expandSelectionToRow As Boolean  ' Pass-through - expand selection to entire Row, or leave as set
-                                   ) As String                      ' Returns the entire Row's text
+    Friend Function MoveToPosition(
+            curPos As Integer,                  ' Move cursor to this position
+            ByRef lineIndex As Integer,         ' Return the new internal Line Number
+            ByRef lineStart As Integer,         ' Return the start of the new Line
+            notMouseClick As Boolean,           ' True -> was Mouse click, do not position cursor (that would erase a select)
+            expandSelectionToRow As Boolean     ' Pass-through - expand selection to entire Row, or leave as set
+            ) As String                         ' Returns the entire Row's text
 
         ' Purpose:      Move to the cursor position, update on screen, update Line/Row data, return Row Text
         ' Process:		Update the cusrsor position if not a Mouse-click, then let GetRowFromIndex() do the work
@@ -1903,34 +2045,54 @@ Module SharedCode
         ' Updates:      <1.060.2> First code.
         '               <1.060.6> Save cusor position as .Tag property, for repositioning
 
-        Const lclProcName As String =                           ' Routine's name for message handling
+        Const lclProcName As String =                   ' Routine's name for message handling
             "MoveToPosition"
 
-        MAIN.Rtb_ODF.Focus()                                    ' Give the ODF focus
-        If notMouseClick Then                                   ' Move the cursor to its new position
-            MAIN.Rtb_ODF.Select(curPos, 0)                      ' If not, then cursor/selection is already set, leave it alone
+        MAIN.Rtb_ODF.Focus()                            ' Give the ODF focus
+        If notMouseClick Then                           ' Move the cursor to its new position
+            MAIN.Rtb_ODF.Select(curPos, 0)              ' If not, then cursor/selection is already set, leave it alone
         End If
         MAIN.Lbl_CursorPosVal.Text =
-            curPos.ToString(conIntFmt)                          ' Update cursor position onscreen
-        MAIN.Lbl_CursorPosVal.Tag = curPos                      ' <1.060.6> Save position in the .Tag property, for later repositioning
-        Return GetRowFromIndex(curPos,                          ' Position to the Line in the ODF at position "caret"
-                               lineIndex,                       ' Returns Line Number, 0-based, pass back to caller
-                               lineStart,                       ' Returns index to beginning of Line, pass back to caller
-                               expandSelectionToRow)            ' Expand Selection to entire Row, or leave as previsouly set
+            curPos.ToString(conIntFmt)                  ' Update cursor position onscreen
+        MAIN.Lbl_CursorPosVal.Tag = curPos              ' <1.060.6> Save position in the .Tag property, for later repositioning
+        Return GetRowFromIndex(curPos,                  ' Position to the Line in the ODF at position "caret"
+                               lineIndex,               ' Returns Line Number, 0-based, pass back to caller
+                               lineStart,               ' Returns index to beginning of Line, pass back to caller
+                               expandSelectionToRow)    ' Expand Selection to entire Row, or leave as previsouly set
+
     End Function
-    Friend Function GotSectionDataByName(secName As String,             ' Section to locate
-                                         ByRef secData As Str_Section   ' Returns this structure data if found
-                                         ) As Boolean                   ' True -> Found the Section, filled in the data
-        Const lclProcName As String = "GotSectionDataByName"
+    Friend Function GotSectionDataByName(   ' Retrieve SecData block by SecName and/or SecID
+            secName As String,              ' Name of Section to locate
+            ByRef secData As Str_Section,   ' Returns this structure data if found
+            Optional secNum As Integer = 0  ' <1.060.13> Optional SecID of Section, for direct access
+            ) As Boolean                    ' True -> Found the Section, filled in the data
 
-        Dim secTag As String                                            ' Build full Section Start-Tag here
-        Dim secStart As Integer                                         ' Index to Section Start-Tag
-        Dim secEnd As Integer                                           ' Index to Section End-Tag
-        Dim rowStart As Integer                                         ' Index to <o> Start-Tag, -1 if it doesn't exist
-        Dim rowEnd As Integer                                           ' Index to Row End-Tag "</o>"
+        ' Purpose:      Locate a Section by Name or ID Number, returning its data block when found
+        ' Process:		If input parm is "NA", just return - no position data. If Section Index is
+        '               valid, will locate from the Section Index, otherwise search the ODF for it.
+        '               For an Index lookup, start with the SecID (direct access): if this exists,
+        '               and the Name in the Index = secName, declare a match and return that data.
+        '               If either the secNum isn't supplied, or the secName doesn't match, then do
+        '               a linear search of the Section Index for secName. Or search the entire ODF.
+        '               If not found, return False; otherwise, fill in the data block.
+        ' Called By:    PositionToSectionByName(); LocateRecRowByKey
+        ' Side Effects: <None>
+        ' Notes:        <None>
+        ' Updates:      <1.060.2> First code.
+        '               <1.060.13> Added logic to get data from the Index if it is valid, else fall
+        '               back to searching the entire ODF (slow).
 
-        With MAIN.Rtb_ODF                                               ' For easier reference
-            If secName = "" Or (.TextLength = 0) Then
+        Const lclProcName As String =                               ' Routine's name for message handling
+            "GotSectionDataByName"
+
+        Dim secTag As String                                        ' Build full Section Start-Tag here
+        Dim secStart As Integer                                     ' Index to Section Start-Tag
+        Dim secEnd As Integer                                       ' Index to Section End-Tag
+        Dim rowStart As Integer                                     ' Index to <o> Start-Tag, -1 if it doesn't exist
+        Dim rowEnd As Integer                                       ' Index to Row End-Tag "</o>"
+
+        With MAIN.Rtb_ODF                                           ' For easier reference
+            If secName = "" Or (.TextLength = 0) Then               ' ODF is empty, display message and return False
                 DispMsg("", conMsgInfo,
                         "Either no Section Name or no ODF" & vbCrLf &
                         "Requested Section: " & secName & vbCrLf &
@@ -1938,54 +2100,70 @@ Module SharedCode
                 Return False
             End If
 
-            secData.name = secName                                      ' The Name field (this one is easy)
-            secTag = conSecStartTag & """" & secName & """>"            ' Build Start-Tag: '<ObjectList ObjectType="secName">'
-            secStart = .Find(secTag, 0, conQuickNoH)                    ' Locate the Section Start-Tag
-            If secStart < 0 Then
-                DispMsg(lclProcName, conMsgExcl,
+            If G_ODFModSinceRecomp Then                             ' <1.060.13> Section Index is invalid, search the ODF
+                secData.name = secName                              ' The Name field (this one is easy)
+                secTag = conSecStartTag & """" & secName & """>"    ' Build Start-Tag: '<ObjectList ObjectType="secName">'
+                secStart = .Find(secTag, 0, conQuickNoH)            ' Locate the Section Start-Tag
+                If secStart < 0 Then
+                    DispMsg(lclProcName, conMsgExcl,
                         "Did not find Section Start-Tag for Section: " & secName & vbCrLf &
                         "Start-Tag string is: " & secTag & vbCrLf &
                         "May be either an ill-formed ODF or an AECHO error.")
-                Return False
-            End If
-            secData.startPos = secStart                                 ' Add the starting location to the return data structure
-            secData.titleLen = secTag.Length                            ' Take length directly from Tag
+                    Return False
+                End If
+                secData.startPos = secStart                     ' Add the starting location to the return data structure
+                secData.titleLen = secTag.Length                ' Take length directly from Tag
 
-            secEnd = .Find(conSecEndTag,
+                secEnd = .Find(conSecEndTag,
                            secStart,
-                           conQuickNoH)                                 ' Find End-Tag, "</ObjectList>"
-            If secEnd < 0 Then                                          ' Did not locate an End-Tag
-                DispMsg(lclProcName, conMsgExcl,
+                           conQuickNoH)                         ' Find End-Tag, "</ObjectList>"
+                If secEnd < 0 Then                              ' Did not locate an End-Tag
+                    DispMsg(lclProcName, conMsgExcl,
                         "Did not find Section End-Tag for Section: " & secName & vbCrLf &
                         "Start-Tag string is: " & secTag & vbCrLf &
                         "May be either an ill-formed ODF or an AECHO error.")
-                Return False
-            End If
-            secData.endPos = secEnd + conSecEndTag.Length               ' End is the <CR> after then End-Tag
+                    Return False
+                End If
+                secData.endPos = secEnd + conSecEndTag.Length   ' End is the <CR> after then End-Tag
 
-            rowStart = .Find(conRowStartTag,
-                             secStart + 1,                              ' Begin search after Section Start-Tag
+                rowStart = .Find(conRowStartTag,
+                             secStart + 1,                      ' Begin search after Section Start-Tag
                              secEnd,
-                             conQuickNoH)                               ' Is there an <o> inside this Section range?
-            If rowStart < 0 Then                                        ' No Record-Row, set values to indicate this
-                secData.firstRowStart = -1
-                secData.firstRowLen = 0
-            Else                                                        ' Found an <o> Row Start-Tag in Section
-                secData.firstRowStart = rowStart                        ' Record the Row's Start location
-                rowEnd = .Find(conRowEndTag, rowStart + 3,              ' Look for matching Row End-Tag
-                               secEnd, conQuickNoH)
-                If rowEnd < 0 Then                                      ' Nope. Is an error, but we can continue
-                    DispMsg(lclProcName, conMsgExcl,
-                            "Did not find matching Record-Row End Tag." & vbCrLf &
-                            "This may be an ill-formed ODF, will continue.")
+                             conQuickNoH)                       ' Is there an <o> inside this Section range?
+                If rowStart < 0 Then                            ' No Record-Row, set values to indicate this
                     secData.firstRowStart = -1
                     secData.firstRowLen = 0
-                Else
-                    secData.firstRowLen = rowEnd - rowStart + 5         ' Got is length, we're done
+                Else                                            ' Found an <o> Row Start-Tag in Section
+                    secData.firstRowStart = rowStart            ' Record the Row's Start location
+                    rowEnd = .Find(conRowEndTag, rowStart + 3,  ' Look for matching Row End-Tag
+                               secEnd, conQuickNoH)
+                    If rowEnd < 0 Then                          ' Nope. Is an error, but we can continue
+                        DispMsg(lclProcName, conMsgExcl,
+                            "Did not find matching Record-Row End Tag." & vbCrLf &
+                            "This may be an ill-formed ODF, will continue.")
+                        secData.firstRowStart = -1
+                        secData.firstRowLen = 0
+                    Else
+                        secData.firstRowLen =                   ' Got is length, we're done
+                            rowEnd - rowStart + 5
+                    End If
+                End If
+                Return True
+            Else                                                ' <1.060.13> Index is valid, use the Index
+                If secNum >= 1 AndAlso                          ' <1.060.13> We have a valid Index, and a Name Match
+                    SecTable(secNum).name = secName Then        ' <1.060.13> Return data directly from the Table
+                    secData = SecTable(secNum)
+                    Return True
+                Else                                            ' <1.060.13> Either no Index, or Name mismatch: search the Table by Name
+                    For I = 1 To G_SectionCount                 ' <1.060.13> Loop over current active part of table
+                        If SecTable(I).name = secName Then      ' <1.060.13> Found it, return the data block
+                            secData = SecTable(I)
+                            Return True
+                        End If
+                    Next
+                    Return False                                ' <1.060.13> Not found, caller will display any "Not Found" message
                 End If
             End If
-            Return True
-
         End With
 
     End Function
@@ -1997,7 +2175,7 @@ Module SharedCode
         '               to that place using single-click semantics, updating the Data fields onscreen.
         ' Called By:    Lbl_SecStartVal_Click(); Lbl_SecEndVal_Click(); Lbl_LineStartVal_Click();
         '               Lbl_LineEndVal_Click(); Lbl_RowStartVal_Click(); Lbl_RowEndVal_Click();
-        '               Lbl_CursorPosVal_Click(); EnumerateSectionsSetFont()
+        '               Lbl_CursorPosVal_Click(); BuildSectionIndex()
         ' Side Effects: <None>
         ' Notes:        <None>
         ' Updates:      <1.060.2> First code.
@@ -2449,11 +2627,11 @@ Module SharedCode
         Return 1                                                        ' Found Section, Key, and Record boundaries, we're good
 
     End Function
-    Friend Sub AppendTxt(                       ' Append text to an RTBPrint Control
-            oBox As RTBPrint,                   ' Control to be modified
-            txtFont As Font,                    ' Set it to this font
-            txtColor As Color,                  ' And this color
-            txtVal As String)                   ' Text to add
+    Friend Sub AppendTxt(                   ' Append text to an RTBPrint Control
+            oBox As RTBPrint,               ' Control to be modified
+            txtFont As Font,                ' Set it to this font
+            txtColor As Color,              ' And this color
+            txtVal As String)               ' Text to add
 
         ' Purpose:      Append the text to any enhanced RTB control, setting it to the
         '               desired font and color; leave positioned after appended text.
@@ -2463,7 +2641,7 @@ Module SharedCode
         ' Notes:        <None>
         ' Updates:      <1.060.3> First implemented for printing Sample Trace
 
-        Const lclProcName As String =                   ' Routine's name for message handling
+        Const lclProcName As String =       ' Routine's name for message handling
             "AppendTxt"
 
         oBox.Select(oBox.Text.Length, 0)    ' Select last position, will append here
@@ -2481,7 +2659,7 @@ Module SharedCode
         ' Purpose:      Adds a new Section (secName) to the Sections Menu.
         ' Process:      If this starts a new group of 22, add the Group entry first,
         '               then add the new Section as the last entry of the last group.
-        ' Called By:    EnumerateSectionsSetFont()
+        ' Called By:    BuildSectionIndex()
         ' Side Effects: Updates menu > Sections
         ' Notes:        <None>
         ' Updates:      <1.060.7> First implementation
@@ -2501,6 +2679,7 @@ Module SharedCode
         i =                                             ' i -> last Group entry
             MAIN.Menu_SectionsA.DropDownItems.Item(lastMenu)
         i.DropDownItems.Add(secName)                    ' Add the new Section Name to the last Group entry
+        i.DropDownItems.Item(i.DropDownItems.Count - 1).Tag = secNum
 
     End Sub
     Friend Sub ModifyMRU(                                       ' Init MRU, or Add/Remove an entry

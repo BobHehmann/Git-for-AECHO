@@ -71,6 +71,10 @@ Public Class MAIN
     '   Git:        MRUFileList
     '   Summary:    Add recently used file list to menu > File: load at start, update on successful Open or Save As.
 
+    '   1.060.13    June 9, 2021 Bob Hehmann
+    '   Git:        FastSection
+    '   Suammry:    Support hybrid Section management for faster performance, especially when text is unchanged.
+
     Dim M_FoundStart As Integer = -1    ' <1.060.2> When a text-search succeeds, this becomes index of start of located text
     Dim M_FoundEnd As Integer = 0       ' <1.060.2> Defines the end of located text; when 0, there is no located text defined.
     Dim M_FirstChar As Integer          ' <1.060.2> Current position in print-stream, between page calls
@@ -99,6 +103,7 @@ Public Class MAIN
         '               <1.060.3> Create hidden instance (Rtb_DText) of printing-enhanced RTB, placed behind the Tags panel. Work around
         '               15 year-old RTB bug re AutoWordSelection.
         '               <1.060.12> Initialize Most-Recently-User (MRU) File List in menu > File.
+        '               <1.060.13> Add Initialization-complete boolean.
 
         Const lclProcName As String =                           ' <1.060.2> Routine's name for message handling
             "MAIN_Load"
@@ -109,47 +114,56 @@ Public Class MAIN
 
         '   Locate the Application Executable, Data, and ODF Directories
 
-        G_DataPath = GetDataPath(Application.StartupPath,       ' <1.060.2> Introduced new function to determine this path, reduce excessive logic nesting
-                                 conDATADir)
-        G_HelpFilePath = Path.Combine(G_DataPath,               ' <1.060.2> Construct offset to HTMl Help directory with \DATA
-                                      conHTMLHelpDir)
-        If Not Directory.Exists(G_HelpFilePath) Then            ' <1.060.2> If HTML Directory doesn't exist, warn user and fallback to classic Help
+        G_DataPath =                                    ' <1.060.2> Introduced new function to determine this path, reduce excessive logic nesting
+            GetDataPath(Application.StartupPath,
+                        conDATADir)
+        G_HelpFilePath =                                ' <1.060.2> Construct offset to HTMl Help directory with \DATA
+            Path.Combine(G_DataPath,
+                         conHTMLHelpDir)
+        If Not Directory.Exists(G_HelpFilePath) Then    ' <1.060.2> If HTML Directory doesn't exist, warn user and fallback to classic Help
             DispMsg(lclProcName, conMsgExcl,
                     "Unable to locate HTML Help Directory:" & vbCrLf &
                     G_HelpFilePath & vbCrLf &
                     "Will fallback to simplified Help displayed in the Descriptive Text Area.")
-            G_HelpFilePath = ""                                 ' <1.060.2> Help loader will check this: when null, use old-style help
+            G_HelpFilePath = ""                         ' <1.060.2> Help loader will check this: when null, use old-style help
         End If
 
-        G_ODFLibPath = GetODFLibPath(G_DataPath,                ' <1.060.2> Modified to function call: Establishes G_ODFLibPath as (possible) location of HW's ODF files
-                                     conInitialDir)
-        G_MRUFile = Path.Combine(G_DataPath,                    ' <1.060.12> Creat the fully qualified Path/Filename to user's MRU backing file
-                                 conMRUFileName)
-        G_Registered = IsRegistered(G_DataPath,
-                                    conLicenseFileName)         ' Savoir si version enregistre ou non; detect if this version is registered or not - as of 1.057, always "Registered"
-        If G_Registered = False Then                            ' Restriction si unRegistered; <1.060.2> Moved disabling-code here from IsRegistered()
-            Menu_FollowASample.Visible = False                  ' Enforce restrictions if unregistered - No Follow A Sample
-            Num_ODFFontSize.Visible = False                     ' Cannot alter ODF Presentation Font Size, hide the Control
-            Lbl_FontSize.Visible = False                        ' <1.060.2> Also hide the Font-Size Control's title/label
-            Btn_Led.Visible = False                             ' Status Light/Quick Recompute unavailable
+        G_ODFLibPath =                                  ' <1.060.2> Modified to function call: Establishes G_ODFLibPath as (possible) location of HW's ODF files
+            GetODFLibPath(G_DataPath,
+                          conInitialDir)
+        G_MRUFile =                                     ' <1.060.12> Creat the fully qualified Path/Filename to user's MRU backing file
+            Path.Combine(G_DataPath,
+                        conMRUFileName)
+        G_Registered =                                  ' Savoir si version enregistre ou non; detect if this version is registered or not - as of 1.057, always "Registered"
+            IsRegistered(G_DataPath,
+                         conLicenseFileName)
+        If G_Registered = False Then                    ' Restriction si unRegistered; <1.060.2> Moved disabling-code here from IsRegistered()
+            Menu_FollowASample.Visible = False          ' Enforce restrictions if unregistered - No Follow A Sample
+            Num_ODFFontSize.Visible = False             ' Cannot alter ODF Presentation Font Size, hide the Control
+            Lbl_FontSize.Visible = False                ' <1.060.2> Also hide the Font-Size Control's title/label
+            Btn_Led.Visible = False                     ' Status Light/Quick Recompute unavailable
         End If
 
         ' Initialize the main form
 
-        Lbl_SectionName.Text = conDefSectionName                ' <1.060.2> Default, until we establish position in a real Section
-        CenterLbl(Lbl_ODFTitle, Rtb_ODF.Left,
-                   Rtb_ODF.Right)                               ' <1.060.2> Center the ODF-Title between the SectionName label and FontSize control
-        G_InitTagPanelWidth = Pnl_Tags.Width                    ' <1.060.2> Save the Panel's initial width at startup, to restore when resizing after image display
-        G_MinPanelHeights = Pnl_Tags.Height                     ' <1.060.2> Remember the initial height, which will also be the minimum when we allow dynamic resizing
+        Lbl_SectionName.Text = conDefSectionName        ' <1.060.2> Default, until we establish position in a real Section
+        CenterLbl(Lbl_ODFTitle,                         ' <1.060.2> Center the ODF-Title between the SectionName label and FontSize control
+                  Rtb_ODF.Left,
+                  Rtb_ODF.Right)
+        CenterLbl(Lbl_TagPanelTitle,                    ' <1.060.13> Center the Tags Panel Title over the Tags Panel
+                  Pnl_Tags.Left,
+                  Pnl_Tags.Right)
+        G_InitTagPanelWidth = Pnl_Tags.Width            ' <1.060.2> Save the Panel's initial width at startup, to restore when resizing after image display
+        G_MinPanelHeights = Pnl_Tags.Height             ' <1.060.2> Remember the initial height, which will also be the minimum when we allow dynamic resizing
 
-        ResetToNoODF()                                          ' <1.060.2> Initalize state when there is no ODF file loaded - general init routine
+        ResetToNoODF()                                  ' <1.060.2> Initalize state when there is no ODF file loaded - general init routine
 
-        With Rtb_DText                                          ' <1.060.3> To support WYSIWYG printing, create hidden instance of enhanced RTB
+        With Rtb_DText                                  ' <1.060.3> To support WYSIWYG printing, create hidden instance of enhanced RTB
             .Font = New Font("Verdana", 10.0!,
                              FontStyle.Regular,
                              GraphicsUnit.Point)
-            .Location = New Point(50, 451)                      ' <1.060.3> Behind the Tags Panel
-            .Margin = New Padding(4, 3, 4, 3)                   ' Same parameters as Rtb_DescText, so layout will be the same
+            .Location = New Point(50, 451)              ' <1.060.3> Behind the Tags Panel
+            .Margin = New Padding(4, 3, 4, 3)           ' Same parameters as Rtb_DescText, so layout will be the same
             .Name = "Rtb_DText"
             .Size = New Size(750, 380)
             .Text = ""
@@ -157,30 +171,35 @@ Public Class MAIN
             .TabStop = False
             .ScrollBars = RichTextBoxScrollBars.Both
             .AcceptsTab = True
-            .Visible = False                                    ' <1.060.3> Keep it hidden, it is just an internal scratch-pad, not to be seen onscreen
+            .Visible = False                            ' <1.060.3> Keep it hidden, it is just an internal scratch-pad, not to be seen onscreen
         End With
-        Controls.Add(Me.Rtb_DText)                              ' <1.060.3> Create it
-        Rtb_XMLRow.AutoWordSelection = False                    ' <1.060.3> Work-around to RTB bug, where control enables AutoWordSelection upon loading
+        Controls.Add(Me.Rtb_DText)                      ' <1.060.3> Create it
+        Rtb_XMLRow.AutoWordSelection = False            ' <1.060.3> Work-around to RTB bug, where control enables AutoWordSelection upon loading
         Rtb_ODF.AutoWordSelection = False
         Rtb_DescText.AutoWordSelection = False
 
-        fnt_Fname = New Font(conDescFont,                       ' <1.060.3> Init useful fonts: slightly reduced size, these path/filename strings can be very long
-                      conDefODFFontSize - 1,
-                      FontStyle.Regular)
-        fnt_Title = New Font(conDescFont,                       ' <1.060.3> Increased size and bold
-                             conDefODFFontSize + 1,
-                             FontStyle.Bold)
-        fnt_Fields = New Font(conDescFont,                      ' <1.060.3> Standard vanilla
-                              conDefODFFontSize,
-                              FontStyle.Regular)
-        fnt_Section = New Font(conDescFont,                     ' <1.060.3> Standard size, but bold
-                                     conDefODFFontSize,
-                                     FontStyle.Bold)
+        fnt_Fname =                                     ' <1.060.3> Init useful fonts: slightly reduced size, these path/filename strings can be very long
+            New Font(conDescFont,
+                     conDefODFFontSize - 1,
+                     FontStyle.Regular)
+        fnt_Title =                                     ' <1.060.3> Increased size and bold
+            New Font(conDescFont,
+                     conDefODFFontSize + 1,
+                     FontStyle.Bold)
+        fnt_Fields =                                    ' <1.060.3> Standard vanilla
+            New Font(conDescFont,
+                     conDefODFFontSize,
+                     FontStyle.Regular)
+        fnt_Section =                                   ' <1.060.3> Standard size, but bold
+            New Font(conDescFont,
+                     conDefODFFontSize,
+                     FontStyle.Bold)
 
-        Menu_Recent.DropDownItems.Clear()                       ' <1.060.12> Delete any prior entries from MRU Dropdown List
-        ModifyMRU("")                                            ' <1.060.12> "" -> Add nothing to top of MRU, load it from the MRU backing file
+        Menu_Recent.DropDownItems.Clear()               ' <1.060.12> Delete any prior entries from MRU Dropdown List
+        ModifyMRU("")                                   ' <1.060.12> "" -> Add nothing to top of MRU, load it from the MRU backing file
         Menu_Recent.Enabled =
-            (Menu_Recent.DropDownItems.Count > 0)               ' <1.060.12> Enable MRU Menu only if there are items in the Dropdown List
+            (Menu_Recent.DropDownItems.Count > 0)       ' <1.060.12> Enable MRU Menu only if there are items in the Dropdown List
+        G_InitComplete = True                           ' <1.060.13> Initialization is complete
 
     End Sub
 
@@ -192,23 +211,97 @@ Public Class MAIN
             ) Handles Num_ODFFontSize.ValueChanged
 
         ' Purpose:      Set Rtb_ODF's (ODF display) font-size to match the new value in the font-size control
-        ' Process:      Call EnumerateSectionsSetFont() to do the work, specifying the ODF (with Titles)
+        ' Process:      Call BuildSectionIndex() to do the work, specifying the ODF (with Titles)
         ' Called By:    Num_ODFFontSize ValueChanged Event
-        ' Side Effects: Cause update to Rtb_ODF display
+        ' Side Effects: Causes update to Rtb_ODF display
         ' Notes:        <None>
         ' Updates:      <1.060.2> Moved main logic to a common routine. No-opped noise invocations triggered before
-        '               MAIN form begins loading, which can cause exception events. Calls EnumerateSectionsSetFont()
+        '               MAIN form begins loading, which can cause exception events. Calls BuildSectionIndex()
         '               to change entire ODF, then scan for Section Titles and emphasize them.
+        '               <1.060.13> Modified for Fast Sections. Modified parms in call to BuildSectionIndex().
 
         Const lclProcName As String =                           ' <1.060.2> Routine's name for message handling
             "Num_ODFFontSize_ValueChanged"
 
+        Dim saveReadOnly As Boolean                             ' <1.060.13> Retain initial readonly/EditMode state, to restore when done.
+
         If G_NoODF Then Return                                  ' <1.060.2> This event triggers twice before MAIN form load procedure gets control!
-        EnumerateSectionsSetFont(Rtb_ODF,                       ' <1.060.2> Moved code to EnumerateSectionsSetFont(), forcing a Title size/emphasis reapplication
-                                 Num_ODFFontSize.Value,         ' <1.060.2> Font-Size to use, taken from the Control
-                                 G_NoODF,                       ' <1.060.2> Have an ODF, this is False
-                                 False,                         ' <1.060.2> Do not enumerate the Sections in the Descriptive Text Area
-                                 True)                          ' <1.060.2> Re-emphasize Titles after setting overall ODF Font size (size change resets all other attributes)
+        If G_ODFModSinceRecomp Then                             ' <1.060.13> If dirty, rebuild: rebuild will also set the fonts
+            BuildSectionIndex(Rtb_ODF,                          ' <1.060.2> Moved code to BuildSectionIndex(), forcing a Title size/emphasis reapplication
+                          G_NoODF)                              ' <1.060.2> Have an ODF, this is False
+        Else                                                    ' <1.060.13> Index is clean, so use it to locate Titles directly from the Index
+            saveReadOnly = Rtb_ODF.ReadOnly                     ' <1.060.13> Save Read-only state
+            Rtb_ODF.ReadOnly = True                             ' <1.060.13> Force to readonly (EditMode disabled), for speed
+            G_EditMode = False
+            Rtb_ODF.SelectAll()                                 ' Affects all text in the ODF
+            Rtb_ODF.SelectionFont =                             ' Set entire RTB to default (Arial), selected font-size, Regular stlye
+                New Font(conFont,
+                         Num_ODFFontSize.Value,
+                         FontStyle.Regular)
+            Rtb_ODF.DeselectAll()
+
+            For i = 1 To G_SectionCount                         ' <1.060.13> Loop through the Sections in order
+                Rtb_ODF.Select(SecTable(i).startPos,            ' Select the Section Title using Index data
+                               SecTable(i).titleLen)
+                Rtb_ODF.SelectionFont =                         ' Make Title's font-size relative to present normal size.
+                        New Font(conFont,
+                                 Num_ODFFontSize.Value + conTitleFontInc,
+                                 FontStyle.Bold)
+                Rtb_ODF.SelectionColor = conTitleColor          ' And set its color to the Title Color
+                Rtb_ODF.DeselectAll()
+            Next
+            Rtb_ODF.ReadOnly = saveReadOnly                     ' <1.060.13> Restore readonly/EditMode to their values upon entry
+            G_EditMode = Not saveReadOnly
+        End If
+
+    End Sub
+    Private Sub Rtb_ODFSizeChanged(     ' Keep ODF Title centered as ODF RTB changes size
+            sender As Object,           ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles Rtb_ODF.SizeChanged
+
+        ' Purpose:      When the ODF RTB changes size, recenter its title
+        ' Process:      Call CenterLbl() on the Size-Change Event
+        ' Called By:    Rtb_ODF SizeChanged Event
+        ' Side Effects: Update form
+        ' Notes:        <None>
+        ' Updates:      <1.060.13> First implementation
+
+        Const lclProcName As String =   ' Routine's name for message handling
+            "Rtb_ODFSizeChanged"
+
+        If G_InitComplete Then          ' Execute this code only once everything is initialized and stable
+            CenterLbl(Lbl_ODFTitle,     ' Center the ODF-Title over the ODF RTB
+                      Rtb_ODF.Left,
+                      Rtb_ODF.Right)
+        End If
+
+    End Sub
+    Private Sub Rtb_DescTextSizeChanged(    ' Keep ODF Title centered as ODF RTB changes size
+            sender As Object,               ' Standard Event Parameters for a Control
+            e As EventArgs
+            ) Handles Rtb_DescText.SizeChanged
+
+        ' Purpose:      When the Descriptive Text Area RTB changes size, recenter its two titles
+        ' Process:      Call CenterLbl() on the Size-Change Event
+        ' Called By:    Rtb_DescText SizeChanged Event
+        ' Side Effects: Update form
+        ' Notes:        <None>
+        ' Updates:      <1.060.13> First implementation
+
+        Const lclProcName As String =       ' Routine's name for message handling
+            "Rtb_DescTextSizeChanged"
+
+        If G_InitComplete Then              ' Execute this code only once everything is initialized and stable
+            CenterLbl(Lbl_TextBoxTitle1,         ' Center the ODF-Title over the ODF RTB
+                      Rtb_DescText.Left,
+                      Rtb_DescText.Right)
+            If Not G_DTATitle2NoCenter Then ' Recentering is conditional, some titles are left-justified, they don't move
+                CenterLbl(Lbl_TextBoxTitle2,
+                          Rtb_DescText.Left,
+                          Rtb_DescText.Right)
+            End If
+        End If
 
     End Sub
     Private Sub Rtb_ODF_MouseDoubleClick(                           ' Double Mouse-click in the ODF
@@ -405,11 +498,12 @@ Public Class MAIN
         ' Notes:        <None>
         ' Updates:      <1.059.0> Modified loading of ODF data to correctly decode UTF8
         '               <1.060.2> Added exception handler, reordered logic to reset things if ODF fails to load, only enabling
-        '               after the load completes. Replaced parsing routines, calling EnumerateSectionsSetFont() to both
+        '               after the load completes. Replaced parsing routines, calling BuildSectionIndex() to both
         '               list the Sections in the Descriptive Text Area, and set the initial Font and Section Title emphasis.
         '               <1.060.12> If open completes, add the ODF's file path/name to top of the MRU. Moved logic to here from
         '               Menu_OpenHauptwerkOrganClick(), so open can be called from multiple locations, and either ask the user
         '               to choose the file, or use the name passed into OpenODF().
+        '               <1.060.13> Modified for Fast Sections.
 
         Const lclProcName As String =                       ' <1.060.2> Routine's name for message handling
             "OpenODF"
@@ -420,7 +514,6 @@ Public Class MAIN
         Dim fInfo As FileInfo                               ' FileInfo object used to determine file length
 
         CheckUnloadODF(G_OrganFile, G_ODFModSinceSaved)     ' <1.060.2> Ask about saving a changed ODF before overwriting it with a new one?
-
 
         If File.Exists(fileName) Then                       ' <1.060.12> If file doesn't exist (invalid MRU likely), bypass the open
             Try                                             ' <1.060.12> Protect the attempt to read file data
@@ -481,11 +574,9 @@ Public Class MAIN
 
             SetODFButtons(True)                             ' <1.060.2> Enable Controls that required ODF Text e.g. Search, Next/Prev, Markers...
 
-            EnumerateSectionsSetFont(Rtb_ODF,               ' <1.060.2> List all Sections, displaying resulting data in the Descriptive Text Area
-                                     Num_ODFFontSize.Value,
-                                     G_NoODF,
-                                     True,                  ' <1.060.2> True -> display Section parsing results
-                                     True)
+            BuildSectionIndex(Rtb_ODF,                      ' <1.060.2> List all Sections, displaying resulting data in the Descriptive Text Area
+                              G_NoODF)
+            ListSections(Rtb_ODF, Rtb_DescText, G_NoODF)    ' <1.060.13> List the Sections in the Descriptive Text Area
             PositionToSectionByName("DisplayPage", False)   ' <1.060.2> Position to the initial Section; False -> Don't display/parse a row, do not alter Descriptive Box
 
             Lbl_LineNumVal.Enabled = True                   ' <1.060.2.> Now that ODF is loaded and these fields are updated, enable them to permit hot-linking
@@ -593,13 +684,13 @@ Public Class MAIN
     End Sub
 
     ' MENU SECTIONS
-    Private Sub Menu_SectionChoiceClick(            ' Any menu > Sections > sub-menu choice
-            sender As ToolStripMenuItem,            ' Standard Event Parameters for a Control
-            e As EventArgs)                         ' <1.060.7> Event Handlers added dynamically as Sections are located
+    Private Sub Menu_SectionChoiceClick(                        ' Any menu > Sections > sub-menu choice
+            sender As ToolStripMenuItem,                        ' Standard Event Parameters for a Control
+            e As EventArgs)                                     ' <1.060.7> Event Handlers added dynamically as Sections are located
 
         ' Purpose:      Process Section Menu choices, to navigate directly to Sections in the ODF.
         ' Process:		When building the Sections Menu, Sections are linked dynamically to this handler. The .Tags property of
-        '               each Section entry has the exact name of the Section: pass this to PositionToSectionByName().
+        '               each Section entry has the SecNum: pass this to PositionToSectionByName().
         ' Called By:    Each of the Section Menu choices' Click Events...
         ' Side Effects: <NA>
         ' Notes:        <None>
@@ -609,10 +700,9 @@ Public Class MAIN
         '               <1.060.7> Removed all explicit "Handles" references, Event Handler linkages are now built
         '               programatically.
 
-        Const lclProcName As String =               ' <1.060.2> Routine's name for message handling
+        Const lclProcName As String =                           ' <1.060.2> Routine's name for message handling
             "Menu_SectionChoiceClick"
-
-        PositionToSectionByName(sender.Tag, True)   ' <1.060.2> Pass embedded Tag data to search: Tag = SectionName; True -> update Descriptive Box
+        PositionToSectionByName(sender.Text, True, sender.Tag)  ' <1.060.2> Pass embedded Tag data to search: Tag = SectionName; True -> update Descriptive Box
 
     End Sub
 
@@ -652,6 +742,7 @@ Public Class MAIN
         '               Removed recompute warning, ReCompute is no longer needed.
         '               <1.060.8> Seperated processing logic from Event Handler, to allow other calls
         '               to the logic.
+        '               <1.060.13> Removed warning message entirely - Menu-Bar feedback is enough.
 
         Const lclProcName As String =               ' <1.060.2> Routine's name for message handling
             "EnableEditing"
@@ -665,8 +756,6 @@ Public Class MAIN
         Menu_EditMode.BackColor = Color.Red         ' Paint Main Menu text with RED background
         G_EditMode = True                           ' indique edition en cours (modif 055); save State
 
-        DispMsg("", conMsgInfo,
-                "ODF Text is now editable")
     End Sub
     Private Sub Menu_ExitEditModeClick(             ' menu > Edit Mode > ODF Editing Disabled
             sender As Object,                       ' Standard Event Parameters for a Control
@@ -705,6 +794,7 @@ Public Class MAIN
         '               editing is disabled (the default). Removed solicitation to recompute.
         '               <1.060.8> Seperated processing logic from Event Handler, allowing logic to be
         '               called from other procedures.
+        '               <1.060.13> If data changed, rebuild the Section Index
 
         Const lclProcName As String =               ' <1.060.2> Routine's name for message handling
             "DisableEditing"
@@ -721,41 +811,36 @@ Public Class MAIN
             Color.Gainsboro                         ' Reset Main Menu text background color <1.060.2> changed from Light Steel Blue to Gainsboro
         G_EditMode = False                          ' indique retour au mode lecture seule (modif v055); save State
 
-        'If G_ODFModSinceParsed Then                 ' <1.060.2> Only solicit recompute if changes were made since the last recompute
-        '    rep = MsgBox("The ODF may have been changed." & vbCrLf &
-        '                 "Do you want to recompute the Section data?",
-        '             MsgBoxStyle.YesNo + MsgBoxStyle.Question,
-        '             "Exiting Edit-Mode")
-        '    If rep = vbYes Then
-        '        ParseSections(conVerbose)
-        '        PositionToSectionByName("DisplayPage", False)                   ' <1.060.2> Position to the initial Section; True -> Don't display/parse a row, do not alter Descriptive Box
-        '    End If
-        'End If
+        If G_ODFModSinceRecomp Then                 ' <1.060.13> Data changed, rebuild the Section Index
+            BuildSectionIndex(Rtb_ODF, G_NoODF)
+        End If
 
     End Sub
-    Private Sub Menu_ReComputeSectionsClick(            ' menu > Edit Mode > Recompute Sections
+    Private Sub Menu_ReComputeSectionsClick(            ' menu > Edit Mode > List Sections
             sender As Object,                           ' Standard Event Parameters for a Control
             e As EventArgs
-            ) Handles Menu_ReComputeSections.Click
+            ) Handles Menu_ReComputeSections.Click, CM_ODFRecompute.Click
 
-        ' Purpose:      Replace old ReCompute with a scan of all Sections, displaying them as we find them
-        ' Process:		Call EnumerateSectionsSetFont(), which scans for all Section Headers - let it list the Section Data
-        ' Called By:    Menu_RecomputeSections Click Event
+        ' Purpose:      Replace old ReCompute with a scan of all Sections, displaying them after we find them
+        ' Process:		Call ListSections(), which checks if the Section Index is valid: if so, it directly lists
+        '               the Sections from that Table. If not, it calls BuildSectionIndex() to scan for all Section
+        '               Headers, building the Index Table, the Menus, and setting the fonts & emphasis. Then it
+        '               lists those sections from the now valid Index Table.
+        ' Called By:    Menu_RecomputeSections Click Event; CM_ODFRecompute Click Event
         ' Side Effects: <NA>
         ' Notes:        <None>
-        ' Updates:      <1.060.2> Repositioned to start of ODF after parsing. Changed to call EnumerateSectionsSetFont(),
+        ' Updates:      <1.060.2> Repositioned to start of ODF after parsing. Changed to call BuildSectionIndex(),
         '               deprecating actual ReCompute, as we no longer use a static data table to navigate.
+        '               <1.060.13> Fast Sections - changed to make explicit call to ListSections(), which will
+        '               implicitly rebuild if the Section Index is dirty. Also directed ODF Context Menu
+        '               for List Sections to this handler, it has the same logic as the Main Menu List Sections.
 
-        Const lclProcName As String =                   ' <1.060.2> Routine's name for message handling
+        Const lclProcName As String =       ' <1.060.2> Routine's name for message handling
             "Menu_ReComputeSectionsClick"
 
-        EnumerateSectionsSetFont(Rtb_ODF,
-                                 Num_ODFFontSize.Value, ' <1.060.2> Keep present Font size
-                                 G_NoODF,
-                                 True,                  ' <1.060.2> Enumerate Sections in Display Text Area
-                                 True)                  ' <1.060.2> Adjust Title Emphasis
-        PositionToSectionByName("DisplayPage",
-                                False)                  ' <1.060.2> Position to the initial Section; False -> Don't display/parse a row, do not alter Descriptive Text Area
+        ListSections(Rtb_ODF,               ' <1.060.13> List the Sections in the Descriptive Text Area
+                     Rtb_DescText,
+                     G_NoODF)
 
     End Sub
 
@@ -838,6 +923,7 @@ Public Class MAIN
         '               Disable "Set Font" and "Save Description" Buttons. Added exception handler. Added
         '               HTML Help as the default help system, falling back to the original if the HTML
         '               content is missing.
+        '               <1.060.13> Enable dynamic recentering of the Title2 when the form changes size
 
         Const lclProcName As String =                           ' <1.060.2> Routine's name for message handling
             "Menu_HelpClick"
@@ -880,6 +966,7 @@ Public Class MAIN
                            Lbl_TextBoxTitle2,
                            Rtb_DescText.Left,
                            Rtb_DescText.Right)
+                G_DTATitle2NoCenter = False                     ' <1.060.13> Enable dynamic recentering of Title2
                 Menu_PrintDT.Enabled = True                     ' <1.060.3> Enable printing when short-help is on display
                 'Btn_SaveDescText.Enabled = True                 ' Temp - Enable this line to enable control to allow saving to the Help File e.g., to make major changes.
             Else                                                ' <1.060.2> Message the user
@@ -960,24 +1047,27 @@ Public Class MAIN
                         True)           ' <1.060.2> Search forward
 
     End Sub
-    Private Sub Btn_LedClick(                       ' Clicked the Led Button in the Data Panel
-            sender As Object,                       ' Standard Event Parameters for a Control
+    Private Sub Btn_LedClick(               ' Clicked the Led Button in the Data Panel
+            sender As Object,               ' Standard Event Parameters for a Control
             e As EventArgs
-            ) Handles Btn_Led.Click
+            ) Handles Btn_Led.Click, Status_SecDirtyVal.Click
 
-        ' Purpose:      Replaced silent ReCompute with null, we no longer use static navigation data.
-        '               Control remains, proving color indicator, when scanning the entire ODF.
-        ' Process:		Returns to caller.
-        ' Called By:    Btn_Led Click Event
+        ' Purpose:      Provides a color indicator, when scanning the entire ODF: Red
+        '               while scanning, Green when not, Orange when there is no ODF.
+        '               When clicked, performas a silent rebuild of the Section Index.
+        ' Process:		Call BuildSectionIndex()
+        ' Called By:    Btn_Led Click Event; Status_SecDirtyVal Click Event
         ' Side Effects: <NA>
         ' Notes:        <None>
         ' Updates:      <1.060.2> After parsing, reset to top Section. Removed call to parser.
         '               In last revision, just return - actions are no longer required.
+        '               <1.060.13> Return of the Led! Perform a "silent" rebuild. Also allow
+        '               click on the Status-Bar indicator to perform the same rebuild.
 
-        Const lclProcName As String =               ' <a1.060.2> Routine's name for message handling
+        Const lclProcName As String =       ' <1.060.2> Routine's name for message handling
             "Btn_LedClick"
 
-        Return
+        BuildSectionIndex(Rtb_ODF, G_NoODF) ' <1.060.13> Rebuild Index, do not List Sections.
 
     End Sub
     Private Sub Btn_SetFontClick(               ' Clicked the Set Desc. Font Button
@@ -1086,14 +1176,14 @@ Public Class MAIN
             "Btn_RowActionClick"
 
         TakeRowAction(G_PackagePath,        ' <1.060.2> Let TakeRowAction() do all the work
-                     G_ImageFile,
-                     G_ImageSet,
-                     G_PackageID,
-                     G_MinPanelHeights)
+                      G_ImageFile,
+                      G_ImageSet,
+                      G_PackageID,
+                      G_MinPanelHeights)
 
     End Sub
-    Private Sub Btn_NextLineClick(                              ' Handle the 6 Next/Prev Line Buttons
-            sender As Button,                                   ' Standard Event Parameters for a Control
+    Private Sub Btn_NextLineClick(                  ' Handle the 6 Next/Prev Line Buttons
+            sender As Button,                       ' Standard Event Parameters for a Control
             e As EventArgs
             ) Handles Btn_NextLine.Click, Btn_Next10Lines.Click, Btn_Next100Lines.Click,
             Btn_PrevLine.Click, Btn_Prev10Lines.Click, Btn_Prev100Lines.Click
@@ -1114,49 +1204,58 @@ Public Class MAIN
         '               Get Section Start/End dynamically from GetSectionFromIndex(), update screen.
         '               <1.060.6> Save Section Start/End positions into the .Tag properties, for later use repositioning.
 
-        Const lclProcName As String =                           ' <1.060.2> Routine's name for message handling
+        Const lclProcName As String =               ' <1.060.2> Routine's name for message handling
             "Btn_NextLineClick"
 
-        Dim desiredNewLine As Integer                           ' Where do we want to move to, prior to imposing limitations
-        Dim cursorPos As Integer                                ' <1.060.2> Local var to hold cursor's location, replaced G_CaretPos
-        Dim secStart As Integer                                 ' <1.060.2> Section Start, determined dynamically by GetSectionFromIndex()
-        Dim secEnd As Integer                                   ' <1.060.2> Section End, determined dynamically by GetSectionFromIndex()
-        Dim secLStart As Integer                                ' <1.060.6> Section's Starting Line
-        Dim secLEnd As Integer                                  ' <1.060.6> Section's Ending Line
-        Dim lineStart As Integer                                ' <1.060.2> Line Start, do our Section search from here
+        Dim desiredNewLine As Integer               ' Where do we want to move to, prior to imposing limitations
+        Dim cursorPos As Integer                    ' <1.060.2> Local var to hold cursor's location, replaced G_CaretPos
+        Dim secStart As Integer                     ' <1.060.2> Section Start, determined dynamically by GetSectionFromIndex()
+        Dim secEnd As Integer                       ' <1.060.2> Section End, determined dynamically by GetSectionFromIndex()
+        Dim secLStart As Integer                    ' <1.060.6> Section's Starting Line
+        Dim secLEnd As Integer                      ' <1.060.6> Section's Ending Line
+        Dim lineStart As Integer                    ' <1.060.2> Line Start, do our Section search from here
 
         Try
-            desiredNewLine = G_LineIndex + sender.Tag           ' Advance/Retard desired line position by 1, 10, or 100 lines
-            G_LineIndex = Clamp(desiredNewLine,                 ' Limit Line Position to stay with 0-based range of lines in ODF 
-                                0,
-                                Rtb_ODF.Lines.Length - 1)
-            cursorPos = Rtb_ODF.GetFirstCharIndexFromLine(
-                G_LineIndex)                                    ' Move Cursor to first character of the new line
-            Rtb_XMLRow.Text = MoveToPosition(cursorPos,         ' Update Line/Row Data, select entire Row, get Row's text 
-                                             G_LineIndex,
-                                             lineStart,
-                                             True,              ' <1.060.2> Reposition the cursor
-                                             True)
-            G_SectionName = GetSectionFromIndex(lineStart,      ' retrouver la section auquel il appartient; locate and load Section Data for the now current Section
-                                                secStart,       ' <1.060.2> Function returns the Start and End positions for the Section dynamically (no recompute)
-                                                secEnd,
-                                                secLStart,      ' <1.060.6> Added Starting/Ending Lines
-                                                secLEnd)
-            Lbl_SectionName.Text = G_SectionName                ' <1.060.2> GetSectionFromIndex() is no longer responsible for screen update, update the Name from here
-            DisplayXMLRow()                                     ' montrer les infos de la ligne; <1.059.0> Removed parameter (1), DisplayXMLRow is now parameterless; parse & display Row
-            Lbl_SecStartVal.Text = secLStart.ToString(conIntFmt) &
+            desiredNewLine =
+                G_LineIndex + sender.Tag            ' Advance/Retard desired line position by 1, 10, or 100 lines
+            G_LineIndex =
+                Clamp(desiredNewLine,               ' Limit Line Position to stay with 0-based range of lines in ODF 
+                      0,
+                      Rtb_ODF.Lines.Length - 1)
+            cursorPos =
+                Rtb_ODF.GetFirstCharIndexFromLine(
+                G_LineIndex)                        ' Move Cursor to first character of the new line
+            Rtb_XMLRow.Text =
+                MoveToPosition(cursorPos,           ' Update Line/Row Data, select entire Row, get Row's text 
+                               G_LineIndex,
+                               lineStart,
+                               True,                ' <1.060.2> Reposition the cursor
+                               True)
+            G_SectionName =
+                GetSectionFromIndex(lineStart,      ' retrouver la section auquel il appartient; locate and load Section Data for the now current Section
+                                    secStart,       ' <1.060.2> Function returns the Start and End positions for the Section dynamically (no recompute)
+                                    secEnd,
+                                    secLStart,      ' <1.060.6> Added Starting/Ending Lines
+                                    secLEnd)
+            Lbl_SectionName.Text =
+                G_SectionName                       ' <1.060.2> GetSectionFromIndex() is no longer responsible for screen update, update the Name from here
+            DisplayXMLRow()                         ' montrer les infos de la ligne; <1.059.0> Removed parameter (1), DisplayXMLRow is now parameterless; parse & display Row
+            Lbl_SecStartVal.Text =
+                secLStart.ToString(conIntFmt) &
                 " / " & secStart.ToString(conIntFmt)
-            Lbl_SecStartVal.Tag = secStart                      ' <1.060.6> Save the raw position data in the .Tag property
-            Lbl_SecEndVal.Text = secLEnd.ToString(conIntFmt) &
+            Lbl_SecStartVal.Tag = secStart          ' <1.060.6> Save the raw position data in the .Tag property
+            Lbl_SecEndVal.Text =
+                secLEnd.ToString(conIntFmt) &
                 " / " & secEnd.ToString(conIntFmt)
             Lbl_SecEndVal.Tag = secEnd
 
-            G_PreviousRTFFile = LoadRTFFile(G_DataPath,         ' charger le fichier RTF; retrieve and display Section's Descriptive Text
-                                            G_SectionName,
-                                            G_PreviousRTFFile)
+            G_PreviousRTFFile =                     ' charger le fichier RTF; retrieve and display Section's Descriptive Text
+                LoadRTFFile(G_DataPath,
+                            G_SectionName,
+                            G_PreviousRTFFile)
             Rtb_ODF.Focus()
 
-        Catch                                                   ' Catch exceptions here, and ignore
+        Catch                                       ' Catch exceptions here, and ignore
             ' ras
         End Try
 
@@ -1175,13 +1274,17 @@ Public Class MAIN
         '               loading a file, or altering text sizes.
         ' Updates:      <1.060.2> Sets the file dirty bit, and updates the Status-Bar
         '               <1.060.2> Update Status-Bar Line & Char counts if changed while in Edit Mode
+        '               <1.060.13> Sets the Section dirty bit, and updates the Status-Bar, if changed while
+        '               in EditMode.
 
         Const lclProcName As String =                   ' <1.060.2> Routine's name for message handling
             "Rtb_ODFTextChanged"
 
-        If G_EditMode Then
+        If G_EditMode Then                              ' When not in EditMode, just ignore
             G_ODFModSinceSaved = True
-            Status_FileDirtyVal.BackColor = Color.Red   ' <1.060.2> Set File-Dirty indiator on the Status-Bar
+            Status_FileDirtyVal.BackColor = Color.Red   ' <1.060.2> Set File-Dirty indicator on the Status-Bar
+            G_ODFModSinceRecomp = True                  ' <1.060.13> Set the global Section Dirty-bit
+            Status_SecDirtyVal.BackColor = Color.Red    ' <1.060.13> Set the Status-Bar's Section Dirty Indicator
             Status_LinesVal.Text =                      ' <1.060.4> Display initial length in Lines and Characters
                 Rtb_ODF.Lines.Count().ToString(conIntFmt)
             Status_CharsVal.Text =
@@ -1194,11 +1297,11 @@ Public Class MAIN
             e As KeyEventArgs
             ) Handles Rtb_ODF.KeyUp
 
-        ' Purpose:      Intercept Arrow Keys, cause them to update Positin Data.
+        ' Purpose:      Intercept Arrow Keys, cause them to update Position Data.
         ' Process:		KeyUp triggers after screen has updated, so an arrow key has already moved the
         '               onscreen cursor to its new location, per normal rules. We now need to update
         '               the related position data - identify where the cursor is, and process a
-        '               Single-Click Move to that location.
+        '               Single-Click formal move to that location, bringing AECHO in synch with screen.
         ' Called By:    Rtb_ODF KeyUp Event
         ' Side Effects: Updates Data Panel Position Fields & G_LineIndex
         ' Notes:        <None>
@@ -1283,7 +1386,8 @@ Public Class MAIN
     End Sub
     Private Sub Lbl_LineNumValClick(        ' Clicked on Line Number field in Daa Panel
             sender As Object,               ' Standard Event Parameters for a Control
-            e As EventArgs) Handles Lbl_LineNumVal.Click
+            e As EventArgs
+            ) Handles Lbl_LineNumVal.Click
 
         ' Purpose:      If active, position to the beginning of the line identified here. Use single-click model.
         ' Process:		Ensure we have a good value, convert to character index, set new position, update Data.
@@ -1295,9 +1399,9 @@ Public Class MAIN
         Const lclProcName As String =       ' Routine's name for message handling
             "Lbl_LineNumValClick"
 
-        Dim ln As Integer
-        Dim curPos As Integer
-        Dim lineStart As Integer
+        Dim ln As Integer                   ' 0-based Line#, calculated from Control's .Tag property
+        Dim curPos As Integer               ' Position of first char of Line # ln
+        Dim lineStart As Integer            ' Dummy var for call to MoveToPosition()
 
         If Lbl_LineNumVal.Text = "NA" Then  ' If no data, just return
             Return
@@ -1635,9 +1739,13 @@ Public Class MAIN
         '               references to the Event Handler for lowest-level entries,
         '               and completing the range (1-22, 22-44...) in the text of the
         '               intermediate entries.
-        ' Process:      If this starts a new group of 22, add the Group entry first,
-        '               then add the new Section as the last entry of the last group.
-        ' Called By:    EnumerateSectionsSetFont()
+        ' Process:      Outer loop processes each intermediate-leve menu item, each of
+        '               which contains between 1 and 22 Sections. The inner loop processes
+        '               each of these Sections, linking it to the common event hadler for
+        '               their click-events. When all Sections in the level have been linked
+        '               to their hangler, the intermediate level's title is updated with the
+        '               SecID range (1-22; 23-44...) that level supports.
+        ' Called By:    BuildSectionIndex()
         ' Side Effects: <None>
         ' Notes:        <None>
         ' Updates:      <1.060.7> First implemented, for dynamic Section Menus
@@ -1651,7 +1759,6 @@ Public Class MAIN
             i.Tag = ""                                                      ' No .Tag properties at this level
             i.Enabled = True
             For Each j As ToolStripMenuItem In i.DropDownItems              ' Loop over the individual entries within each Group
-                j.Tag = j.Text                                              ' These are the actual active links, set the .Tag
                 AddHandler j.Click, AddressOf Menu_SectionChoiceClick       ' Link the individual entries to the Event Handler
                 j.Enabled = True
             Next
@@ -1660,18 +1767,14 @@ Public Class MAIN
             beg += i.DropDownItems.Count                                    ' Advance to beginning value for the next Group
         Next
 
-        If Menu_SectionsA.DropDownItems.Count > 0 Then                      ' Enable the Menu-Bar level if there is any content
-            Menu_SectionsA.Enabled = True
-        Else                                                                ' Otherwise leave is disabled, no Sections
-            Menu_SectionsA.Enabled = False
-        End If
+        Menu_SectionsA.Enabled = (Menu_SectionsA.DropDownItems.Count > 0)   ' Enable the Menu-Bar level if there is any content
 
     End Sub
     Public Sub ClearSecMenus()
 
         ' Purpose:      Deletes all Group and Detail entries from the Sections menu
         ' Process:      For each Group, delete all its children, then delete the Group
-        ' Called By:    ResetToNoODF(); EnumerateSectionsSetFont()
+        ' Called By:    ResetToNoODF(); BuildSectionIndex()
         ' Side Effects: <None>
         ' Notes:        <None>
         ' Updates:      <1.060.7> First implemented, for dynamic Section Menus
@@ -1859,7 +1962,7 @@ Public Class MAIN
         CM_DescCut.Enabled =                    ' Cut has same criteria as Copy
             CM_DescCopy.Enabled
         CM_DescFont.Enabled = True              ' Always allow: if text is selected, changes text, else changes RTB default
-        CM_DescPrint.Enabled =                  ' Print enabled if there is text
+        CM_DescPrint.Enabled =                  ' Enable Print if there is text
             (Rtb_DescText.TextLength > 0)
         CM_DescPaste.Enabled =                  ' Paste allowed if Clipboard has any Text or Image content
             (Clipboard.ContainsText() Or
@@ -2228,30 +2331,6 @@ Public Class MAIN
                 CM_ODFEditMode.Text = "Enable Editing"
                 DisableEditing()
             End If
-        End If
-
-    End Sub
-    Private Sub CM_ODFRecomputeClick(                           ' CM Recompute Click in ODF Area
-            sender As Object,                                   ' Standard Event Parameters for a Control
-            e As EventArgs
-            ) Handles CM_ODFRecompute.Click
-
-        ' Purpose:      Handles Click on Recompute for ODF Area
-        ' Process:      If ODF is loaded, call EnumerateSectionsSetFont()
-        ' Called By:    CM_ODF Recompute Click Event
-        ' Side Effects: <None>
-        ' Notes:        <None>
-        ' Updates:      <1.060.8> First implementation
-
-        Dim lclProcName As String =                             ' Routine's name for message handling
-            "CM_ODFRecomputeClick"
-
-        If (Not (G_NoODF) And (Rtb_ODF.TextLength > 0)) Then
-            EnumerateSectionsSetFont(Rtb_ODF,                   ' Operate on the ODF
-                                     Num_ODFFontSize.Value,     ' Maintain present font-size
-                                     G_NoODF,                   ' Have ODF, this is False
-                                     True,                      ' List Sections in the Descriptive Text Area
-                                     True)                      ' Ensure all Titles are emphasize correctly (there may be new Sections after an edit!)
         End If
 
     End Sub

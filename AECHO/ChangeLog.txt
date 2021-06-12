@@ -16,7 +16,7 @@
     3)  Changed "Compilated" to "Compiled" in Title Bar; Made Vesion info in Title Bar & About Box dynamic
     4)  Changed Menu Bar text to mixed-case, added ... to "Save As" & "Open Hauptwerk Organ"; Changed text for
         "Help" to "View Help", "About" to "About AECHO", reflecting standatd practice
-    5)  Replaced MSgBox implementation of "About" with VS AboutBox object, which takes its content from Project
+    5)  Replaced MsgBox implementation of "About" with VS AboutBox object, which takes its content from Project
         Assembly parameters.
     6)  Updated .NET Framework from 3.5 to 4.8 (and tested successfully with .NET 5.0)
     7) 	Added AECHO 1.059.0 Project to GIT, to manage source versioning. Updates 1-7 define the initial baseline
@@ -256,7 +256,7 @@
     38) Eliminated all use of ReCompute & the related S_Sections data-structure array. Instead, all required navigation information is retrieved
         dynamically. The Edit Mode->ReCompute menu item has been replaced with "List Sections", which populates the Descriptive Text area with the
         same information as the old ReCompute, but this no longer build/rebuilds any useful internal data. The "silent recompute" of the Led button
-        is no longr implmented. Entering and Leaving Edit-Mode no longer warns about nor solicits a ReCompute. AECHO no longer tracks if ODF
+        is no longer implmented. Entering and Leaving Edit-Mode no longer warns about nor solicits a ReCompute. AECHO no longer tracks if ODF
         data has been changed by editing since a ReCompute, though it does track changes since the last save-to-a-file.
 
     39) Rewrote Trace-Sample, eliminating Find_a_Tag() and Read_a_Tag(): instead, use the new Function ReadAndDisplayTag() that combines those
@@ -458,6 +458,67 @@
                 is created if it does not exist.) If an attempt to open a file off the MRU list fails, that
                 entry is removed from the menu and the backing file.
 
+1.060.13    June 9, 2021 Bob Hehmann
+    Git:        FastSection
+    Summary:    Introduce hybrid Section handling of Sections for improved performances.
+    Details:    Reintroduce the Static Sections array, without previous limits on Section count. Populate on
+                ODF load. When index data is clean, use this table to: position to a Section by name; recolor and
+                size Section Titles; locate Section from current position; Recompute lists Sections from this table.
+                When "dirty", fallback to search-based algorithm to locate current Section from current position, 
+                and recompute when changing ODF font, accessing a Section directly via the Section menu's dropdown
+                list, or on demand. Add a "dirty Section data" marker to the Status-Bar.
+
+    1)  Added attribution for icons to www.vecteezy.com. Added organ graphic as default to the About-Box.
+
+    2)  Renamed "Recompute Sections" to "Build Section Index" in Menu and Context Menu; modified Menu variant to
+        leave Cursor at its original position rather than resetting the position to the Default Section. This
+        aligns the Menu's and the Context Menu's semantics.
+
+    3)  Separated the Section Data Display logic into its own routine, ListSections(). Adjusted parameter list
+        of BuildSectionIndex, which now scans the ODF once, setting its font & emphasis, builds the Section
+        Table, and the Sections Menu dropdowns. Those routines that also want to update the Descriptive Text
+        Area with the Section Data explicitly call ListSections() to do that. ListSections can also be called
+        alone, it will invoke BuildSectionIndex if the Section Index is dirty; otherwise, it just displays the
+        data from the Section Table. menu > Edit Mode > List Sections  & ODF's Context Menu > List Sections 
+        now call ListSections(), with implicit rebuild if needed.
+
+    4)  Re-enabled the function of the Led control (colored box in the Position Data Panel.) Clicking on this
+        Control while an ODF is loaded forces an Index rebuild, regardless of the dirty bit. It then repositions
+        the cursor to its original location. Parsed Data and Descriptive Text is not changed, if any, unless the
+        rebuild places the cursor in a different Section.
+
+    5)  Modified Section-search logic throughout, to use SecID for direct-access when possible and Index is
+        valid; search Index Table by Name; search ODF.
+
+    6)  Removed Warning when entering Edit Mode - superfluous at this point.
+
+    7)  Modified ChangeFontSize to do an Index rebuild if the Index is dirty, then to locate directly to each
+        SectionTitle to apply the emphasis, rather than searching for text in the ODF.
+
+    8)  Removed extra ScrollToCursor() when positioning to Section - location is placed onscreen, just not
+        necessarily to the top of the RTB. Eliminates a visual stutter as screen need not paint twice
+        in succession.
+
+    9)  Updated logic that locates the owning Section from a character-position so that it uses the
+        Section Index table to find the Section, as long as the Index Table is valid. If invalid,
+        it falls back to a text-search of the ODF, which can be slower for large instruments.
+
+    10) Updated tool-tip text.
+
+    11) Added logic to perform a silent-rebuild by clicking on the Status-Bar Index-Valid indicator, the same
+        as clicking on the Led control in the Data Panel.
+
+    12) When rebuilding the Section Index, set the ODF to read-only/EditMode off, as the operation performs several 
+        times faster than when EditMode is enabled. ODF Change Events are triggered, when EditMode is on, these cause
+        significant processing that is not needed for a rebuild. When the rebuild completes, return the ODF to its 
+        prior state. Apply the same logic in the ODF Font-Size Change logic.
+        
+    13) Support basic resizing. Couplers window is fixed size. Trace windos if fully adjustable, content box follows
+        sizing, introduces scroll-bars dynamically. Main window extends size of ODF both rightward and downward;
+        Descriptive Text Area, Search Area, and XML Area extend rightward. Keep ODF Title and Descriptive Area
+        Titles centered over their respective controls as those controls change size in response to resizing the
+        main form. Set minimum size of form to its design default, 1500x900.
+
 Routines relocated from various forms over to SharedCode.vb (or new routines created in SharedCode.vb):
 
 Friend              Constant Declarations / Init    Relocated from MAIN form
@@ -483,7 +544,8 @@ Friend Function     LoadRTFFile()                   Relocated from MAIN form; ch
 Friend Sub          DisplayTagText()                Relocated from MAIN form
 Friend Function     ReadTag()                       Relocated from MAIN form
 Friend Sub          FindButtonsProc()               Relocated from MAIN form; renamed from NextLineCommun()
-Friend Sub          EnumerateSectionsSetFont()      New, moved code from MAIN form event handler to fix bug, renamed from SetODFFontSize
+Friend Sub          BuildSectionIndex()             New, moved code from MAIN form event handler to fix bug, renamed from SetODFFontSize(), EnumerateSectionsSetFont()
+Friend Sub          ListSections()                  New, Lists Section Data, calling for a rebuild if the Section Index is dirty.
 Friend Sub          DisplayImage()                  Relocated from MAIN form
 Friend Function     FindImagePackageID()            Relocated from MAIN form; changed from Sub to Func
 Friend Sub          SetRTBDescButtons()             New, to enable/disable "Set Font" and "Save Description" Controls

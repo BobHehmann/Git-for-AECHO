@@ -60,44 +60,12 @@
   <metadata name="Menu_Strip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="Menu_OpenHauptwerkOrgan.ToolTipText" xml:space="preserve">
-    <value>Select and load an ODF file using a standard Windows
-File-Open Dialog. Windows uses the last opened ODF's
-directory as the starting place to locate this ODF.
-
-If there is a modified but unsaved ODF currently loaded,
-prompts to save it before opening a new one.</value>
-  </data>
-  <data name="Menu_ReComputeSections.ToolTipText" xml:space="preserve">
-    <value>AECHO will scan the entire ODF, indentifying all Sections,
-and displaying in the Descriptive Text Box each Section's 
-ID #, Starting &amp; Ending positions, Starting &amp; Ending Line 
-Numbers, and Name, in the order found. Upon completion,
-the main display will be positioned to the DisplayPage
-Section.</value>
-  </data>
-  <data name="Menu_CouplersCode.ToolTipText" xml:space="preserve">
-    <value>Displays an independant Window, which decodes Integer
-Coupler Codes into their Sources, Destinations, 
-and Types; it also translates choices of Source /
-Destination / Type into the corresponding  internal
-HW code.</value>
-  </data>
   <data name="Menu_FollowASample.ToolTipText" xml:space="preserve">
-    <value>Invokes an independant Window that traces data
-related to a (sound) SampleID, presenting this data on
-a single consolidated form. It displays the Installation 
-Package ID, Filename, Pitch Specification Method Code,
-Pitch Rank Base, Pitch Normal MIDI Note, Pitch Exact
-Sample Pitch, License Info, and Pipe Sound Engine 01
-Attack Sample.</value>
-  </data>
-  <data name="Menu_ListSections.ToolTipText" xml:space="preserve">
-    <value>Display the List of Sections (SecID, LIne Start/End,
-Character Position Start/End, Section Name) in
-the Descriptive Text Area. If data has changed
-sinced last Recompute, asks if Sections should
-be recalculated before display.</value>
+    <value>Displays all possible Fields of a Sample Record,
+showing default values used by HW when the
+Field is not present in the Record. Follows links to
+various related Sections, providing the same 
+expanded Field display for the linked Records.</value>
   </data>
   <metadata name="CM_ODF.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>959, 17</value>
@@ -134,6 +102,14 @@ back to a file.
     Orange - No ODF loaded.
     Green - ODF is unmodified from file version.
     Red - ODF has been modified not not saved to a file.</value>
+  </data>
+  <data name="Status_SecDirtyVal.ToolTipText" xml:space="preserve">
+    <value>Indicates the validity of the Section Indices.  A
+List Sections or ODF Font-Size change will forcibly
+rebuild an Invalid Index.
+    Orange - No ODF loaded
+    Green - ODF loaded, Section Indices Valid
+    Red - ODF loaded, Section Indicies Invalid</value>
   </data>
   <metadata name="PrintDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>387, 17</value>

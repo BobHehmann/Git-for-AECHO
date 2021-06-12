@@ -60,7 +60,9 @@ Public Class Trace
             .AcceptsTab = True
             .Visible = True
             .ContextMenuStrip = CM_SampleTrace          ' <1.060.8> Associate menu with this RTB
+            .Anchor = AnchorStyles.Bottom Or AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
         End With
+
         Controls.Add(Me.Rtb_Trace)                      ' Create the display box
         Rtb_Trace.AutoWordSelection = False             ' Work-around for old RTB bug, RTB self-enable this property, over-riding Designer setting.
 

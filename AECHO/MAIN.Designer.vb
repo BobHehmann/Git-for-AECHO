@@ -41,9 +41,9 @@ Partial Class MAIN
         Me.Menu_ReComputeSections = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_Tools = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_ClearMarkers = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator8 = New System.Windows.Forms.ToolStripSeparator()
         Me.Menu_CouplersCode = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_FollowASample = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Menu_ListSections = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_HelpAbout = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_Help = New System.Windows.Forms.ToolStripMenuItem()
         Me.Menu_About = New System.Windows.Forms.ToolStripMenuItem()
@@ -178,6 +178,8 @@ Partial Class MAIN
         Me.Status_RowTypeVal = New System.Windows.Forms.ToolStripStatusLabel()
         Me.Status_FileDirtyTitle = New System.Windows.Forms.ToolStripStatusLabel()
         Me.Status_FileDirtyVal = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.Status_SecDirtyTitle = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.Status_SecDirtyVal = New System.Windows.Forms.ToolStripStatusLabel()
         Me.Status_LinesTitle = New System.Windows.Forms.ToolStripStatusLabel()
         Me.Status_LinesVal = New System.Windows.Forms.ToolStripStatusLabel()
         Me.Status_CharsTitle = New System.Windows.Forms.ToolStripStatusLabel()
@@ -229,13 +231,16 @@ Partial Class MAIN
         Me.Menu_OpenHauptwerkOrgan.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.O), System.Windows.Forms.Keys)
         Me.Menu_OpenHauptwerkOrgan.Size = New System.Drawing.Size(252, 22)
         Me.Menu_OpenHauptwerkOrgan.Text = "&Open Hauptwerk Organ..."
-        Me.Menu_OpenHauptwerkOrgan.ToolTipText = resources.GetString("Menu_OpenHauptwerkOrgan.ToolTipText")
+        Me.Menu_OpenHauptwerkOrgan.ToolTipText = "Select and load an ODF file from a standard Windows" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "File-Open Dialog. Previous d" &
+    "irectory is remembered.." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "If an unsaved modified ODF is loaded, prompts to" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "sa" &
+    "ve it before opening the a new one."
         '
         'Menu_Recent
         '
         Me.Menu_Recent.Name = "Menu_Recent"
         Me.Menu_Recent.Size = New System.Drawing.Size(252, 22)
         Me.Menu_Recent.Text = "Open a Recent ODF..."
+        Me.Menu_Recent.ToolTipText = "Presents a pick-list of recently opened or saved" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "ODFs."
         '
         'Menu_CloseODF
         '
@@ -244,9 +249,8 @@ Partial Class MAIN
         Me.Menu_CloseODF.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.W), System.Windows.Forms.Keys)
         Me.Menu_CloseODF.Size = New System.Drawing.Size(252, 22)
         Me.Menu_CloseODF.Text = "&Close ODF..."
-        Me.Menu_CloseODF.ToolTipText = "Closes the current ODF, remaining in AECHO. If" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "the current ODF has been modified" &
-    " since it was" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "loaded or last saved, then Close ODF offers to save" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "the current " &
-    "ODF into a file."
+        Me.Menu_CloseODF.ToolTipText = "Closes the current ODF. If it has been modified" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "but unsaved, prompts to save it " &
+    "before closing."
         '
         'Menu_SaveAs
         '
@@ -256,8 +260,8 @@ Partial Class MAIN
             Or System.Windows.Forms.Keys.S), System.Windows.Forms.Keys)
         Me.Menu_SaveAs.Size = New System.Drawing.Size(252, 22)
         Me.Menu_SaveAs.Text = "&Save As..."
-        Me.Menu_SaveAs.ToolTipText = "Saves the current ODF contents to a file. If" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "saved, the current ODF will be mark" &
-    "ed as" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "unchanged until it undergoes further modifications."
+        Me.Menu_SaveAs.ToolTipText = "Saves the current ODF  to a file. If saved, the loaded" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "ODF is marked as unmodifi" &
+    "ed-since-saved."
         '
         'Menu_Sep2
         '
@@ -270,7 +274,7 @@ Partial Class MAIN
         Me.Menu_PrintDT.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.P), System.Windows.Forms.Keys)
         Me.Menu_PrintDT.Size = New System.Drawing.Size(252, 22)
         Me.Menu_PrintDT.Text = "&Print Descriptive Text..."
-        Me.Menu_PrintDT.ToolTipText = "Print the contents of the Descriptive Text area."
+        Me.Menu_PrintDT.ToolTipText = "Send the Descriptive Text Area to any system print" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "device, physical or virtual."
         '
         'Menu_Sep3
         '
@@ -283,8 +287,8 @@ Partial Class MAIN
         Me.Menu_Quit.ShortcutKeys = CType((System.Windows.Forms.Keys.Alt Or System.Windows.Forms.Keys.F4), System.Windows.Forms.Keys)
         Me.Menu_Quit.Size = New System.Drawing.Size(252, 22)
         Me.Menu_Quit.Text = "E&xit"
-        Me.Menu_Quit.ToolTipText = "Exits AECHO. If there is an ODF onscreen that has" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "been modified since it was ope" &
-    "ned or last saved," & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "then Exit will offer to save that file before exiting."
+        Me.Menu_Quit.ToolTipText = "Exits AECHO. If there is an modified byut usaved" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "ODF loaded, prompt to save it b" &
+    "efore quiting."
         '
         'Menu_SectionsA
         '
@@ -309,8 +313,8 @@ Partial Class MAIN
             Or System.Windows.Forms.Keys.E), System.Windows.Forms.Keys)
         Me.Menu_EditModeStart.Size = New System.Drawing.Size(250, 22)
         Me.Menu_EditModeStart.Text = "ODF Editing &Enabled"
-        Me.Menu_EditModeStart.ToolTipText = "Selecting this enters Edit-Mode, allowing modifications" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "to the current ODF. When" &
-    " enabled, the Main Menu" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Item ""Edit Mode"" is highlighted with a RED background."
+        Me.Menu_EditModeStart.ToolTipText = "Enables ODF editing. If enabled, this entry is " & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & """checked"". Edit Mode is displaye" &
+    "d on a Red" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "background when editing is enabled."
         '
         'Menu_EditModeExit
         '
@@ -319,7 +323,7 @@ Partial Class MAIN
             Or System.Windows.Forms.Keys.D), System.Windows.Forms.Keys)
         Me.Menu_EditModeExit.Size = New System.Drawing.Size(250, 22)
         Me.Menu_EditModeExit.Text = "ODF Editing &Disabled"
-        Me.Menu_EditModeExit.ToolTipText = "This command exits Edit-Mode, returning the ODF" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "to read-only."
+        Me.Menu_EditModeExit.ToolTipText = "Returns the ODF to read-only. When read-only, this" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "menu item is ""checked""."
         '
         'Menu_ReComputeSections
         '
@@ -327,12 +331,14 @@ Partial Class MAIN
         Me.Menu_ReComputeSections.ShortcutKeys = CType(((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Alt) _
             Or System.Windows.Forms.Keys.R), System.Windows.Forms.Keys)
         Me.Menu_ReComputeSections.Size = New System.Drawing.Size(250, 22)
-        Me.Menu_ReComputeSections.Text = "&Recompute Sections"
-        Me.Menu_ReComputeSections.ToolTipText = resources.GetString("Menu_ReComputeSections.ToolTipText")
+        Me.Menu_ReComputeSections.Text = "&List Sections"
+        Me.Menu_ReComputeSections.ToolTipText = "Lists all Sections in the Descriptive Text Area. If the" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Section Index is invalid" &
+    ", LIst rebuilds the Index." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Displays the Section Number, Start/End Lines," & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Start" &
+    "/End Position, and Name."
         '
         'Menu_Tools
         '
-        Me.Menu_Tools.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Menu_ClearMarkers, Me.Menu_CouplersCode, Me.Menu_FollowASample, Me.Menu_ListSections})
+        Me.Menu_Tools.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Menu_ClearMarkers, Me.ToolStripSeparator8, Me.Menu_CouplersCode, Me.Menu_FollowASample})
         Me.Menu_Tools.Name = "Menu_Tools"
         Me.Menu_Tools.Size = New System.Drawing.Size(46, 20)
         Me.Menu_Tools.Text = "&Tools"
@@ -342,14 +348,20 @@ Partial Class MAIN
         Me.Menu_ClearMarkers.Name = "Menu_ClearMarkers"
         Me.Menu_ClearMarkers.Size = New System.Drawing.Size(216, 22)
         Me.Menu_ClearMarkers.Text = "Clear &Markers"
-        Me.Menu_ClearMarkers.ToolTipText = "All Markers will be reset to empty."
+        Me.Menu_ClearMarkers.ToolTipText = "Resets all Markers (Bookmarks) to empty."
+        '
+        'ToolStripSeparator8
+        '
+        Me.ToolStripSeparator8.Name = "ToolStripSeparator8"
+        Me.ToolStripSeparator8.Size = New System.Drawing.Size(213, 6)
         '
         'Menu_CouplersCode
         '
         Me.Menu_CouplersCode.Name = "Menu_CouplersCode"
         Me.Menu_CouplersCode.Size = New System.Drawing.Size(216, 22)
         Me.Menu_CouplersCode.Text = "&Couplers (Encode/Decode)"
-        Me.Menu_CouplersCode.ToolTipText = resources.GetString("Menu_CouplersCode.ToolTipText")
+        Me.Menu_CouplersCode.ToolTipText = "Displays the Couplers Window, which translates" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "between Coupler Codes and their F" &
+    "unctional" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Behaviors, bi-directionally."
         '
         'Menu_FollowASample
         '
@@ -357,13 +369,6 @@ Partial Class MAIN
         Me.Menu_FollowASample.Size = New System.Drawing.Size(216, 22)
         Me.Menu_FollowASample.Text = "&Trace a Sample"
         Me.Menu_FollowASample.ToolTipText = resources.GetString("Menu_FollowASample.ToolTipText")
-        '
-        'Menu_ListSections
-        '
-        Me.Menu_ListSections.Name = "Menu_ListSections"
-        Me.Menu_ListSections.Size = New System.Drawing.Size(216, 22)
-        Me.Menu_ListSections.Text = "&List Sections"
-        Me.Menu_ListSections.ToolTipText = resources.GetString("Menu_ListSections.ToolTipText")
         '
         'Menu_HelpAbout
         '
@@ -378,7 +383,8 @@ Partial Class MAIN
         Me.Menu_Help.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.F1), System.Windows.Forms.Keys)
         Me.Menu_Help.Size = New System.Drawing.Size(173, 22)
         Me.Menu_Help.Text = "View &Help"
-        Me.Menu_Help.ToolTipText = "Presents AECHO's Help Text."
+        Me.Menu_Help.ToolTipText = "Presents AECHO's Help Text. First priority is to" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "open the extensive HTML Help in" &
+    " the user's" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "default browser."
         '
         'Menu_About
         '
@@ -386,10 +392,13 @@ Partial Class MAIN
         Me.Menu_About.ShortcutKeys = System.Windows.Forms.Keys.F1
         Me.Menu_About.Size = New System.Drawing.Size(173, 22)
         Me.Menu_About.Text = "&About AECHO"
-        Me.Menu_About.ToolTipText = "Displays AECHO's About Box."
+        Me.Menu_About.ToolTipText = "Displays AECHO's About-Box."
         '
         'Rtb_ODF
         '
+        Me.Rtb_ODF.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Rtb_ODF.BackColor = System.Drawing.Color.WhiteSmoke
         Me.Rtb_ODF.ContextMenuStrip = Me.CM_ODF
         Me.Rtb_ODF.DetectUrls = False
@@ -408,14 +417,14 @@ Partial Class MAIN
         '
         Me.CM_ODF.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CM_ODFUndo, Me.CM_ODFRedo, Me.ToolStripSeparator4, Me.CM_ODFCut, Me.CM_ODFCopy, Me.CM_ODFPaste, Me.ToolStripSeparator5, Me.CM_ODFEditMode, Me.ToolStripSeparator6, Me.CM_ODFRecompute})
         Me.CM_ODF.Name = "CM_ODF"
-        Me.CM_ODF.Size = New System.Drawing.Size(183, 176)
+        Me.CM_ODF.Size = New System.Drawing.Size(150, 176)
         '
         'CM_ODFUndo
         '
         Me.CM_ODFUndo.Name = "CM_ODFUndo"
         Me.CM_ODFUndo.ShortcutKeyDisplayString = " "
         Me.CM_ODFUndo.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Z), System.Windows.Forms.Keys)
-        Me.CM_ODFUndo.Size = New System.Drawing.Size(182, 22)
+        Me.CM_ODFUndo.Size = New System.Drawing.Size(149, 22)
         Me.CM_ODFUndo.Text = "Undo"
         Me.CM_ODFUndo.ToolTipText = "Undo last operation in the" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "ODF Area"
         '
@@ -424,21 +433,21 @@ Partial Class MAIN
         Me.CM_ODFRedo.Name = "CM_ODFRedo"
         Me.CM_ODFRedo.ShortcutKeyDisplayString = " "
         Me.CM_ODFRedo.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Y), System.Windows.Forms.Keys)
-        Me.CM_ODFRedo.Size = New System.Drawing.Size(182, 22)
+        Me.CM_ODFRedo.Size = New System.Drawing.Size(149, 22)
         Me.CM_ODFRedo.Text = "Redo"
         Me.CM_ODFRedo.ToolTipText = "Redo  last operation in the " & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "ODF Area"
         '
         'ToolStripSeparator4
         '
         Me.ToolStripSeparator4.Name = "ToolStripSeparator4"
-        Me.ToolStripSeparator4.Size = New System.Drawing.Size(179, 6)
+        Me.ToolStripSeparator4.Size = New System.Drawing.Size(146, 6)
         '
         'CM_ODFCut
         '
         Me.CM_ODFCut.Name = "CM_ODFCut"
         Me.CM_ODFCut.ShortcutKeyDisplayString = " "
         Me.CM_ODFCut.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.X), System.Windows.Forms.Keys)
-        Me.CM_ODFCut.Size = New System.Drawing.Size(182, 22)
+        Me.CM_ODFCut.Size = New System.Drawing.Size(149, 22)
         Me.CM_ODFCut.Text = "Cut"
         Me.CM_ODFCut.ToolTipText = "Cut selected text from the" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "ODF Area"
         '
@@ -447,7 +456,7 @@ Partial Class MAIN
         Me.CM_ODFCopy.Name = "CM_ODFCopy"
         Me.CM_ODFCopy.ShortcutKeyDisplayString = " "
         Me.CM_ODFCopy.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.C), System.Windows.Forms.Keys)
-        Me.CM_ODFCopy.Size = New System.Drawing.Size(182, 22)
+        Me.CM_ODFCopy.Size = New System.Drawing.Size(149, 22)
         Me.CM_ODFCopy.Text = "Copy"
         Me.CM_ODFCopy.ToolTipText = "Copy selected text from the" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "ODF Area"
         '
@@ -456,32 +465,32 @@ Partial Class MAIN
         Me.CM_ODFPaste.Name = "CM_ODFPaste"
         Me.CM_ODFPaste.ShortcutKeyDisplayString = " "
         Me.CM_ODFPaste.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.V), System.Windows.Forms.Keys)
-        Me.CM_ODFPaste.Size = New System.Drawing.Size(182, 22)
+        Me.CM_ODFPaste.Size = New System.Drawing.Size(149, 22)
         Me.CM_ODFPaste.Text = "Paste"
         Me.CM_ODFPaste.ToolTipText = "Paste text into the ODF Area"
         '
         'ToolStripSeparator5
         '
         Me.ToolStripSeparator5.Name = "ToolStripSeparator5"
-        Me.ToolStripSeparator5.Size = New System.Drawing.Size(179, 6)
+        Me.ToolStripSeparator5.Size = New System.Drawing.Size(146, 6)
         '
         'CM_ODFEditMode
         '
         Me.CM_ODFEditMode.Name = "CM_ODFEditMode"
-        Me.CM_ODFEditMode.Size = New System.Drawing.Size(182, 22)
+        Me.CM_ODFEditMode.Size = New System.Drawing.Size(149, 22)
         Me.CM_ODFEditMode.Text = "Enable Editing"
         Me.CM_ODFEditMode.ToolTipText = "Enable or Disable editing of the" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "ODF Area"
         '
         'ToolStripSeparator6
         '
         Me.ToolStripSeparator6.Name = "ToolStripSeparator6"
-        Me.ToolStripSeparator6.Size = New System.Drawing.Size(179, 6)
+        Me.ToolStripSeparator6.Size = New System.Drawing.Size(146, 6)
         '
         'CM_ODFRecompute
         '
         Me.CM_ODFRecompute.Name = "CM_ODFRecompute"
-        Me.CM_ODFRecompute.Size = New System.Drawing.Size(182, 22)
-        Me.CM_ODFRecompute.Text = "Recompute Sections"
+        Me.CM_ODFRecompute.Size = New System.Drawing.Size(149, 22)
+        Me.CM_ODFRecompute.Text = "List Sections"
         Me.CM_ODFRecompute.ToolTipText = "Recompute the Section locations"
         '
         'CM_XML
@@ -501,6 +510,7 @@ Partial Class MAIN
         '
         'Num_ODFFontSize
         '
+        Me.Num_ODFFontSize.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Num_ODFFontSize.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.Num_ODFFontSize.Location = New System.Drawing.Point(828, 32)
         Me.Num_ODFFontSize.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
@@ -674,6 +684,8 @@ Partial Class MAIN
         'Rtb_DescText
         '
         Me.Rtb_DescText.AcceptsTab = True
+        Me.Rtb_DescText.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Rtb_DescText.ContextMenuStrip = Me.CM_Desc
         Me.Rtb_DescText.DetectUrls = False
         Me.Rtb_DescText.Font = New System.Drawing.Font("Verdana", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point)
@@ -768,6 +780,8 @@ Partial Class MAIN
         '
         'Rtb_XMLRow
         '
+        Me.Rtb_XMLRow.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Rtb_XMLRow.BackColor = System.Drawing.Color.WhiteSmoke
         Me.Rtb_XMLRow.ContextMenuStrip = Me.CM_XML
         Me.Rtb_XMLRow.DetectUrls = False
@@ -782,6 +796,7 @@ Partial Class MAIN
         '
         'Btn_SaveDescText
         '
+        Me.Btn_SaveDescText.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Btn_SaveDescText.Enabled = False
         Me.Btn_SaveDescText.Location = New System.Drawing.Point(1369, 389)
         Me.Btn_SaveDescText.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
@@ -793,6 +808,7 @@ Partial Class MAIN
         '
         'Pnl_Tags
         '
+        Me.Pnl_Tags.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.Pnl_Tags.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
         Me.Pnl_Tags.Controls.Add(Me.Btn_RowAction)
         Me.Pnl_Tags.Controls.Add(Me.tag24)
@@ -1518,6 +1534,8 @@ Partial Class MAIN
         '
         'Pnl_Find
         '
+        Me.Pnl_Find.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Pnl_Find.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.Pnl_Find.Controls.Add(Me.Btn_FindPrev)
         Me.Pnl_Find.Controls.Add(Me.Btn_FindNext)
@@ -1532,6 +1550,7 @@ Partial Class MAIN
         '
         'Btn_FindPrev
         '
+        Me.Btn_FindPrev.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Btn_FindPrev.Enabled = False
         Me.Btn_FindPrev.Location = New System.Drawing.Point(1137, 7)
         Me.Btn_FindPrev.Name = "Btn_FindPrev"
@@ -1542,6 +1561,7 @@ Partial Class MAIN
         '
         'Btn_FindNext
         '
+        Me.Btn_FindNext.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Btn_FindNext.Location = New System.Drawing.Point(1049, 7)
         Me.Btn_FindNext.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Btn_FindNext.Name = "Btn_FindNext"
@@ -1552,6 +1572,7 @@ Partial Class MAIN
         '
         'Btn_FindFirst
         '
+        Me.Btn_FindFirst.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Btn_FindFirst.Location = New System.Drawing.Point(961, 7)
         Me.Btn_FindFirst.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Btn_FindFirst.Name = "Btn_FindFirst"
@@ -1562,6 +1583,8 @@ Partial Class MAIN
         '
         'Txt_SearchText
         '
+        Me.Txt_SearchText.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Txt_SearchText.ContextMenuStrip = Me.CM_Search
         Me.Txt_SearchText.Location = New System.Drawing.Point(94, 12)
         Me.Txt_SearchText.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
@@ -1631,6 +1654,7 @@ Partial Class MAIN
         '
         'Btn_SetFont
         '
+        Me.Btn_SetFont.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Btn_SetFont.Enabled = False
         Me.Btn_SetFont.Location = New System.Drawing.Point(1261, 389)
         Me.Btn_SetFont.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
@@ -1682,6 +1706,7 @@ Partial Class MAIN
         '
         'Pnl_Data
         '
+        Me.Pnl_Data.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Pnl_Data.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.Pnl_Data.Controls.Add(Me.Lbl_LineEndVal)
         Me.Pnl_Data.Controls.Add(Me.Lbl_LineStartVal)
@@ -1771,6 +1796,7 @@ Partial Class MAIN
         '
         'Btn_NextLine
         '
+        Me.Btn_NextLine.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Btn_NextLine.Location = New System.Drawing.Point(881, 29)
         Me.Btn_NextLine.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Btn_NextLine.Name = "Btn_NextLine"
@@ -1782,6 +1808,7 @@ Partial Class MAIN
         '
         'Btn_Next10Lines
         '
+        Me.Btn_Next10Lines.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Btn_Next10Lines.Location = New System.Drawing.Point(1004, 29)
         Me.Btn_Next10Lines.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Btn_Next10Lines.Name = "Btn_Next10Lines"
@@ -1793,6 +1820,7 @@ Partial Class MAIN
         '
         'Btn_Next100Lines
         '
+        Me.Btn_Next100Lines.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Btn_Next100Lines.Location = New System.Drawing.Point(1127, 29)
         Me.Btn_Next100Lines.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Btn_Next100Lines.Name = "Btn_Next100Lines"
@@ -1804,6 +1832,7 @@ Partial Class MAIN
         '
         'Lbl_TagPanelTitle
         '
+        Me.Lbl_TagPanelTitle.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.Lbl_TagPanelTitle.AutoSize = True
         Me.Lbl_TagPanelTitle.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
         Me.Lbl_TagPanelTitle.Location = New System.Drawing.Point(415, 432)
@@ -1814,6 +1843,7 @@ Partial Class MAIN
         '
         'Lbl_TextBoxTitle1
         '
+        Me.Lbl_TextBoxTitle1.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.Lbl_TextBoxTitle1.AutoSize = True
         Me.Lbl_TextBoxTitle1.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
         Me.Lbl_TextBoxTitle1.Location = New System.Drawing.Point(1067, 415)
@@ -1825,6 +1855,7 @@ Partial Class MAIN
         '
         'Lbl_ImageTitle
         '
+        Me.Lbl_ImageTitle.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.Lbl_ImageTitle.AutoSize = True
         Me.Lbl_ImageTitle.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
         Me.Lbl_ImageTitle.Location = New System.Drawing.Point(741, 432)
@@ -1835,7 +1866,7 @@ Partial Class MAIN
         '
         'Status_Strip1
         '
-        Me.Status_Strip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Status_RowTypeTitle, Me.Status_RowTypeVal, Me.Status_FileDirtyTitle, Me.Status_FileDirtyVal, Me.Status_LinesTitle, Me.Status_LinesVal, Me.Status_CharsTitle, Me.Status_CharsVal})
+        Me.Status_Strip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.Status_RowTypeTitle, Me.Status_RowTypeVal, Me.Status_FileDirtyTitle, Me.Status_FileDirtyVal, Me.Status_SecDirtyTitle, Me.Status_SecDirtyVal, Me.Status_LinesTitle, Me.Status_LinesVal, Me.Status_CharsTitle, Me.Status_CharsVal})
         Me.Status_Strip1.Location = New System.Drawing.Point(0, 839)
         Me.Status_Strip1.Name = "Status_Strip1"
         Me.Status_Strip1.ShowItemToolTips = True
@@ -1867,14 +1898,14 @@ Partial Class MAIN
         Me.Status_FileDirtyTitle.BackColor = System.Drawing.Color.Transparent
         Me.Status_FileDirtyTitle.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
         Me.Status_FileDirtyTitle.Name = "Status_FileDirtyTitle"
-        Me.Status_FileDirtyTitle.Size = New System.Drawing.Size(200, 17)
-        Me.Status_FileDirtyTitle.Text = "      ODF Modified from Saved Copy"
+        Me.Status_FileDirtyTitle.Size = New System.Drawing.Size(203, 17)
+        Me.Status_FileDirtyTitle.Text = "      ODF Modified from Saved Copy:"
         '
         'Status_FileDirtyVal
         '
         Me.Status_FileDirtyVal.AutoSize = False
         Me.Status_FileDirtyVal.AutoToolTip = True
-        Me.Status_FileDirtyVal.BackColor = System.Drawing.Color.Orange
+        Me.Status_FileDirtyVal.BackColor = System.Drawing.Color.DarkOrange
         Me.Status_FileDirtyVal.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None
         Me.Status_FileDirtyVal.BorderSides = CType((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) _
             Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) _
@@ -1884,6 +1915,26 @@ Partial Class MAIN
         Me.Status_FileDirtyVal.Size = New System.Drawing.Size(25, 17)
         Me.Status_FileDirtyVal.Text = "      "
         Me.Status_FileDirtyVal.ToolTipText = resources.GetString("Status_FileDirtyVal.ToolTipText")
+        '
+        'Status_SecDirtyTitle
+        '
+        Me.Status_SecDirtyTitle.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
+        Me.Status_SecDirtyTitle.Name = "Status_SecDirtyTitle"
+        Me.Status_SecDirtyTitle.Size = New System.Drawing.Size(161, 17)
+        Me.Status_SecDirtyTitle.Text = "      ODF Section Index Valid:"
+        '
+        'Status_SecDirtyVal
+        '
+        Me.Status_SecDirtyVal.AutoSize = False
+        Me.Status_SecDirtyVal.AutoToolTip = True
+        Me.Status_SecDirtyVal.BackColor = System.Drawing.Color.DarkOrange
+        Me.Status_SecDirtyVal.BorderSides = CType((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) _
+            Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) _
+            Or System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom), System.Windows.Forms.ToolStripStatusLabelBorderSides)
+        Me.Status_SecDirtyVal.BorderStyle = System.Windows.Forms.Border3DStyle.Sunken
+        Me.Status_SecDirtyVal.Name = "Status_SecDirtyVal"
+        Me.Status_SecDirtyVal.Size = New System.Drawing.Size(25, 17)
+        Me.Status_SecDirtyVal.ToolTipText = resources.GetString("Status_SecDirtyVal.ToolTipText")
         '
         'Status_LinesTitle
         '
@@ -1923,6 +1974,7 @@ Partial Class MAIN
         '
         'Lbl_XMLRowTitle
         '
+        Me.Lbl_XMLRowTitle.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.Lbl_XMLRowTitle.AutoSize = True
         Me.Lbl_XMLRowTitle.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
         Me.Lbl_XMLRowTitle.Location = New System.Drawing.Point(14, 289)
@@ -1933,6 +1985,7 @@ Partial Class MAIN
         '
         'Lbl_FontSize
         '
+        Me.Lbl_FontSize.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Lbl_FontSize.AutoSize = True
         Me.Lbl_FontSize.Location = New System.Drawing.Point(745, 34)
         Me.Lbl_FontSize.Name = "Lbl_FontSize"
@@ -1952,6 +2005,7 @@ Partial Class MAIN
         '
         'Lbl_TextBoxTitle2
         '
+        Me.Lbl_TextBoxTitle2.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.Lbl_TextBoxTitle2.AutoSize = True
         Me.Lbl_TextBoxTitle2.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point)
         Me.Lbl_TextBoxTitle2.Location = New System.Drawing.Point(1067, 434)
@@ -1963,6 +2017,7 @@ Partial Class MAIN
         '
         'Btn_PrevLine
         '
+        Me.Btn_PrevLine.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Btn_PrevLine.Location = New System.Drawing.Point(940, 29)
         Me.Btn_PrevLine.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Btn_PrevLine.Name = "Btn_PrevLine"
@@ -1974,6 +2029,7 @@ Partial Class MAIN
         '
         'Btn_Prev10Lines
         '
+        Me.Btn_Prev10Lines.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Btn_Prev10Lines.Location = New System.Drawing.Point(1063, 29)
         Me.Btn_Prev10Lines.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Btn_Prev10Lines.Name = "Btn_Prev10Lines"
@@ -1985,6 +2041,7 @@ Partial Class MAIN
         '
         'Btn_Prev100Lines
         '
+        Me.Btn_Prev100Lines.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Btn_Prev100Lines.Location = New System.Drawing.Point(1186, 29)
         Me.Btn_Prev100Lines.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Btn_Prev100Lines.Name = "Btn_Prev100Lines"
@@ -2041,9 +2098,11 @@ Partial Class MAIN
         Me.Controls.Add(Me.Num_ODFFontSize)
         Me.Controls.Add(Me.Rtb_ODF)
         Me.Controls.Add(Me.Menu_Strip)
+        Me.DoubleBuffered = True
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MainMenuStrip = Me.Menu_Strip
         Me.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.MinimumSize = New System.Drawing.Size(1500, 900)
         Me.Name = "MAIN"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "AECHO : Hauptwerk Organ Analyzer , Version 1.62.X"
@@ -2211,7 +2270,6 @@ Partial Class MAIN
     Friend WithEvents CM_SearchCut As Windows.Forms.ToolStripMenuItem
     Friend WithEvents CM_SearchCopy As Windows.Forms.ToolStripMenuItem
     Friend WithEvents CM_SearchPaste As Windows.Forms.ToolStripMenuItem
-    Friend WithEvents Menu_ListSections As Windows.Forms.ToolStripMenuItem
     Friend WithEvents CM_Desc As Windows.Forms.ContextMenuStrip
     Friend WithEvents CM_DescUndo As Windows.Forms.ToolStripMenuItem
     Friend WithEvents CM_DescRedo As Windows.Forms.ToolStripMenuItem
@@ -2236,4 +2294,7 @@ Partial Class MAIN
     Friend WithEvents CM_DescFont As Windows.Forms.ToolStripMenuItem
     Friend WithEvents FntDial_Desc As Windows.Forms.FontDialog
     Friend WithEvents Menu_Recent As Windows.Forms.ToolStripMenuItem
+    Friend WithEvents Status_SecDirtyTitle As Windows.Forms.ToolStripStatusLabel
+    Friend WithEvents Status_SecDirtyVal As Windows.Forms.ToolStripStatusLabel
+    Friend WithEvents ToolStripSeparator8 As Windows.Forms.ToolStripSeparator
 End Class

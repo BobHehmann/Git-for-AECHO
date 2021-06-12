@@ -448,6 +448,7 @@ Partial Class Couplers
         Me.Controls.Add(Me.Pnl_Source)
         Me.Controls.Add(Me.Pnl_Dest)
         Me.Controls.Add(Me.Pnl_Type)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow
         Me.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Name = "Couplers"
         Me.Text = "Couplers"
